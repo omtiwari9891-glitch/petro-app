@@ -13,7 +13,7 @@
     <div id="loginModal" class="fixed inset-0 bg-slate-900 bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-96 border border-slate-100">
             <div class="text-center mb-6">
-                <span class="bg-blue-100 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Enterprise ERP</span>
+                <span class="bg-blue-100 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Enterprise ERP + AI</span>
                 <h2 class="text-2xl font-extrabold mt-2 text-slate-800">PetroFlow Pro</h2>
             </div>
             <form id="loginForm" class="space-y-4">
@@ -51,9 +51,10 @@
                 <button onclick="switchTab('dashboard')" class="tab-btn py-3.5 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 text-sm whitespace-nowrap flex items-center gap-2">📊 Dashboard</button>
                 <button onclick="switchTab('shifts')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">⛽ Shift & Sales</button>
                 <button onclick="switchTab('customers')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👥 Credit & Udhar</button>
-                <button onclick="switchTab('staff')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👨‍💼 Staff Salary & Advance</button>
+                <button onclick="switchTab('staff')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👨‍💼 Staff Salary</button>
                 <button onclick="switchTab('expenses')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💸 Expenses</button>
                 <button onclick="switchTab('tanks')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🛢️ Tank Stock</button>
+                <button onclick="switchTab('pricing')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Subscription Plans</button>
             </div>
         </nav>
 
@@ -271,7 +272,88 @@
                 </div>
             </div>
 
+            <!-- 7. Subscription Plans Tab -->
+            <div id="tab-pricing" class="tab-content hidden space-y-6">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 text-center max-w-4xl mx-auto">
+                    <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Flexible SaaS Pricing</span>
+                    <h2 class="text-3xl font-black text-slate-800 mt-2">Upgrade Your Petrol Pump Subscription</h2>
+                    <p class="text-slate-500 text-sm mt-1">Choose the ideal plan to keep your pump management running seamlessly.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 text-left">
+                        <!-- Starter Plan -->
+                        <div class="border border-slate-200 p-6 rounded-xl bg-slate-50 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-lg">Starter Plan</h3>
+                                <p class="text-xs text-slate-500 mt-1">For single nozzle small pumps</p>
+                                <div class="my-4"><span class="text-3xl font-black text-slate-900">₹999</span><span class="text-xs text-slate-500"> / month</span></div>
+                                <ul class="text-xs space-y-2 text-slate-600">
+                                    <li>✔ Shift & Sales Entry</li>
+                                    <li>✔ Basic Tank Stock</li>
+                                    <li>✔ Expense Manager</li>
+                                </ul>
+                            </div>
+                            <button onclick="buyPlan('Starter Plan', 999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Starter</button>
+                        </div>
+
+                        <!-- Professional Plan -->
+                        <div class="border-2 border-blue-600 p-6 rounded-xl bg-white shadow-lg flex flex-col justify-between relative">
+                            <span class="absolute -top-3 left-1/2 -transform -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase">Most Popular</span>
+                            <div>
+                                <h3 class="font-bold text-blue-900 text-lg">Professional</h3>
+                                <p class="text-xs text-slate-500 mt-1">For standard active petrol pumps</p>
+                                <div class="my-4"><span class="text-3xl font-black text-slate-900">₹2,499</span><span class="text-xs text-slate-500"> / month</span></div>
+                                <ul class="text-xs space-y-2 text-slate-600">
+                                    <li>✔ Everything in Starter</li>
+                                    <li>✔ Credit & Udhar Customer Ledger</li>
+                                    <li>✔ Staff Salary & Advance Mgmt</li>
+                                    <li>✔ PDF Bill / Invoice Printing</li>
+                                </ul>
+                            </div>
+                            <button onclick="buyPlan('Professional Plan', 2499)" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Choose Pro</button>
+                        </div>
+
+                        <!-- Enterprise Plan -->
+                        <div class="border border-slate-200 p-6 rounded-xl bg-slate-50 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-lg">Enterprise</h3>
+                                <p class="text-xs text-slate-500 mt-1">For multi-pump station owners</p>
+                                <div class="my-4"><span class="text-3xl font-black text-slate-900">₹4,999</span><span class="text-xs text-slate-500"> / month</span></div>
+                                <ul class="text-xs space-y-2 text-slate-600">
+                                    <li>✔ Everything in Pro</li>
+                                    <li>✔ Advanced Analytics Graphs</li>
+                                    <li>✔ Priority Phone & WhatsApp Support</li>
+                                    <li>✔ Multi-User Role Access</li>
+                                </ul>
+                            </div>
+                            <button onclick="buyPlan('Enterprise Plan', 4999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Enterprise</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
+
+        <!-- AI Assistant Floating Widget -->
+        <div class="fixed bottom-6 right-6 z-50">
+            <div id="aiChatBox" class="hidden bg-white w-80 rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col mb-3">
+                <div class="bg-blue-600 text-white p-3.5 flex justify-between items-center">
+                    <h4 class="font-bold text-sm flex items-center gap-2">🤖 PetroAI Assistant</h4>
+                    <button onclick="toggleAIChat()" class="text-white hover:text-slate-200 font-bold text-sm">✕</button>
+                </div>
+                <div id="aiChatMessages" class="p-3.5 h-64 overflow-y-auto text-xs space-y-2 bg-slate-50 flex flex-col">
+                    <div class="bg-blue-50 text-blue-900 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100">
+                        Hello! Main aapka AI assistant hoon. Aap mujhse pump ki sales, stock ya udhar ke baare mein pooch sakte hain.
+                    </div>
+                </div>
+                <div class="p-2.5 bg-white border-t border-slate-200 flex gap-2">
+                    <input type="text" id="aiInput" placeholder="Ask AI anything..." class="flex-grow border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="sendAIMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">Send</button>
+                </div>
+            </div>
+            <button onclick="toggleAIChat()" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-105">
+                🤖
+            </button>
+        </div>
     </div>
 
     <script>
@@ -279,6 +361,7 @@
         let globalDieselStock = 18200;
         let mySalesChart = null;
         let currentUserPump = "PetroFlow Pro";
+        let latestRecordsData = [];
 
         window.onload = function() {
             const user = localStorage.getItem('petroUser');
@@ -344,9 +427,48 @@
             loadExpenses();
         }
 
+        function buyPlan(planName, price) {
+            alert(`Redirecting to Secure Payment Gateway for ${planName} (₹${price})...\n(Integration ready for Razorpay/UPI)`);
+        }
+
+        function toggleAIChat() {
+            const box = document.getElementById('aiChatBox');
+            box.classList.toggle('hidden');
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            const chatMessages = document.getElementById('aiChatMessages');
+            chatMessages.innerHTML += `<div class="bg-slate-200 text-slate-800 p-2.5 rounded-xl self-end max-w-[85%]">${msg}</div>`;
+            input.value = '';
+
+            // AI Smart Response Logic
+            setTimeout(() => {
+                let reply = "Main samajh nahi paya. Aap 'sales', 'stock', ya 'udhar' ke baare mein pooch sakte hain.";
+                const lower = msg.toLowerCase();
+                if(lower.includes('sales') || lower.includes('revenue') || lower.includes('bikri')) {
+                    let totalRev = latestRecordsData.reduce((sum, r) => sum + r.total, 0);
+                    reply = `Aapki total recorded sales revenue abhi tak ₹${totalRev.toLocaleString()} ki hai.`;
+                } else if(lower.includes('stock') || lower.includes('tank') || lower.includes('diesel') || lower.includes('petrol')) {
+                    reply = `Current Tank Stock: Petrol -> ${globalPetrolStock} Liters, Diesel -> ${globalDieselStock} Liters.`;
+                } else if(lower.includes('udhar') || lower.includes('credit')) {
+                    reply = `Aapke customer ledger mein pending udhar ka data Dashboard par available hai.`;
+                } else if(lower.includes('hello') || lower.includes('hi')) {
+                    reply = `Hello! Main aapki kya sahayata kar sakta hoon?`;
+                }
+
+                chatMessages.innerHTML += `<div class="bg-blue-50 text-blue-900 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100">${reply}</div>`;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 500);
+        }
+
         async function loadRecords() {
             const res = await fetch('/api/records');
             const data = await res.json();
+            latestRecordsData = data.records;
             const tbody = document.getElementById('recordsTableBody');
             tbody.innerHTML = '';
             
