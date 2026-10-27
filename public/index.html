@@ -1,342 +1,384 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetroFlow - Petrol Pump Management System</title>
+    <title>PetroFlow - Complete Petrol Pump Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+<body class="bg-gray-100 font-sans">
 
-    <!-- LOGIN / SUBSCRIPTION MODAL -->
-    <div id="loginModal" class="fixed inset-0 bg-slate-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
-            <h2 class="text-2xl font-bold text-slate-800 mb-2">Pump Login / Register</h2>
-            <p class="text-sm text-gray-500 mb-6">Enter your details to access your pump software.</p>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+            <h2 class="text-2xl font-bold mb-4 text-center text-blue-600">PetroFlow Login</h2>
+            <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Petrol Pump Name</label>
-                    <input type="text" id="loginPump" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500">
+                    <label class="block text-sm font-medium text-gray-700">Pump Name</label>
+                    <input type="text" id="loginPumpName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
-                    <input type="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500" placeholder="e.g. admin@petroflow.com for free access">
+                    <label class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="loginEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-lg transition">Login / Start</button>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">Login / Start</button>
             </form>
         </div>
     </div>
 
-    <!-- SUBSCRIPTION EXPIRED MODAL -->
-    <div id="subModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4 text-center">
-            <div class="text-rose-500 text-4xl mb-3"><i class="fa-solid fa-lock"></i></div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-2">Subscription Required</h2>
-            <p class="text-sm text-gray-600 mb-6">Your free trial has ended. Please subscribe to continue using PetroFlow for your petrol pump.</p>
-            <button onclick="alert('Redirecting to payment gateway... (Demo Mode)')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition mb-2">Pay ₹999/month Subscription</button>
-            <button onclick="logout()" class="text-sm text-gray-500 hover:underline">Logout / Change Account</button>
-        </div>
-    </div>
+    <!-- Main Container -->
+    <div id="appContainer" class="hidden min-h-screen flex flex-col">
+        <header class="bg-blue-600 text-white shadow-md">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 id="navPumpTitle" class="text-xl font-bold">PetroFlow Management</h1>
+                <button onclick="logout()" class="bg-red-500 px-3 py-1 rounded text-sm hover:bg-red-600">Logout</button>
+            </div>
+        </header>
 
-    <!-- MAIN APP INTERFACE -->
-    <div id="appContainer" class="hidden flex h-screen overflow-hidden">
-        <div class="hidden md:flex md:flex-shrink-0">
-            <div class="flex flex-col w-64 bg-slate-900 text-white">
-                <div class="flex items-center justify-center h-16 bg-slate-800">
-                    <span class="text-xl font-bold tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-gas-pump text-amber-400"></i> PetroFlow
-                    </span>
+        <!-- Navigation Tabs -->
+        <nav class="bg-white shadow border-b">
+            <div class="container mx-auto px-4 flex space-x-2 overflow-x-auto">
+                <button onclick="switchTab('shifts')" class="tab-btn py-3 px-4 font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">Shift Entries</button>
+                <button onclick="switchTab('customers')" class="tab-btn py-3 px-4 font-medium text-gray-600 hover:text-blue-600 whitespace-nowrap">Credit Customers & Payments</button>
+                <button onclick="switchTab('expenses')" class="tab-btn py-3 px-4 font-medium text-gray-600 hover:text-blue-600 whitespace-nowrap">Daily Expenses</button>
+                <button onclick="switchTab('tanks')" class="tab-btn py-3 px-4 font-medium text-gray-600 hover:text-blue-600 whitespace-nowrap">Tank Stock</button>
+            </div>
+        </nav>
+
+        <!-- Content Body -->
+        <main class="container mx-auto px-4 py-6 flex-grow">
+            
+            <!-- 1. Shifts Tab -->
+            <div id="tab-shifts" class="tab-content space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">New Shift Sales Entry</h3>
+                    <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="date" id="sDate" required class="border p-2 rounded">
+                        <input type="text" id="sShift" placeholder="Shift (Morning/Evening)" required class="border p-2 rounded">
+                        <input type="text" id="sAttendant" placeholder="Attendant Name" required class="border p-2 rounded">
+                        <select id="sFuelType" class="border p-2 rounded">
+                            <option value="Petrol">Petrol</option>
+                            <option value="Diesel">Diesel</option>
+                        </select>
+                        <input type="number" step="0.01" id="sUnitPrice" placeholder="Unit Price (₹)" required class="border p-2 rounded">
+                        <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="border p-2 rounded">
+                        <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="border p-2 rounded">
+                        <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters (Default 0)" value="0" class="border p-2 rounded">
+                        <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 md:col-span-4">Save Shift Entry</button>
+                    </form>
                 </div>
-                <div class="flex flex-col flex-grow px-4 py-6 space-y-2">
-                    <a href="#dashboard" onclick="switchTab('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-amber-500 text-slate-900 font-semibold transition"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-                    <a href="#entry" onclick="switchTab('entry')" id="nav-entry" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition"><i class="fa-solid fa-pen-to-square"></i> Data Entry</a>
-                    <a href="#records" onclick="switchTab('records')" id="nav-records" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition"><i class="fa-solid fa-table-list"></i> All Records</a>
-                </div>
-                <div class="p-4 bg-slate-800 text-xs text-slate-400">
-                    <span id="userDisplay"></span><br>
-                    <button onclick="logout()" class="text-rose-400 hover:underline mt-1">Logout</button>
+
+                <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Shift History</h3>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="p-2 border">Date</th>
+                                <th class="p-2 border">Shift</th>
+                                <th class="p-2 border">Attendant</th>
+                                <th class="p-2 border">Fuel</th>
+                                <th class="p-2 border">Liters Sold</th>
+                                <th class="p-2 border">Total Amount (₹)</th>
+                                <th class="p-2 border">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody"></tbody>
+                    </table>
                 </div>
             </div>
-        </div>
 
-        <div class="flex flex-col flex-1 h-full overflow-y-auto">
-            <header class="flex items-center justify-between h-16 px-6 bg-white border-b border-gray-200 shadow-sm">
-                <h1 id="page-title" class="text-xl font-bold text-slate-800">Dashboard Overview</h1>
-                <span id="pumpTitle" class="text-sm font-medium text-slate-600 bg-amber-100 px-3 py-1 rounded-full"></span>
-            </header>
-
-            <main class="flex-1 p-6">
-                <!-- DASHBOARD -->
-                <section id="tab-dashboard" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                            <p class="text-xs uppercase font-semibold text-gray-500">Total Sales</p>
-                            <h3 id="stat-total-sales" class="text-2xl font-bold text-slate-800 mt-1">₹0.00</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                            <p class="text-xs uppercase font-semibold text-gray-500">Petrol Sold</p>
-                            <h3 id="stat-petrol-liters" class="text-2xl font-bold text-slate-800 mt-1">0 L</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                            <p class="text-xs uppercase font-semibold text-gray-500">Diesel Sold</p>
-                            <h3 id="stat-diesel-liters" class="text-2xl font-bold text-slate-800 mt-1">0 L</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                            <p class="text-xs uppercase font-semibold text-gray-500">Transactions</p>
-                            <h3 id="stat-transactions" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- DATA ENTRY -->
-                <section id="tab-entry" class="hidden space-y-6">
-                    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 max-w-4xl mx-auto">
-                        <h2 class="text-lg font-bold text-slate-800 mb-6">Shift Data Entry</h2>
-                        <form id="pumpForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Date</label>
-                                    <input type="date" id="entryDate" required class="w-full px-4 py-2.5 border rounded-lg">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Shift</label>
-                                    <select id="entryShift" class="w-full px-4 py-2.5 border rounded-lg">
-                                        <option value="Morning">Morning Shift</option>
-                                        <option value="Evening">Evening Shift</option>
-                                        <option value="Night">Night Shift</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Fuel Type</label>
-                                    <select id="fuelType" onchange="updateDefaultPrice()" class="w-full px-4 py-2.5 border rounded-lg">
-                                        <option value="Petrol">Petrol</option>
-                                        <option value="Diesel">Diesel</option>
-                                        <option value="Speed Petrol">Speed Petrol</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Price per Liter (₹)</label>
-                                    <input type="number" step="0.01" id="unitPrice" value="96.72" required class="w-full px-4 py-2.5 border rounded-lg">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Opening Meter</label>
-                                    <input type="number" step="0.01" id="openingMeter" required oninput="calculateSales()" class="w-full px-4 py-2.5 border rounded-lg">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Closing Meter</label>
-                                    <input type="number" step="0.01" id="closingMeter" required oninput="calculateSales()" class="w-full px-4 py-2.5 border rounded-lg">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Total Liters</label>
-                                    <input type="text" id="totalLiters" readonly class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg font-bold">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border">
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Attendant Name</label>
-                                    <input type="text" id="attendantName" required class="w-full px-4 py-2.5 bg-white border rounded-lg">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Total Amount</label>
-                                    <input type="text" id="totalAmount" readonly class="w-full px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-lg font-bold text-amber-800 text-lg" value="₹0.00">
-                                </div>
-                            </div>
-                            <div class="flex justify-end gap-4 pt-4 border-t">
-                                <button type="submit" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-lg transition">Save Record</button>
-                            </div>
+            <!-- 2. Customers Tab -->
+            <div id="tab-customers" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Add Customer -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">Add Credit Customer / Udhar</h3>
+                        <form id="customerForm" class="space-y-4">
+                            <input type="text" id="cName" placeholder="Customer Name" required class="w-full border p-2 rounded">
+                            <input type="text" id="cPhone" placeholder="Phone Number" required class="w-full border p-2 rounded">
+                            <input type="text" id="cVehicle" placeholder="Vehicle Number" required class="w-full border p-2 rounded">
+                            <input type="number" step="0.01" id="cAmount" placeholder="Initial Udhar Amount (₹)" required class="w-full border p-2 rounded">
+                            <button type="submit" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Add Customer</button>
                         </form>
                     </div>
-                </section>
 
-                <!-- RECORDS -->
-                <section id="tab-records" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-                        <div class="overflow-x-auto border rounded-lg">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-slate-100 text-slate-700 text-xs uppercase font-bold">
-                                        <th class="p-3.5 border-b">Date / Shift</th>
-                                        <th class="p-3.5 border-b">Attendant</th>
-                                        <th class="p-3.5 border-b">Fuel Type</th>
-                                        <th class="p-3.5 border-b">Liters Sold</th>
-                                        <th class="p-3.5 border-b">Total Amount</th>
-                                        <th class="p-3.5 border-b text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recordsTableBody" class="divide-y divide-gray-200 text-sm"></tbody>
-                            </table>
+                    <!-- Record Payment Collection -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">Record Customer Payment (Wasooli)</h3>
+                        <form id="paymentForm" class="space-y-4">
+                            <select id="pCustomerId" required class="w-full border p-2 rounded">
+                                <option value="">Select Customer</option>
+                            </select>
+                            <input type="date" id="pDate" required class="w-full border p-2 rounded">
+                            <input type="number" step="0.01" id="pAmountPaid" placeholder="Amount Paid (₹)" required class="w-full border p-2 rounded">
+                            <select id="pMode" class="w-full border p-2 rounded">
+                                <option value="Cash">Cash</option>
+                                <option value="Online/UPI">Online / UPI</option>
+                            </select>
+                            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Receive Payment</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Credit Ledger (Udhar Balance)</h3>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="p-2 border">Name</th>
+                                <th class="p-2 border">Phone</th>
+                                <th class="p-2 border">Vehicle No</th>
+                                <th class="p-2 border">Current Udhar Balance (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. Expenses Tab -->
+            <div id="tab-expenses" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Add Daily Expense</h3>
+                    <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="date" id="eDate" required class="border p-2 rounded">
+                        <input type="text" id="eCategory" placeholder="Category (Salary/Bill/Misc)" required class="border p-2 rounded">
+                        <input type="number" step="0.01" id="eAmount" placeholder="Amount (₹)" required class="border p-2 rounded">
+                        <input type="text" id="eNotes" placeholder="Notes / Description" class="border p-2 rounded">
+                        <button type="submit" class="bg-yellow-600 text-white p-2 rounded hover:bg-yellow-700 md:col-span-4">Save Expense</button>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Expenses History</h3>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="p-2 border">Date</th>
+                                <th class="p-2 border">Category</th>
+                                <th class="p-2 border">Amount (₹)</th>
+                                <th class="p-2 border">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expensesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. Tank Stock Tab -->
+            <div id="tab-tanks" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Tank Stock & Inventory</h3>
+                    <p class="text-gray-600">Monitor underground tank capacities and real-time fuel stock levels.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="border p-4 rounded bg-blue-50">
+                            <h4 class="font-bold text-blue-700">Petrol Tank</h4>
+                            <p class="text-sm text-gray-600 mt-1">Capacity: 20,000 Liters</p>
+                            <p class="text-lg font-bold mt-2">Available Stock: 14,500 L</p>
+                        </div>
+                        <div class="border p-4 rounded bg-green-50">
+                            <h4 class="font-bold text-green-700">Diesel Tank</h4>
+                            <p class="text-sm text-gray-600 mt-1">Capacity: 25,000 Liters</p>
+                            <p class="text-lg font-bold mt-2">Available Stock: 18,200 L</p>
                         </div>
                     </div>
-                </section>
-            </main>
-        </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <script>
-        document.getElementById('entryDate').valueAsDate = new Date();
-        let records = [];
-        const defaultPrices = { 'Petrol': 96.72, 'Diesel': 89.45, 'Speed Petrol': 102.30 };
-
-        // Check active session on load
-        const currentUser = JSON.parse(localStorage.getItem('petro_user'));
-        if (currentUser) {
-            validateUserSession(currentUser);
+        window.onload = function() {
+            const user = localStorage.getItem('petroUser');
+            if (user) {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                document.getElementById('navPumpTitle').innerText = JSON.parse(user).pumpName + " - PetroFlow";
+                loadAllData();
+            }
         }
 
-        async function handleLogin(e) {
+        document.getElementById('loginForm').onsubmit = async function(e) {
             e.preventDefault();
+            const pumpName = document.getElementById('loginPumpName').value;
             const email = document.getElementById('loginEmail').value;
-            const pumpName = document.getElementById('loginPump').value;
 
             const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, pumpName })
+                body: JSON.stringify({ pumpName, email })
             });
             const data = await res.json();
-            if (data.success) {
-                localStorage.setItem('petro_user', JSON.stringify(data));
-                validateUserSession(data);
-            }
-        }
 
-        function validateUserSession(user) {
-            document.getElementById('loginModal').classList.add('hidden');
-            if (user.isSubscribed === 1) {
-                document.getElementById('subModal').classList.add('hidden');
+            if (data.success) {
+                localStorage.setItem('petroUser', JSON.stringify(data));
+                document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
-                document.getElementById('pumpTitle').innerText = user.pumpName;
-                document.getElementById('userDisplay').innerText = user.email;
-                fetchRecords();
-            } else {
-                document.getElementById('subModal').classList.remove('hidden');
+                document.getElementById('navPumpTitle').innerText = data.pumpName + " - PetroFlow";
+                loadAllData();
             }
-        }
+        };
 
         function logout() {
-            localStorage.removeItem('petro_user');
+            localStorage.removeItem('petroUser');
             location.reload();
         }
 
-        function updateDefaultPrice() {
-            const fuel = document.getElementById('fuelType').value;
-            document.getElementById('unitPrice').value = defaultPrices[fuel];
-            calculateSales();
-        }
-
-        function calculateSales() {
-            const opening = parseFloat(document.getElementById('openingMeter').value) || 0;
-            const closing = parseFloat(document.getElementById('closingMeter').value) || 0;
-            const price = parseFloat(document.getElementById('unitPrice').value) || 0;
-            const liters = closing >= opening ? closing - opening : 0;
-            const total = liters * price;
-            document.getElementById('totalLiters').value = liters.toFixed(2) + ' L';
-            document.getElementById('totalAmount').value = '₹' + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-        }
-
         function switchTab(tabId) {
-            document.getElementById('tab-dashboard').classList.add('hidden');
-            document.getElementById('tab-entry').classList.add('hidden');
-            document.getElementById('tab-records').classList.add('hidden');
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-
-            document.getElementById('nav-dashboard').className = "flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition";
-            document.getElementById('nav-entry').className = "flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition";
-            document.getElementById('nav-records').className = "flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition";
-            document.getElementById('nav-' + tabId).className = "flex items-center gap-3 px-4 py-2.5 rounded-lg bg-amber-500 text-slate-900 font-semibold transition";
-
-            if (tabId === 'records' || tabId === 'dashboard') fetchRecords();
-        }
-
-        async function fetchRecords() {
-            try {
-                const res = await fetch('/api/records');
-                const data = await res.json();
-                records = data.records;
-                renderRecords();
-                updateDashboardStats();
-            } catch (err) {
-                console.error('Error fetching records:', err);
-            }
-        }
-
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const opening = parseFloat(document.getElementById('openingMeter').value);
-            const closing = parseFloat(document.getElementById('closingMeter').value);
-            if (closing < opening) {
-                alert('Closing meter cannot be less than opening meter!');
-                return;
-            }
-
-            const newRecord = {
-                date: document.getElementById('entryDate').value,
-                shift: document.getElementById('entryShift').value,
-                attendant: document.getElementById('attendantName').value,
-                fuelType: document.getElementById('fuelType').value,
-                unitPrice: parseFloat(document.getElementById('unitPrice').value),
-                openingMeter: opening,
-                closingMeter: closing,
-                liters: closing - opening,
-                total: (closing - opening) * parseFloat(document.getElementById('unitPrice').value)
-            };
-
-            const res = await fetch('/api/records', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newRecord)
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                el.classList.add('text-gray-600');
             });
 
-            if (res.ok) {
-                alert('Record saved successfully!');
-                document.getElementById('pumpForm').reset();
-                document.getElementById('entryDate').valueAsDate = new Date();
-                switchTab('records');
-            }
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            event.currentTarget.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            event.currentTarget.classList.remove('text-gray-600');
         }
 
-        async function deleteRecord(id) {
-            if (confirm('Delete this record?')) {
-                await fetch(`/api/records/${id}`, { method: 'DELETE' });
-                fetchRecords();
-            }
+        function loadAllData() {
+            loadRecords();
+            loadCustomers();
+            loadExpenses();
         }
 
-        function renderRecords() {
+        async function loadRecords() {
+            const res = await fetch('/api/records');
+            const data = await res.json();
             const tbody = document.getElementById('recordsTableBody');
             tbody.innerHTML = '';
-            records.forEach(rec => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3.5 border-b"><b>${rec.date}</b><br><span class="text-xs text-gray-500">${rec.shift}</span></td>
-                        <td class="p-3.5 border-b">${rec.attendant}</td>
-                        <td class="p-3.5 border-b"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700">${rec.fuelType}</span></td>
-                        <td class="p-3.5 border-b font-semibold">${rec.liters.toFixed(2)} L</td>
-                        <td class="p-3.5 border-b font-bold">₹${rec.total.toLocaleString('en-IN')}</td>
-                        <td class="p-3.5 border-b text-center">
-                            <button onclick="deleteRecord(${rec.id})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
-                        </td>
-                    </tr>`;
+            data.records.forEach(r => {
+                tbody.innerHTML += `<tr>
+                    <td class="p-2 border">${r.date}</td>
+                    <td class="p-2 border">${r.shift}</td>
+                    <td class="p-2 border">${r.attendant}</td>
+                    <td class="p-2 border">${r.fuelType}</td>
+                    <td class="p-2 border">${r.liters} L</td>
+                    <td class="p-2 border font-bold">₹${r.total}</td>
+                    <td class="p-2 border"><button onclick="deleteRecord(${r.id})" class="text-red-500 hover:underline">Delete</button></td>
+                </tr>`;
             });
         }
 
-        function updateDashboardStats() {
-            let totalSales = 0, petrol = 0, diesel = 0;
-            records.forEach(r => {
-                totalSales += r.total;
-                if (r.fuelType.includes('Petrol')) petrol += r.liters;
-                else if (r.fuelType === 'Diesel') diesel += r.liters;
+        document.getElementById('shiftForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const opening = parseFloat(document.getElementById('sOpening').value);
+            const closing = parseFloat(document.getElementById('sClosing').value);
+            const testing = parseFloat(document.getElementById('sTesting').value) || 0;
+            const unitPrice = parseFloat(document.getElementById('sUnitPrice').value);
+            
+            const liters = (closing - opening) - testing;
+            const total = liters * unitPrice;
+
+            const payload = {
+                date: document.getElementById('sDate').value,
+                shift: document.getElementById('sShift').value,
+                attendant: document.getElementById('sAttendant').value,
+                fuelType: document.getElementById('sFuelType').value,
+                unitPrice, openingMeter: opening, closingMeter: closing, testing, liters, total
+            };
+
+            await fetch('/api/records', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
-            document.getElementById('stat-total-sales').innerText = '₹' + totalSales.toLocaleString('en-IN', { maximumFractionDigits: 2 });
-            document.getElementById('stat-petrol-liters').innerText = petrol.toFixed(2) + ' L';
-            document.getElementById('stat-diesel-liters').innerText = diesel.toFixed(2) + ' L';
-            document.getElementById('stat-transactions').innerText = records.length;
+            this.reset();
+            loadRecords();
+        };
+
+        async function deleteRecord(id) {
+            await fetch('/api/records/' + id, { method: 'DELETE' });
+            loadRecords();
         }
+
+        async function loadCustomers() {
+            const res = await fetch('/api/customers');
+            const data = await res.json();
+            const tbody = document.getElementById('customersTableBody');
+            const select = document.getElementById('pCustomerId');
+            
+            tbody.innerHTML = '';
+            select.innerHTML = '<option value="">Select Customer</option>';
+
+            data.customers.forEach(c => {
+                tbody.innerHTML += `<tr>
+                    <td class="p-2 border">${c.name}</td>
+                    <td class="p-2 border">${c.phone}</td>
+                    <td class="p-2 border">${c.vehicleNo}</td>
+                    <td class="p-2 border text-red-600 font-bold">₹${c.udharAmount}</td>
+                </tr>`;
+                select.innerHTML += `<option value="${c.id}">${c.name} (${c.vehicleNo}) - Due: ₹${c.udharAmount}</option>`;
+            });
+        }
+
+        document.getElementById('customerForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('cName').value,
+                phone: document.getElementById('cPhone').value,
+                vehicleNo: document.getElementById('cVehicle').value,
+                udharAmount: parseFloat(document.getElementById('cAmount').value)
+            };
+            await fetch('/api/customers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            this.reset();
+            loadCustomers();
+        };
+
+        document.getElementById('paymentForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const payload = {
+                customerId: document.getElementById('pCustomerId').value,
+                date: document.getElementById('pDate').value,
+                amountPaid: parseFloat(document.getElementById('pAmountPaid').value),
+                paymentMode: document.getElementById('pMode').value
+            };
+            await fetch('/api/customer-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            this.reset();
+            loadCustomers();
+            alert('Payment recorded and balance updated successfully!');
+        };
+
+        async function loadExpenses() {
+            const res = await fetch('/api/expenses');
+            const data = await res.json();
+            const tbody = document.getElementById('expensesTableBody');
+            tbody.innerHTML = '';
+            data.expenses.forEach(e => {
+                tbody.innerHTML += `<tr>
+                    <td class="p-2 border">${e.date}</td>
+                    <td class="p-2 border">${e.category}</td>
+                    <td class="p-2 border text-orange-600 font-bold">₹${e.amount}</td>
+                    <td class="p-2 border">${e.notes || '-'}</td>
+                </tr>`;
+            });
+        }
+
+        document.getElementById('expenseForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const payload = {
+                date: document.getElementById('eDate').value,
+                category: document.getElementById('eCategory').value,
+                amount: parseFloat(document.getElementById('eAmount').value),
+                notes: document.getElementById('eNotes').value
+            };
+            await fetch('/api/expenses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            this.reset();
+            loadExpenses();
+        };
     </script>
 </body>
 </html>
