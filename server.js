@@ -18,7 +18,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     else console.log('Connected to SQLite database.');
 });
 
-// Petrobyte Complete Database Schema
+// Database Schema with createdAt for Trial calculation
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +38,8 @@ db.serialize(() => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE,
         pumpName TEXT,
-        isSubscribed INTEGER
+        isSubscribed INTEGER,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS customers (
@@ -64,33 +65,52 @@ db.serialize(() => {
         amount REAL,
         notes TEXT
     )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS tanks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fuelType TEXT,
-        capacity REAL,
-        currentStock REAL
-    )`);
 });
 
-// API: Login with Admin Bypass
+// API: Login with Admin Bypass & 5-Day Trial Calculation
 app.post('/api/login', (req, res) => {
     const { email, pumpName } = req.body;
     const adminEmail = "omtiwari9192@gmail.com"; 
-    const isSubscribed = (email === adminEmail) ? 1 : 0;
 
     db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
         if (err) return res.status(500).json({ error: err.message });
         
+        const now = new Date();
+
         if (!user) {
-            db.run(`INSERT INTO users (email, pumpName, isSubscribed) VALUES (?, ?, ?)`, 
-                [email, pumpName, isSubscribed], function(err) {
+            // New user gets registered with current timestamp
+            db.run(`INSERT INTO users (email, pumpName, isSubscribed) VALUES (?, ?, 0)`, 
+                [email, pumpName], function(err) {
                 if (err) return res.status(500).json({ error: err.message });
-                res.json({ success: true, email, pumpName, isSubscribed });
+                
+                // New user gets 5 days trial
+                res.json({ 
+                    success: true, 
+                    email, 
+                    pumpName, 
+                    isSubscribed: 0, 
+                    trialDaysLeft: 5,
+                    isAdmin: (email === adminEmail)
+                });
             });
         } else {
-            const activeStatus = (email === adminEmail) ? 1 : user.isSubscribed;
-            res.json({ success: true, email: user.email, pumpName: user.pumpName, isSubscribed: activeStatus });
+            // Calculate days passed since creation
+            const createdDate = new Date(user.createdAt || now);
+            const diffTime = Math.abs(now - createdDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const trialDaysLeft = Math.max(0, 5 - diffDays);
+            
+            const isAdmin = (email === adminEmail);
+            const activeStatus = (isAdmin || user.isSubscribed === 1 || trialDaysLeft > 0) ? 1 : 0;
+
+            res.json({ 
+                success: true, 
+                email: user.email, 
+                pumpName: user.pumpName, 
+                isSubscribed: activeStatus,
+                trialDaysLeft: isAdmin ? 999 : trialDaysLeft,
+                isAdmin
+            });
         }
     });
 });

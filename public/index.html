@@ -12,7 +12,7 @@
     <div id="loginModal" class="fixed inset-0 bg-slate-900 bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-96 border border-slate-100">
             <div class="text-center mb-6">
-                <span class="bg-blue-100 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Enterprise Portal</span>
+                <span class="bg-blue-100 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">5-Day Free Trial Available</span>
                 <h2 class="text-2xl font-extrabold mt-2 text-slate-800">PetroFlow Pro</h2>
             </div>
             <form id="loginForm" class="space-y-4">
@@ -21,10 +21,10 @@
                     <input type="text" id="loginPumpName" placeholder="e.g. Tiwari Filling Station" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Admin / Owner Email</label>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Owner Email</label>
                     <input type="email" id="loginEmail" placeholder="omtiwari9192@gmail.com" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">Secure Login</button>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">Start Trial / Login</button>
             </form>
         </div>
     </div>
@@ -38,7 +38,7 @@
                     <div class="bg-blue-600 p-2 rounded-lg font-black text-lg tracking-wider">PF</div>
                     <div>
                         <h1 id="navPumpTitle" class="text-base font-bold leading-tight">PetroFlow Pro</h1>
-                        <span class="text-xs text-emerald-400 font-medium flex items-center gap-1">● Live Cloud Sync</span>
+                        <span id="trialBadgeText" class="text-xs text-amber-400 font-semibold flex items-center gap-1">⏳ Trial Active</span>
                     </div>
                 </div>
                 <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
@@ -221,14 +221,13 @@
                 </div>
             </div>
 
-            <!-- 5. Tank Stock & Dip Volume Tab (Petrobyte Style Graphics) -->
+            <!-- 5. Tank Stock Tab -->
             <div id="tab-tanks" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Underground Storage Tanks (UST) & Dip Volume</h3>
                     <p class="text-xs text-slate-500 mb-6">Real-time volumetric status and percentage gauge.</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Petrol Tank Graphic -->
                         <div class="border border-slate-200 p-6 rounded-xl bg-gradient-to-br from-blue-50/50 to-white shadow-sm space-y-4">
                             <div class="flex justify-between items-center">
                                 <h4 class="font-black text-blue-900 text-lg">MS (Petrol) Tank</h4>
@@ -248,7 +247,6 @@
                             </div>
                         </div>
 
-                        <!-- Diesel Tank Graphic -->
                         <div class="border border-slate-200 p-6 rounded-xl bg-gradient-to-br from-emerald-50/50 to-white shadow-sm space-y-4">
                             <div class="flex justify-between items-center">
                                 <h4 class="font-black text-emerald-900 text-lg">HSD (Diesel) Tank</h4>
@@ -281,9 +279,17 @@
         window.onload = function() {
             const user = localStorage.getItem('petroUser');
             if (user) {
+                const userData = JSON.parse(user);
                 document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
-                document.getElementById('navPumpTitle').innerText = JSON.parse(user).pumpName;
+                document.getElementById('navPumpTitle').innerText = userData.pumpName;
+                
+                if(userData.isAdmin) {
+                    document.getElementById('trialBadgeText').innerText = '👑 Admin Access (Lifetime Free)';
+                } else {
+                    document.getElementById('trialBadgeText').innerText = `⏳ Free Trial: ${userData.trialDaysLeft} Days Remaining`;
+                }
+
                 loadAllData();
             }
         }
@@ -305,6 +311,13 @@
                 document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
                 document.getElementById('navPumpTitle').innerText = data.pumpName;
+                
+                if(data.isAdmin) {
+                    document.getElementById('trialBadgeText').innerText = '👑 Admin Access (Lifetime Free)';
+                } else {
+                    document.getElementById('trialBadgeText').innerText = `⏳ Free Trial: ${data.trialDaysLeft} Days Remaining`;
+                }
+
                 loadAllData();
             }
         };
