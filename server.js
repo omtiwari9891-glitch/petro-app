@@ -45,7 +45,7 @@ app.post('/api/login', (req, res) => {
     const { email, pumpName } = req.body;
     
     // Aapka personal email yahan admin bypass ke liye set hai (Hamesha Free)
-    const adminEmail = "ontiwari9192@gmail.com"; 
+    const adminEmail = "omtiwari9192@gmail.com"; 
     const isSubscribed = (email === adminEmail) ? 1 : 0;
 
     db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
