@@ -23,7 +23,8 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Owner Email</label>
-                    <input type="email" id="loginEmail" placeholder="omtiwari9192@gmail.com" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <!-- Generic placeholder used here -->
+                    <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">Start Trial / Login</button>
             </form>
@@ -177,7 +178,6 @@
             <!-- 4. Staff Salary & Advance Management -->
             <div id="tab-staff" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Add Staff -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <h3 class="text-lg font-bold text-slate-800 mb-4">Register New Staff / Attendant</h3>
                         <form id="staffForm" class="space-y-4">
@@ -189,7 +189,6 @@
                         </form>
                     </div>
 
-                    <!-- Record Advance Money -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <h3 class="text-lg font-bold text-slate-800 mb-4">Issue / Record Advance Money</h3>
                         <form id="advanceForm" class="space-y-4">
@@ -465,7 +464,6 @@
             alert('Payment received!');
         };
 
-        // Staff & Advance Management
         async function loadStaff() {
             const res = await fetch('/api/staff');
             const data = await res.json();
