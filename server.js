@@ -18,7 +18,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     else console.log('Connected to SQLite database.');
 });
 
-// Database Tables for Petrobyte-like features
+// Petrobyte Complete Database Schema
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,6 +29,7 @@ db.serialize(() => {
         unitPrice REAL,
         openingMeter REAL,
         closingMeter REAL,
+        testing REAL,
         liters REAL,
         total REAL
     )`);
@@ -46,6 +47,14 @@ db.serialize(() => {
         phone TEXT,
         vehicleNo TEXT,
         udharAmount REAL
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS customer_payments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        customerId INTEGER,
+        date TEXT,
+        amountPaid REAL,
+        paymentMode TEXT
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS expenses (
@@ -95,9 +104,9 @@ app.get('/api/records', (req, res) => {
 });
 
 app.post('/api/records', (req, res) => {
-    const { date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, liters, total } = req.body;
-    const query = `INSERT INTO records (date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, liters, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    db.run(query, [date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, liters, total], function(err) {
+    const { date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total } = req.body;
+    const query = `INSERT INTO records (date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    db.run(query, [date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total], function(err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Success', id: this.lastID });
     });
@@ -110,7 +119,7 @@ app.delete('/api/records/:id', (req, res) => {
     });
 });
 
-// Credit/Udhar Customers APIs
+// Credit Customers & Payments APIs
 app.get('/api/customers', (req, res) => {
     db.all(`SELECT * FROM customers ORDER BY id DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -127,7 +136,19 @@ app.post('/api/customers', (req, res) => {
     });
 });
 
-// Daily Expenses APIs
+app.post('/api/customer-payment', (req, res) => {
+    const { customerId, date, amountPaid, paymentMode } = req.body;
+    db.run(`INSERT INTO customer_payments (customerId, date, amountPaid, paymentMode) VALUES (?, ?, ?, ?)`,
+        [customerId, date, amountPaid, paymentMode], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        db.run(`UPDATE customers SET udharAmount = udharAmount - ? WHERE id = ?`, [amountPaid, customerId], (err2) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            res.json({ message: 'Payment recorded and balance updated' });
+        });
+    });
+});
+
+// Expenses APIs
 app.get('/api/expenses', (req, res) => {
     db.all(`SELECT * FROM expenses ORDER BY id DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
