@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve index.html explicitly for the root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -19,32 +18,55 @@ const db = new sqlite3.Database(dbFile, (err) => {
     else console.log('Connected to SQLite database.');
 });
 
-// Tables creation
-db.run(`CREATE TABLE IF NOT EXISTS records (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date TEXT,
-    shift TEXT,
-    attendant TEXT,
-    fuelType TEXT,
-    unitPrice REAL,
-    openingMeter REAL,
-    closingMeter REAL,
-    liters REAL,
-    total REAL
-)`);
+// Database Tables for Petrobyte-like features
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        shift TEXT,
+        attendant TEXT,
+        fuelType TEXT,
+        unitPrice REAL,
+        openingMeter REAL,
+        closingMeter REAL,
+        liters REAL,
+        total REAL
+    )`);
 
-db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE,
-    pumpName TEXT,
-    isSubscribed INTEGER
-)`);
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE,
+        pumpName TEXT,
+        isSubscribed INTEGER
+    )`);
 
-// API: Login or Register Pump
+    db.run(`CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        phone TEXT,
+        vehicleNo TEXT,
+        udharAmount REAL
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        category TEXT,
+        amount REAL,
+        notes TEXT
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS tanks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        fuelType TEXT,
+        capacity REAL,
+        currentStock REAL
+    )`);
+});
+
+// API: Login with Admin Bypass
 app.post('/api/login', (req, res) => {
     const { email, pumpName } = req.body;
-    
-    // Aapka personal email yahan admin bypass ke liye set hai (Hamesha Free)
     const adminEmail = "omtiwari9192@gmail.com"; 
     const isSubscribed = (email === adminEmail) ? 1 : 0;
 
@@ -64,7 +86,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// Records APIs
+// Shift Records APIs
 app.get('/api/records', (req, res) => {
     db.all(`SELECT * FROM records ORDER BY id DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -85,6 +107,40 @@ app.delete('/api/records/:id', (req, res) => {
     db.run(`DELETE FROM records WHERE id = ?`, req.params.id, function(err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Deleted' });
+    });
+});
+
+// Credit/Udhar Customers APIs
+app.get('/api/customers', (req, res) => {
+    db.all(`SELECT * FROM customers ORDER BY id DESC`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ customers: rows });
+    });
+});
+
+app.post('/api/customers', (req, res) => {
+    const { name, phone, vehicleNo, udharAmount } = req.body;
+    db.run(`INSERT INTO customers (name, phone, vehicleNo, udharAmount) VALUES (?, ?, ?, ?)`, 
+        [name, phone, vehicleNo, udharAmount], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Success', id: this.lastID });
+    });
+});
+
+// Daily Expenses APIs
+app.get('/api/expenses', (req, res) => {
+    db.all(`SELECT * FROM expenses ORDER BY id DESC`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ expenses: rows });
+    });
+});
+
+app.post('/api/expenses', (req, res) => {
+    const { date, category, amount, notes } = req.body;
+    db.run(`INSERT INTO expenses (date, category, amount, notes) VALUES (?, ?, ?, ?)`, 
+        [date, category, amount, notes], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Success', id: this.lastID });
     });
 });
 
