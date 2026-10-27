@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetroFlow Pro - Enterprise Petrol Pump Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-50 font-sans">
 
@@ -59,7 +61,7 @@
         <!-- Main Content Area -->
         <main class="container mx-auto px-6 py-8 flex-grow space-y-6">
             
-            <!-- 1. Executive Dashboard Tab -->
+            <!-- 1. Executive Dashboard Tab with Graphs -->
             <div id="tab-dashboard" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
@@ -78,6 +80,14 @@
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Udhar Pending</p>
                         <h3 id="dashTotalUdhar" class="text-2xl font-black text-red-600 mt-2">₹0.00</h3>
+                    </div>
+                </div>
+
+                <!-- Sales Analytics Graph Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">📈 Sales & Revenue Analytics Graph</h3>
+                    <div class="w-full h-72">
+                        <canvas id="salesChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -275,6 +285,7 @@
     <script>
         let globalPetrolStock = 14500;
         let globalDieselStock = 18200;
+        let mySalesChart = null;
 
         window.onload = function() {
             const user = localStorage.getItem('petroUser');
@@ -374,6 +385,48 @@
             document.getElementById('dashTotalRevenue').innerText = '₹' + totalRev.toLocaleString();
             document.getElementById('dashPetrolSold').innerText = petrolL.toFixed(2) + ' Liters';
             document.getElementById('dashDieselSold').innerText = dieselL.toFixed(2) + ' Liters';
+
+            // Render Sales Graph
+            renderSalesGraph(data.records);
+        }
+
+        function renderSalesGraph(records) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const dateMap = {};
+            
+            records.forEach(r => {
+                dateMap[r.date] = (dateMap[r.date] || 0) + r.total;
+            });
+
+            const labels = Object.keys(dateMap).sort();
+            const dataValues = labels.map(date => dateMap[date]);
+
+            if (mySalesChart) {
+                mySalesChart.destroy();
+            }
+
+            mySalesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Revenue (₹)',
+                        data: dataValues,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true }
+                    }
+                }
+            });
         }
 
         document.getElementById('shiftForm').onsubmit = async function(e) {
