@@ -18,7 +18,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     else console.log('Connected to SQLite database.');
 });
 
-// Database Schema with createdAt for Trial calculation
+// Database Schema including Staff and Advance Salary tables
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,6 +65,14 @@ db.serialize(() => {
         amount REAL,
         notes TEXT
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS staff (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        phone TEXT,
+        monthlySalary REAL,
+        advanceTaken REAL DEFAULT 0
+    )`);
 });
 
 // API: Login with Admin Bypass & 5-Day Trial Calculation
@@ -78,12 +86,9 @@ app.post('/api/login', (req, res) => {
         const now = new Date();
 
         if (!user) {
-            // New user gets registered with current timestamp
             db.run(`INSERT INTO users (email, pumpName, isSubscribed) VALUES (?, ?, 0)`, 
                 [email, pumpName], function(err) {
                 if (err) return res.status(500).json({ error: err.message });
-                
-                // New user gets 5 days trial
                 res.json({ 
                     success: true, 
                     email, 
@@ -94,7 +99,6 @@ app.post('/api/login', (req, res) => {
                 });
             });
         } else {
-            // Calculate days passed since creation
             const createdDate = new Date(user.createdAt || now);
             const diffTime = Math.abs(now - createdDate);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -139,7 +143,7 @@ app.delete('/api/records/:id', (req, res) => {
     });
 });
 
-// Credit Customers & Payments APIs
+// Credit Customers APIs
 app.get('/api/customers', (req, res) => {
     db.all(`SELECT * FROM customers ORDER BY id DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -182,6 +186,31 @@ app.post('/api/expenses', (req, res) => {
         [date, category, amount, notes], function(err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Success', id: this.lastID });
+    });
+});
+
+// Staff Salary & Advance APIs
+app.get('/api/staff', (req, res) => {
+    db.all(`SELECT * FROM staff ORDER BY id DESC`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ staff: rows });
+    });
+});
+
+app.post('/api/staff', (req, res) => {
+    const { name, phone, monthlySalary, advanceTaken } = req.body;
+    db.run(`INSERT INTO staff (name, phone, monthlySalary, advanceTaken) VALUES (?, ?, ?, ?)`, 
+        [name, phone, monthlySalary, advanceTaken || 0], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Success', id: this.lastID });
+    });
+});
+
+app.post('/api/staff-advance', (req, res) => {
+    const { staffId, advanceAmount } = req.body;
+    db.run(`UPDATE staff SET advanceTaken = advanceTaken + ? WHERE id = ?`, [advanceAmount, staffId], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Advance updated successfully' });
     });
 });
 
