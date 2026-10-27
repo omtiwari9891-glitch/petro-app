@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetroFlow - Petrol Pump Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- LOGIN / SUBSCRIPTION MODAL -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Pump Login / Register</h2>
+            <p class="text-sm text-gray-500 mb-6">Enter your details to access your pump software.</p>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Petrol Pump Name</label>
+                    <input type="text" id="loginPump" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500" placeholder="e.g. admin@petroflow.com for free access">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-lg transition">Login / Start</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SUBSCRIPTION EXPIRED MODAL -->
+    <div id="subModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full mx-4 text-center">
+            <div class="text-rose-500 text-4xl mb-3"><i class="fa-solid fa-lock"></i></div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Subscription Required</h2>
+            <p class="text-sm text-gray-600 mb-6">Your free trial has ended. Please subscribe to continue using PetroFlow for your petrol pump.</p>
+            <button onclick="alert('Redirecting to payment gateway... (Demo Mode)')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition mb-2">Pay ₹999/month Subscription</button>
+            <button onclick="logout()" class="text-sm text-gray-500 hover:underline">Logout / Change Account</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP INTERFACE -->
+    <div id="appContainer" class="hidden flex h-screen overflow-hidden">
+        <div class="hidden md:flex md:flex-shrink-0">
+            <div class="flex flex-col w-64 bg-slate-900 text-white">
+                <div class="flex items-center justify-center h-16 bg-slate-800">
+                    <span class="text-xl font-bold tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-gas-pump text-amber-400"></i> PetroFlow
+                    </span>
+                </div>
+                <div class="flex flex-col flex-grow px-4 py-6 space-y-2">
+                    <a href="#dashboard" onclick="switchTab('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-amber-500 text-slate-900 font-semibold transition"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                    <a href="#entry" onclick="switchTab('entry')" id="nav-entry" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition"><i class="fa-solid fa-pen-to-square"></i> Data Entry</a>
+                    <a href="#records" onclick="switchTab('records')" id="nav-records" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition"><i class="fa-solid fa-table-list"></i> All Records</a>
+                </div>
+                <div class="p-4 bg-slate-800 text-xs text-slate-400">
+                    <span id="userDisplay"></span><br>
+                    <button onclick="logout()" class="text-rose-400 hover:underline mt-1">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col flex-1 h-full overflow-y-auto">
+            <header class="flex items-center justify-between h-16 px-6 bg-white border-b border-gray-200 shadow-sm">
+                <h1 id="page-title" class="text-xl font-bold text-slate-800">Dashboard Overview</h1>
+                <span id="pumpTitle" class="text-sm font-medium text-slate-600 bg-amber-100 px-3 py-1 rounded-full"></span>
+            </header>
+
+            <main class="flex-1 p-6">
+                <!-- DASHBOARD -->
+                <section id="tab-dashboard" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                            <p class="text-xs uppercase font-semibold text-gray-500">Total Sales</p>
+                            <h3 id="stat-total-sales" class="text-2xl font-bold text-slate-800 mt-1">₹0.00</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                            <p class="text-xs uppercase font-semibold text-gray-500">Petrol Sold</p>
+                            <h3 id="stat-petrol-liters" class="text-2xl font-bold text-slate-800 mt-1">0 L</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                            <p class="text-xs uppercase font-semibold text-gray-500">Diesel Sold</p>
+                            <h3 id="stat-diesel-liters" class="text-2xl font-bold text-slate-800 mt-1">0 L</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                            <p class="text-xs uppercase font-semibold text-gray-500">Transactions</p>
+                            <h3 id="stat-transactions" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- DATA ENTRY -->
+                <section id="tab-entry" class="hidden space-y-6">
+                    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 max-w-4xl mx-auto">
+                        <h2 class="text-lg font-bold text-slate-800 mb-6">Shift Data Entry</h2>
+                        <form id="pumpForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Date</label>
+                                    <input type="date" id="entryDate" required class="w-full px-4 py-2.5 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Shift</label>
+                                    <select id="entryShift" class="w-full px-4 py-2.5 border rounded-lg">
+                                        <option value="Morning">Morning Shift</option>
+                                        <option value="Evening">Evening Shift</option>
+                                        <option value="Night">Night Shift</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Fuel Type</label>
+                                    <select id="fuelType" onchange="updateDefaultPrice()" class="w-full px-4 py-2.5 border rounded-lg">
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="Speed Petrol">Speed Petrol</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Price per Liter (₹)</label>
+                                    <input type="number" step="0.01" id="unitPrice" value="96.72" required class="w-full px-4 py-2.5 border rounded-lg">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Opening Meter</label>
+                                    <input type="number" step="0.01" id="openingMeter" required oninput="calculateSales()" class="w-full px-4 py-2.5 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Closing Meter</label>
+                                    <input type="number" step="0.01" id="closingMeter" required oninput="calculateSales()" class="w-full px-4 py-2.5 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Total Liters</label>
+                                    <input type="text" id="totalLiters" readonly class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg font-bold">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Attendant Name</label>
+                                    <input type="text" id="attendantName" required class="w-full px-4 py-2.5 bg-white border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Total Amount</label>
+                                    <input type="text" id="totalAmount" readonly class="w-full px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-lg font-bold text-amber-800 text-lg" value="₹0.00">
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-4 pt-4 border-t">
+                                <button type="submit" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-lg transition">Save Record</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- RECORDS -->
+                <section id="tab-records" class="hidden space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                        <div class="overflow-x-auto border rounded-lg">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 text-xs uppercase font-bold">
+                                        <th class="p-3.5 border-b">Date / Shift</th>
+                                        <th class="p-3.5 border-b">Attendant</th>
+                                        <th class="p-3.5 border-b">Fuel Type</th>
+                                        <th class="p-3.5 border-b">Liters Sold</th>
+                                        <th class="p-3.5 border-b">Total Amount</th>
+                                        <th class="p-3.5 border-b text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recordsTableBody" class="divide-y divide-gray-200 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('entryDate').valueAsDate = new Date();
+        let records = [];
+        const defaultPrices = { 'Petrol': 96.72, 'Diesel': 89.45, 'Speed Petrol': 102.30 };
+
+        // Check active session on load
+        const currentUser = JSON.parse(localStorage.getItem('petro_user'));
+        if (currentUser) {
+            validateUserSession(currentUser);
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pumpName = document.getElementById('loginPump').value;
+
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, pumpName })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem('petro_user', JSON.stringify(data));
+                validateUserSession(data);
+            }
+        }
+
+        function validateUserSession(user) {
+            document.getElementById('loginModal').classList.add('hidden');
+            if (user.isSubscribed === 1) {
+                document.getElementById('subModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                document.getElementById('pumpTitle').innerText = user.pumpName;
+                document.getElementById('userDisplay').innerText = user.email;
+                fetchRecords();
+            } else {
+                document.getElementById('subModal').classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('petro_user');
+            location.reload();
+        }
+
+        function updateDefaultPrice() {
+            const fuel = document.getElementById('fuelType').value;
+            document.getElementById('unitPrice').value = defaultPrices[fuel];
+            calculateSales();
+        }
+
+        function calculateSales() {
+            const opening = parseFloat(document.getElementById('openingMeter').value) || 0;
+            const closing = parseFloat(document.getElementById('closingMeter').value) || 0;
+            const price = parseFloat(document.getElementById('unitPrice').value) || 0;
+            const liters = closing >= opening ? closing - opening : 0;
+            const total = liters * price;
+            document.getElementById('totalLiters').value = liters.toFixed(2) + ' L';
+            document.getElementById('totalAmount').value = '₹' + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-entry').classList.add('hidden');
+            document.getElementById('tab-records').classList.add('hidden');
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            document.getElementById('nav-dashboard').className = "flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition";
+            document.getElementById('nav-entry').className = "flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition";
+            document.getElementById('nav-records').className = "flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition";
+            document.getElementById('nav-' + tabId).className = "flex items-center gap-3 px-4 py-2.5 rounded-lg bg-amber-500 text-slate-900 font-semibold transition";
+
+            if (tabId === 'records' || tabId === 'dashboard') fetchRecords();
+        }
+
+        async function fetchRecords() {
+            try {
+                const res = await fetch('/api/records');
+                const data = await res.json();
+                records = data.records;
+                renderRecords();
+                updateDashboardStats();
+            } catch (err) {
+                console.error('Error fetching records:', err);
+            }
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const opening = parseFloat(document.getElementById('openingMeter').value);
+            const closing = parseFloat(document.getElementById('closingMeter').value);
+            if (closing < opening) {
+                alert('Closing meter cannot be less than opening meter!');
+                return;
+            }
+
+            const newRecord = {
+                date: document.getElementById('entryDate').value,
+                shift: document.getElementById('entryShift').value,
+                attendant: document.getElementById('attendantName').value,
+                fuelType: document.getElementById('fuelType').value,
+                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                openingMeter: opening,
+                closingMeter: closing,
+                liters: closing - opening,
+                total: (closing - opening) * parseFloat(document.getElementById('unitPrice').value)
+            };
+
+            const res = await fetch('/api/records', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newRecord)
+            });
+
+            if (res.ok) {
+                alert('Record saved successfully!');
+                document.getElementById('pumpForm').reset();
+                document.getElementById('entryDate').valueAsDate = new Date();
+                switchTab('records');
+            }
+        }
+
+        async function deleteRecord(id) {
+            if (confirm('Delete this record?')) {
+                await fetch(`/api/records/${id}`, { method: 'DELETE' });
+                fetchRecords();
+            }
+        }
+
+        function renderRecords() {
+            const tbody = document.getElementById('recordsTableBody');
+            tbody.innerHTML = '';
+            records.forEach(rec => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3.5 border-b"><b>${rec.date}</b><br><span class="text-xs text-gray-500">${rec.shift}</span></td>
+                        <td class="p-3.5 border-b">${rec.attendant}</td>
+                        <td class="p-3.5 border-b"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700">${rec.fuelType}</span></td>
+                        <td class="p-3.5 border-b font-semibold">${rec.liters.toFixed(2)} L</td>
+                        <td class="p-3.5 border-b font-bold">₹${rec.total.toLocaleString('en-IN')}</td>
+                        <td class="p-3.5 border-b text-center">
+                            <button onclick="deleteRecord(${rec.id})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function updateDashboardStats() {
+            let totalSales = 0, petrol = 0, diesel = 0;
+            records.forEach(r => {
+                totalSales += r.total;
+                if (r.fuelType.includes('Petrol')) petrol += r.liters;
+                else if (r.fuelType === 'Diesel') diesel += r.liters;
+            });
+            document.getElementById('stat-total-sales').innerText = '₹' + totalSales.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+            document.getElementById('stat-petrol-liters').innerText = petrol.toFixed(2) + ' L';
+            document.getElementById('stat-diesel-liters').innerText = diesel.toFixed(2) + ' L';
+            document.getElementById('stat-transactions').innerText = records.length;
+        }
+    </script>
+</body>
+</html>
