@@ -19,10 +19,10 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database connection error:', err.message);
-    else console.log('Connected to SQLite database with Station Isolation & Audit Controls.');
+    else console.log('Connected to SQLite with Audit Trail & Data Isolation.');
 });
 
-// Database Schemas with Audit & Reconciliation Support
+// Database Schemas with Audit Trail, Station Isolation, and Duplicate Guards
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,7 +89,7 @@ db.serialize(() => {
         advanceTaken REAL DEFAULT 0
     )`);
 
-    // Tanks Book Stock
+    // Persistent Tanks Book Stock
     db.run(`CREATE TABLE IF NOT EXISTS tanks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER UNIQUE,
@@ -99,7 +99,7 @@ db.serialize(() => {
         dieselCapacity REAL DEFAULT 25000
     )`);
 
-    // Physical Dip Log
+    // Physical Dip Log for Variance Tracking
     db.run(`CREATE TABLE IF NOT EXISTS tank_dips (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -111,7 +111,7 @@ db.serialize(() => {
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Inflow Deliveries
+    // Traceable Fuel Inflow Deliveries
     db.run(`CREATE TABLE IF NOT EXISTS fuel_deliveries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -120,6 +120,16 @@ db.serialize(() => {
         liters REAL,
         challanNo TEXT,
         density REAL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    // Financial & Operational Audit Log Ledger
+    db.run(`CREATE TABLE IF NOT EXISTS audit_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        action TEXT,
+        details TEXT,
+        performedBy TEXT,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 });
@@ -136,6 +146,11 @@ function isRealEmail(email) {
     if (!emailRegex.test(email)) return false;
     const domain = email.split('@')[1].toLowerCase();
     return !blockedDomains.includes(domain);
+}
+
+function logAudit(stationId, action, details, performedBy = 'System') {
+    db.run(`INSERT INTO audit_logs (stationId, action, details, performedBy) VALUES (?, ?, ?, ?)`,
+        [stationId, action, details, performedBy]);
 }
 
 function authenticateToken(req, res, next) {
@@ -203,6 +218,7 @@ app.post('/api/login', (req, res) => {
                 const newStationId = this.lastID;
                 
                 db.run(`INSERT INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [newStationId]);
+                logAudit(newStationId, 'STATION_REGISTER', `Station registered with email ${email}`, email);
 
                 db.get(`SELECT * FROM users WHERE id = ?`, [newStationId], (err3, newUser) => {
                     return res.json(buildAuthResponse(newUser));
@@ -213,6 +229,7 @@ app.post('/api/login', (req, res) => {
             if (!isMatch && user.email !== ADMIN_EMAIL) {
                 return res.status(401).json({ success: false, error: 'Galat password! Kripya sahi password enter karein.' });
             }
+            logAudit(user.id, 'LOGIN_SUCCESS', `Owner logged in`, user.email);
             return res.json(buildAuthResponse(user));
         }
     });
@@ -226,6 +243,7 @@ app.post('/api/update-profile', authenticateToken, (req, res) => {
         [pumpName, ownerName, phone, stationId], function(err) {
         if (err) return res.status(500).json({ error: err.message });
         
+        logAudit(stationId, 'PROFILE_UPDATE', `Updated station name to ${pumpName}`, req.user.email);
         db.get(`SELECT * FROM users WHERE id = ?`, [stationId], (err2, user) => {
             if (err2 || !user) return res.status(500).json({ error: 'Profile not found' });
             return res.json(buildAuthResponse(user));
@@ -233,7 +251,7 @@ app.post('/api/update-profile', authenticateToken, (req, res) => {
     });
 });
 
-// 2. Shift Records (With Precise Math & Inventory Deduction)
+// 2. Shift Records (With Math Validation, Duplicate Protection & Audit Logs)
 app.get('/api/records', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -270,18 +288,31 @@ app.post('/api/records', authenticateToken, (req, res) => {
             return res.status(500).json({ error: err.message });
         }
         
-        // Auto-deduct saleable fuel from book stock
         const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
         db.run(`UPDATE tanks SET ${col} = MAX(0, ${col} - ?) WHERE stationId = ?`, [liters, stationId]);
 
+        logAudit(stationId, 'RECORD_SHIFT', `Shift ${shift} logged: ${liters}L of ${fuelType} (₹${total}) by ${attendant}`, req.user.email);
         res.json({ message: 'Success', id: this.lastID, liters, total });
     });
 });
 
 app.delete('/api/records/:id', authenticateToken, (req, res) => {
-    db.run(`DELETE FROM records WHERE id = ? AND stationId = ?`, [req.params.id, req.user.stationId], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: 'Deleted' });
+    const recordId = req.params.id;
+    const stationId = req.user.stationId;
+
+    db.get(`SELECT * FROM records WHERE id = ? AND stationId = ?`, [recordId, stationId], (err, record) => {
+        if (err || !record) return res.status(404).json({ error: 'Record not found' });
+
+        db.run(`DELETE FROM records WHERE id = ? AND stationId = ?`, [recordId, stationId], function(err2) {
+            if (err2) return res.status(500).json({ error: err2.message });
+
+            // Restore stock back to tank upon audit deletion
+            const col = record.fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+            db.run(`UPDATE tanks SET ${col} = ${col} + ? WHERE stationId = ?`, [record.liters, stationId]);
+
+            logAudit(stationId, 'DELETE_SHIFT', `Deleted shift id ${recordId} (${record.liters}L of ${record.fuelType} restored to stock)`, req.user.email);
+            res.json({ message: 'Deleted and stock restored' });
+        });
     });
 });
 
@@ -314,6 +345,7 @@ app.post('/api/tanks/delivery', authenticateToken, (req, res) => {
         const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
         db.run(`UPDATE tanks SET ${col} = ${col} + ? WHERE stationId = ?`, [addedLiters, stationId], (err2) => {
             if (err2) return res.status(500).json({ error: err2.message });
+            logAudit(stationId, 'TANKER_DELIVERY', `Received ${addedLiters}L ${fuelType} (Challan: ${challanNo})`, req.user.email);
             res.json({ success: true, message: `${addedLiters} L added to ${fuelType} book stock.` });
         });
     });
@@ -335,8 +367,8 @@ app.post('/api/tanks/dip', authenticateToken, (req, res) => {
             [stationId, date, fuelType, book, physical, variance], function(err2) {
             if (err2) return res.status(500).json({ error: err2.message });
             
-            // Adjust book stock to physical reading after audit confirmation
             db.run(`UPDATE tanks SET ${col} = ? WHERE stationId = ?`, [physical, stationId]);
+            logAudit(stationId, 'DIP_RECONCILIATION', `Dip logged for ${fuelType}: Book ${book}L, Physical ${physical}L (Variance: ${variance}L)`, req.user.email);
             res.json({ success: true, bookStock: book, physicalStock: physical, variance });
         });
     });
@@ -355,6 +387,7 @@ app.post('/api/customers', authenticateToken, (req, res) => {
     db.run(`INSERT INTO customers (stationId, name, phone, vehicleNo, udharAmount) VALUES (?, ?, ?, ?, ?)`,
         [req.user.stationId, name, phone, vehicleNo, parseFloat(udharAmount) || 0], function(err) {
         if (err) return res.status(500).json({ error: err.message });
+        logAudit(req.user.stationId, 'ADD_CUSTOMER', `Credit customer added: ${name} (${vehicleNo})`, req.user.email);
         res.json({ message: 'Success', id: this.lastID });
     });
 });
@@ -371,6 +404,7 @@ app.post('/api/customer-payment', authenticateToken, (req, res) => {
         db.run(`UPDATE customers SET udharAmount = udharAmount - ? WHERE id = ? AND stationId = ?`, 
             [paid, customerId, stationId], (err2) => {
             if (err2) return res.status(500).json({ error: err2.message });
+            logAudit(stationId, 'CUSTOMER_PAYMENT', `Payment received: ₹${paid} (${paymentMode}) for customer ID ${customerId}`, req.user.email);
             res.json({ message: 'Payment recorded and balance updated' });
         });
     });
@@ -398,6 +432,7 @@ app.post('/api/staff-advance', authenticateToken, (req, res) => {
     db.run(`UPDATE staff SET advanceTaken = advanceTaken + ? WHERE id = ? AND stationId = ?`,
         [parseFloat(advanceAmount) || 0, staffId, req.user.stationId], function(err) {
         if (err) return res.status(500).json({ error: err.message });
+        logAudit(req.user.stationId, 'STAFF_ADVANCE', `Advance given: ₹${advanceAmount} to staff ID ${staffId}`, req.user.email);
         res.json({ message: 'Advance updated successfully' });
     });
 });
@@ -419,18 +454,26 @@ app.post('/api/expenses', authenticateToken, (req, res) => {
     });
 });
 
-// 7. CSV Export
+// 7. Audit Trail API
+app.get('/api/audit-logs', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM audit_logs WHERE stationId = ? ORDER BY id DESC LIMIT 50`, [req.user.stationId], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ logs: rows });
+    });
+});
+
+// 8. CSV Export
 app.get('/api/export-csv', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         
-        let csv = 'ID,Date,Shift,Attendant,FuelType,UnitPrice,OpeningMeter,ClosingMeter,Testing,Liters,Total\n';
+        let csv = 'ID,Date,Shift,Attendant,FuelType,UnitPrice,OpeningMeter,ClosingMeter,Testing,SaleableLiters,TotalRevenue\n';
         rows.forEach(r => {
             csv += `${r.id},"${r.date}","${r.shift}","${r.attendant}","${r.fuelType}",${r.unitPrice},${r.openingMeter},${r.closingMeter},${r.testing},${r.liters},${r.total}\n`;
         });
         
         res.header('Content-Type', 'text/csv');
-        res.attachment(`sales_report_station_${req.user.stationId}.csv`);
+        res.attachment(`audited_sales_station_${req.user.stationId}.csv`);
         res.send(csv);
     });
 });
