@@ -19,10 +19,10 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database connection error:', err.message);
-    else console.log('Connected to SQLite database with Station Isolation.');
+    else console.log('Connected to SQLite database with Station Isolation & Audit Controls.');
 });
 
-// Database Schemas with stationId column
+// Database Schemas with Audit & Reconciliation Support
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,6 +35,7 @@ db.serialize(() => {
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // Shift Records with Unique constraint to prevent duplicate submissions
     db.run(`CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -48,7 +49,8 @@ db.serialize(() => {
         testing REAL,
         liters REAL,
         total REAL,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(stationId, date, shift, fuelType, openingMeter)
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS customers (
@@ -87,7 +89,7 @@ db.serialize(() => {
         advanceTaken REAL DEFAULT 0
     )`);
 
-    // Persistent Tank Stock Table per Station
+    // Tanks Book Stock
     db.run(`CREATE TABLE IF NOT EXISTS tanks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER UNIQUE,
@@ -97,7 +99,19 @@ db.serialize(() => {
         dieselCapacity REAL DEFAULT 25000
     )`);
 
-    // Fuel Delivery Challan Ledger
+    // Physical Dip Log
+    db.run(`CREATE TABLE IF NOT EXISTS tank_dips (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        date TEXT,
+        fuelType TEXT,
+        bookStock REAL,
+        physicalStock REAL,
+        variance REAL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    // Inflow Deliveries
     db.run(`CREATE TABLE IF NOT EXISTS fuel_deliveries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -165,7 +179,7 @@ function buildAuthResponse(user) {
     };
 }
 
-// Login & Registration
+// 1. Auth & Login
 app.post('/api/login', (req, res) => {
     const { email, password, pumpName } = req.body;
 
@@ -188,7 +202,6 @@ app.post('/api/login', (req, res) => {
                 if (err2) return res.status(500).json({ error: err2.message });
                 const newStationId = this.lastID;
                 
-                // Initialize Tank Stock for new station
                 db.run(`INSERT INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [newStationId]);
 
                 db.get(`SELECT * FROM users WHERE id = ?`, [newStationId], (err3, newUser) => {
@@ -205,7 +218,6 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// Profile Update
 app.post('/api/update-profile', authenticateToken, (req, res) => {
     const { pumpName, ownerName, phone } = req.body;
     const stationId = req.user.stationId;
@@ -221,7 +233,7 @@ app.post('/api/update-profile', authenticateToken, (req, res) => {
     });
 });
 
-// Shift Records & Auto-Deduct Stock from Tanks
+// 2. Shift Records (With Precise Math & Inventory Deduction)
 app.get('/api/records', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -238,18 +250,27 @@ app.post('/api/records', authenticateToken, (req, res) => {
     const test = parseFloat(testing) || 0;
     const rate = parseFloat(unitPrice);
 
-    if (close < open) return res.status(400).json({ error: 'Closing meter opening meter se kam nahi ho sakta.' });
+    if (close < open) {
+        return res.status(400).json({ error: 'Closing meter opening meter se kam nahi ho sakta.' });
+    }
     const grossLiters = close - open;
-    if (test > grossLiters) return res.status(400).json({ error: 'Testing volume gross volume se zyada nahi ho sakti.' });
+    if (test > grossLiters) {
+        return res.status(400).json({ error: 'Testing fuel volume gross fuel se zyada nahi ho sakta.' });
+    }
 
-    const liters = grossLiters - test;
+    const liters = parseFloat((grossLiters - test).toFixed(2));
     const total = parseFloat((liters * rate).toFixed(2));
 
     const query = `INSERT INTO records (stationId, date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     db.run(query, [stationId, date, shift, attendant, fuelType, rate, open, close, test, liters, total], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            if (err.message.includes('UNIQUE')) {
+                return res.status(400).json({ error: 'Yeh shift entry pehle se recorded hai! Duplicate submission blocked.' });
+            }
+            return res.status(500).json({ error: err.message });
+        }
         
-        // Auto-deduct from persistent tank stock
+        // Auto-deduct saleable fuel from book stock
         const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
         db.run(`UPDATE tanks SET ${col} = MAX(0, ${col} - ?) WHERE stationId = ?`, [liters, stationId]);
 
@@ -264,7 +285,7 @@ app.delete('/api/records/:id', authenticateToken, (req, res) => {
     });
 });
 
-// Tank Stock & Tanker Delivery APIs
+// 3. Tank Stock, Inflow & Physical Dip Reconciliation
 app.get('/api/tanks', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
     db.get(`SELECT * FROM tanks WHERE stationId = ?`, [stationId], (err, row) => {
@@ -293,12 +314,35 @@ app.post('/api/tanks/delivery', authenticateToken, (req, res) => {
         const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
         db.run(`UPDATE tanks SET ${col} = ${col} + ? WHERE stationId = ?`, [addedLiters, stationId], (err2) => {
             if (err2) return res.status(500).json({ error: err2.message });
-            res.json({ success: true, message: `${addedLiters} L added to ${fuelType} tank.` });
+            res.json({ success: true, message: `${addedLiters} L added to ${fuelType} book stock.` });
         });
     });
 });
 
-// Customers & Udhar
+app.post('/api/tanks/dip', authenticateToken, (req, res) => {
+    const stationId = req.user.stationId;
+    const { date, fuelType, physicalStock } = req.body;
+    const physical = parseFloat(physicalStock);
+
+    const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+    db.get(`SELECT ${col} AS book FROM tanks WHERE stationId = ?`, [stationId], (err, row) => {
+        if (err || !row) return res.status(500).json({ error: 'Tank stock fetch failed' });
+        
+        const book = row.book;
+        const variance = parseFloat((physical - book).toFixed(2));
+
+        db.run(`INSERT INTO tank_dips (stationId, date, fuelType, bookStock, physicalStock, variance) VALUES (?, ?, ?, ?, ?, ?)`,
+            [stationId, date, fuelType, book, physical, variance], function(err2) {
+            if (err2) return res.status(500).json({ error: err2.message });
+            
+            // Adjust book stock to physical reading after audit confirmation
+            db.run(`UPDATE tanks SET ${col} = ? WHERE stationId = ?`, [physical, stationId]);
+            res.json({ success: true, bookStock: book, physicalStock: physical, variance });
+        });
+    });
+});
+
+// 4. Customers & Udhar Ledger
 app.get('/api/customers', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM customers WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -332,7 +376,7 @@ app.post('/api/customer-payment', authenticateToken, (req, res) => {
     });
 });
 
-// Staff
+// 5. Staff Payroll & Advances
 app.get('/api/staff', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM staff WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -358,7 +402,7 @@ app.post('/api/staff-advance', authenticateToken, (req, res) => {
     });
 });
 
-// Expenses
+// 6. Expenses
 app.get('/api/expenses', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM expenses WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -375,7 +419,7 @@ app.post('/api/expenses', authenticateToken, (req, res) => {
     });
 });
 
-// CSV Export
+// 7. CSV Export
 app.get('/api/export-csv', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
