@@ -26,19 +26,19 @@
                         </div>
                     </div>
                     <div>
-                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">ACID Transaction Safe</span>
-                        <h3 class="text-2xl font-bold mt-3">Authoritative Server Math & Tenant Isolation</h3>
-                        <p class="text-xs text-blue-100 mt-2">Every shift closing, tank deduction, and dip calibration runs inside atomic SQLite WAL transactions.</p>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">Append-Only SQLite Triggers</span>
+                        <h3 class="text-2xl font-bold mt-3">Verified Financial & Inventory Integrity</h3>
+                        <p class="text-xs text-blue-100 mt-2">Server-derived cash reconciliation, single-deduction atomic shifts, and immutable SQL audit triggers.</p>
                     </div>
                 </div>
                 <div class="text-[11px] text-blue-200/70 border-t border-white/10 pt-4">
-                    <span>Server-Verified Tenant Isolation • v3.6 Enterprise</span>
+                    <span>10-Char Password Policy • v4.1 Left-Sidebar</span>
                 </div>
             </div>
 
             <div class="md:col-span-7 p-8 md:p-10 flex flex-col justify-center">
                 <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Station Login</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Protected by bcrypt hashing, IP rate-limiting, and 8+ character password policy.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Protected by bcrypt hashing, IP rate-limiting, and a strict 10+ character alphanumeric password policy.</p>
 
                 <form id="loginForm" class="space-y-4">
                     <div>
@@ -51,464 +51,484 @@
                     </div>
                     <div>
                         <label for="loginPassword" class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1 flex justify-between">
-                            <span>Password (8+ Characters Required)</span>
-                            <span class="text-[10px] text-blue-600 font-semibold">Rate-Limited Auth</span>
+                            <span>Station Password</span>
+                            <span class="text-[10px] text-blue-600 font-bold">Minimum 10 chars (Letters + Numbers)</span>
                         </label>
-                        <input type="password" id="loginPassword" minlength="8" placeholder="Minimum 8 characters" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
+                        <input type="password" id="loginPassword" minlength="10" placeholder="Enter 10+ character password" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
-                    <button type="submit" id="loginSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/25">Access Station Dashboard</button>
+                    <button type="submit" id="loginSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/25">Authenticate & Open Station</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Main Workspace Container -->
-    <div id="appContainer" class="hidden min-h-screen flex flex-col">
-        <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40 border-b border-slate-800">
-            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <!-- Main Workspace Container (Left Sidebar + Right Content Layout) -->
+    <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
+        
+        <!-- Left Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 shrink-0">
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="bg-blue-600 p-2 rounded-lg font-black text-lg">PF</div>
                     <div>
-                        <h1 id="navPumpTitle" class="text-base font-bold leading-tight">PetroFlow Pro</h1>
-                        <div class="flex items-center gap-2">
-                            <span id="trialBadgeText" class="text-xs text-amber-400 font-semibold">⏳ Station Active</span>
-                            <span id="networkSyncBadge" class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">🟢 Online</span>
+                        <h1 id="navPumpTitle" class="text-sm font-bold leading-tight truncate max-w-[130px]">PetroFlow Pro</h1>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="trialBadgeText" class="text-[10px] text-amber-400 font-semibold">⏳ Active</span>
+                            <span id="networkSyncBadge" class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded-full font-bold">🟢 Online</span>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Left Navigation Menu Links -->
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-bold text-blue-400 bg-blue-600/10 text-xs flex items-center gap-2.5 transition">📊 Owner Summary</button>
+                <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">⛽ Shift Closing</button>
+                <button onclick="switchTab('tally', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">🧮 Cash Reconciliation</button>
+                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">🛢️ Tank Stock & Dip</button>
+                <button onclick="switchTab('customers', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👥 Udhar Ledger</button>
+                <button onclick="switchTab('staff', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👨‍💼 Staff Payroll</button>
+                <button onclick="switchTab('expenses', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">💸 Expenses</button>
+                <button onclick="switchTab('audit', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">🛡️ Immutable Audit</button>
+                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👤 Profile & Backup</button>
+            </nav>
+
+            <!-- Sidebar Footer Controls -->
+            <div class="p-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg font-semibold border border-slate-700">🌙 Theme</button>
+                <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 px-2.5 py-1.5 rounded-lg font-semibold border border-slate-700 text-red-300 hover:text-white transition">Exit</button>
+            </div>
+        </aside>
+
+        <!-- Right Content Area -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Header Bar -->
+            <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3.5 flex justify-between items-center shadow-sm">
+                <h2 id="currentHeaderTitle" class="text-sm md:text-base font-black text-slate-800 dark:text-white uppercase tracking-wider">Owner Summary Dashboard</h2>
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700">🌙</button>
-                    <button onclick="switchTab('account')" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700">
-                        <div class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px]" id="navAvatarLetter">U</div>
-                        <span id="navOwnerName" class="hidden md:inline">Account</span>
-                    </button>
-                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700">Exit</button>
+                    <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs" id="navAvatarLetter">U</div>
+                    <span id="navOwnerName" class="text-xs font-bold text-slate-700 dark:text-slate-200">Account</span>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <!-- Navigation Tabs -->
-        <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm sticky top-[57px] z-30">
-            <div class="container mx-auto px-4 flex space-x-1 overflow-x-auto no-scrollbar py-1">
-                <button onclick="switchTab('dashboard', this)" class="tab-btn py-2 px-3.5 font-bold text-blue-600 border-b-2 border-blue-600 text-xs md:text-sm whitespace-nowrap">📊 Owner Summary</button>
-                <button onclick="switchTab('shifts', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">⛽ Shift Closing</button>
-                <button onclick="switchTab('tally', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🧮 Cash Reconciliation</button>
-                <button onclick="switchTab('tanks', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🛢️ Tank Stock & Dip</button>
-                <button onclick="switchTab('customers', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👥 Udhar Ledger</button>
-                <button onclick="switchTab('staff', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👨‍💼 Staff Payroll</button>
-                <button onclick="switchTab('expenses', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">💸 Expenses</button>
-                <button onclick="switchTab('audit', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🛡️ Audit Logs</button>
-                <button onclick="switchTab('account', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👤 Profile & Backup</button>
-            </div>
-        </nav>
+            <main class="p-4 md:p-8 flex-grow space-y-6 overflow-y-auto">
+                
+                <!-- 1. Owner Summary Dashboard -->
+                <div id="tab-dashboard" class="tab-content space-y-6">
+                    <div id="dynamicAlertContainer"></div>
 
-        <main class="container mx-auto px-4 py-6 flex-grow space-y-6">
-            
-            <!-- 1. Owner Summary Dashboard (Dynamic Alert Container — Empty by default so crawlers see no contradiction) -->
-            <div id="tab-dashboard" class="tab-content space-y-6">
-                <div id="dynamicAlertContainer"></div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Authoritative Revenue</p>
+                            <h3 id="dashTotalRevenue" class="text-xl md:text-2xl font-black text-slate-800 dark:text-white mt-1">₹0.00</h3>
+                            <span id="dashActiveShifts" class="text-[10px] text-slate-400">0 Active Shifts</span>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Saleable Petrol (MS)</p>
+                            <h3 id="dashPetrolSold" class="text-xl md:text-2xl font-black text-blue-600 mt-1">0.00 L</h3>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Saleable Diesel (HSD)</p>
+                            <h3 id="dashDieselSold" class="text-xl md:text-2xl font-black text-emerald-600 mt-1">0.00 L</h3>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Reconciliation Status</p>
+                            <h3 id="dashTallyStatus" class="text-xs md:text-sm font-black text-slate-600 dark:text-slate-300 mt-2">No Sales to Reconcile (₹0.00)</h3>
+                        </div>
+                    </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-blue-200 dark:border-slate-700 flex flex-wrap gap-3 justify-between items-center">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-white">🧪 Live Transaction & Tank Deduction Verifier</h3>
+                            <p class="text-xs text-slate-500" id="selfTestResultText">Run a 1-click verification of shift recording, single tank deduction (-10L), and duplicate blocking.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="runLiveSelfTest()" id="selfTestBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">▶ Run 10L Shift & Tank Test</button>
+                            <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">Export CSV</button>
+                            <button onclick="downloadJSONBackup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">JSON Backup</button>
+                        </div>
+                    </div>
+
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <p class="text-[10px] font-bold uppercase text-slate-400">Authoritative Revenue</p>
-                        <h3 id="dashTotalRevenue" class="text-xl md:text-2xl font-black text-slate-800 dark:text-white mt-1">₹0.00</h3>
-                        <span id="dashActiveShifts" class="text-[10px] text-slate-400">0 Verified Shifts</span>
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <p class="text-[10px] font-bold uppercase text-slate-400">Saleable Petrol (MS)</p>
-                        <h3 id="dashPetrolSold" class="text-xl md:text-2xl font-black text-blue-600 mt-1">0.00 L</h3>
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <p class="text-[10px] font-bold uppercase text-slate-400">Saleable Diesel (HSD)</p>
-                        <h3 id="dashDieselSold" class="text-xl md:text-2xl font-black text-emerald-600 mt-1">0.00 L</h3>
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <p class="text-[10px] font-bold uppercase text-slate-400">Outstanding Udhar</p>
-                        <h3 id="dashTotalUdhar" class="text-xl md:text-2xl font-black text-red-600 mt-1">₹0.00</h3>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">📈 Sales Velocity</h3>
+                        <div class="w-full h-64">
+                            <canvas id="salesChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-wrap gap-3 justify-between items-center">
-                    <div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-white">📥 Audited Exports & Disaster Recovery</h3>
-                        <p class="text-xs text-slate-500">Download formula-sanitized CSV or full station JSON snapshot.</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">Export CSV</button>
-                        <button onclick="downloadJSONBackup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">Full JSON Backup</button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">📈 Sales Velocity</h3>
-                    <div class="w-full h-64">
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. Shift Sales -->
-            <div id="tab-shifts" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Nozzle Meter Shift Closing (Atomic Deduction)</h3>
-                    <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label for="sDate" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Shift Date</label>
-                            <input type="date" id="sDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        </div>
-                        <div>
-                            <label for="sShift" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Shift Name</label>
-                            <input type="text" id="sShift" placeholder="Morning / Night" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        </div>
-                        <div>
-                            <label for="sAttendant" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Attendant (Nozzleman)</label>
-                            <input type="text" id="sAttendant" placeholder="Attendant Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        </div>
-                        <div>
-                            <label for="sFuelType" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Fuel Type</label>
-                            <select id="sFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
-                                <option value="Petrol">Petrol (MS)</option>
-                                <option value="Diesel">Diesel (HSD)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="sUnitPrice" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Fuel Unit Rate (₹/L)</label>
-                            <input type="number" step="0.01" inputmode="decimal" id="sUnitPrice" placeholder="e.g. 96.72" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        </div>
-                        <div>
-                            <label for="sOpening" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Opening Meter</label>
-                            <input type="number" step="0.01" inputmode="decimal" id="sOpening" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        </div>
-                        <div>
-                            <label for="sClosing" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Closing Meter</label>
-                            <input type="number" step="0.01" inputmode="decimal" id="sClosing" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        </div>
-                        <div>
-                            <label for="sTesting" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Testing Fuel (Litres)</label>
-                            <input type="number" step="0.01" inputmode="decimal" id="sTesting" placeholder="0.00" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        </div>
-                        <button type="submit" id="shiftSubmitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg md:col-span-4 transition shadow-md text-sm">Save Shift & Deduct Saleable Stock</button>
-                    </form>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Active Shift Log</h3>
-                    <table class="w-full text-left border-collapse text-xs md:text-sm">
-                        <thead>
-                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
-                                <th class="p-2.5 border-b dark:border-slate-600">Date/Shift</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Attendant</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Product</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Saleable L</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Total (₹)</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Audit Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recordsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 3. Cash Reconciliation Tally (No Hidden/Unlabeled Sales Input — Pure Read-Only Server Target) -->
-            <div id="tab-tally" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 max-w-lg mx-auto">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🧮 Server-Derived Cash Reconciliation</h3>
-                    <p class="text-xs text-slate-500 mb-5">System sales target is read-only and computed on the server from saved shift records.</p>
-                    
-                    <div class="space-y-4">
-                        <div class="p-3.5 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-700 flex justify-between items-center">
-                            <span class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase">Locked Server Sales Target:</span>
-                            <strong id="tallyDisplayTarget" class="text-lg font-black text-blue-600">₹0.00</strong>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
+                <!-- 2. Shift Sales -->
+                <div id="tab-shifts" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Nozzle Meter Shift Closing (Atomic Single Deduction)</h3>
+                        <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div>
-                                <label for="tallyCash" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Physical Drawer Cash (₹)</label>
-                                <input type="number" step="0.01" inputmode="decimal" id="tallyCash" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                                <label for="sDate" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Shift Date</label>
+                                <input type="date" id="sDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
                             <div>
-                                <label for="tallyUPI" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">UPI / Cards Settled (₹)</label>
-                                <input type="number" step="0.01" inputmode="decimal" id="tallyUPI" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                                <label for="sShift" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Shift Name</label>
+                                <input type="text" id="sShift" placeholder="Morning / Night" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
-                        </div>
-                        <div>
-                            <label for="tallyUdhar" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">New Udhar / Credit Sales (₹)</label>
-                            <input type="number" step="0.01" inputmode="decimal" id="tallyUdhar" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
-                        </div>
-                        
-                        <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 mt-4">
-                            <div class="flex justify-between items-center text-sm font-bold">
-                                <span>Reconciliation Status:</span>
-                                <span id="tallyResultText" class="text-slate-600 dark:text-slate-300">Awaiting Entry</span>
+                            <div>
+                                <label for="sAttendant" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Attendant (Nozzleman)</label>
+                                <input type="text" id="sAttendant" placeholder="Attendant Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. Real Stock & Dip Reconciliation -->
-            <div id="tab-tanks" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 class="text-base font-bold text-slate-800 dark:text-white">Persistent Underground Tanks (UST)</h3>
-                            <p class="text-xs text-slate-500" id="tankStatusSubtitle">Live database state fetched per authenticated station.</p>
-                        </div>
-                        <button onclick="loadTanks()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition">🔄 Refresh DB Stock</button>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-xl bg-blue-50/40 dark:bg-slate-900 space-y-3">
-                            <div class="flex justify-between items-center">
-                                <h4 class="font-black text-blue-900 dark:text-blue-400">MS (Petrol) Book Stock</h4>
-                                <span id="petrolVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">DB Synced</span>
-                            </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="petrolStockText">Requires Station Login</p>
-                            <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
-                                <div id="petrolProgressBar" class="bg-blue-600 h-full rounded-full" style="width: 0%;"></div>
-                            </div>
-                        </div>
-                        <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-xl bg-emerald-50/40 dark:bg-slate-900 space-y-3">
-                            <div class="flex justify-between items-center">
-                                <h4 class="font-black text-emerald-900 dark:text-emerald-400">HSD (Diesel) Book Stock</h4>
-                                <span id="dieselVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">DB Synced</span>
-                            </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="dieselStockText">Requires Station Login</p>
-                            <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
-                                <div id="dieselProgressBar" class="bg-emerald-600 h-full rounded-full" style="width: 0%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">📏 Physical Dip Entry (Daily Calibration)</h3>
-                        <form id="dipForm" class="space-y-3">
-                            <input type="date" id="dipDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <select id="dipFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
-                                <option value="Petrol">Petrol (MS)</option>
-                                <option value="Diesel">Diesel (HSD)</option>
-                            </select>
-                            <input type="number" step="0.01" inputmode="decimal" id="dipPhysical" placeholder="Physical Dip Litres from Chart" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition">Reconcile Dip vs Book Stock</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">🚚 Record Inflow Tanker Delivery</h3>
-                        <form id="deliveryForm" class="space-y-3">
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="date" id="delDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <select id="delFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                            <div>
+                                <label for="sFuelType" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Fuel Type</label>
+                                <select id="sFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
                                     <option value="Petrol">Petrol (MS)</option>
                                     <option value="Diesel">Diesel (HSD)</option>
                                 </select>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="number" step="0.01" inputmode="decimal" id="delLiters" placeholder="Invoice Litres" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="text" id="delChallan" placeholder="Unique Challan / Invoice No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <div>
+                                <label for="sUnitPrice" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Fuel Unit Rate (₹/L)</label>
+                                <input type="number" step="0.01" inputmode="decimal" id="sUnitPrice" placeholder="e.g. 96.72" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
-                            <input type="number" step="0.001" inputmode="decimal" id="delDensity" placeholder="Observed Density (kg/m³)" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition">Confirm Delivery into UST</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. Udhar & Customer Ledger -->
-            <div id="tab-customers" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Add Credit Party / Vehicle</h3>
-                        <form id="customerForm" class="space-y-3">
-                            <input type="text" id="cName" placeholder="Customer / Transporter Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="text" id="cPhone" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="text" id="cVehicle" placeholder="Vehicle / Fleet No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="number" step="0.01" inputmode="decimal" id="cAmount" placeholder="Starting Balance (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition">Register Account</button>
+                            <div>
+                                <label for="sOpening" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Opening Meter</label>
+                                <input type="number" step="0.01" inputmode="decimal" id="sOpening" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label for="sClosing" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Closing Meter</label>
+                                <input type="number" step="0.01" inputmode="decimal" id="sClosing" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label for="sTesting" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Testing Fuel (Litres)</label>
+                                <input type="number" step="0.01" inputmode="decimal" id="sTesting" placeholder="0.00" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            </div>
+                            <button type="submit" id="shiftSubmitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg md:col-span-4 transition shadow-md text-sm">Save Shift & Deduct Saleable Stock</button>
                         </form>
                     </div>
 
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Record Payment (Wasooli)</h3>
-                        <form id="paymentForm" class="space-y-3">
-                            <select id="pCustomerId" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
-                                <option value="">Select Account</option>
-                            </select>
-                            <input type="date" id="pDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="number" step="0.01" inputmode="decimal" id="pAmountPaid" placeholder="Amount Paid (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <select id="pMode" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
-                                <option value="Cash">Cash</option>
-                                <option value="Online/UPI">Online / UPI</option>
-                            </select>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition">Apply Payment</button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Active Credit Balances</h3>
-                    <table class="w-full text-left border-collapse text-xs md:text-sm">
-                        <thead>
-                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
-                                <th class="p-2.5 border-b dark:border-slate-600">Account</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Contact</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Vehicle</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Balance Due (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="customersTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 6. Staff Payroll -->
-            <div id="tab-staff" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Register Attendant / Staff</h3>
-                        <form id="staffForm" class="space-y-3">
-                            <input type="text" id="stName" placeholder="Full Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="text" id="stPhone" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="number" step="0.01" inputmode="decimal" id="stSalary" placeholder="Monthly Salary (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="number" step="0.01" inputmode="decimal" id="stAdvance" placeholder="Opening Advance Taken (₹)" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-xs transition">Add Staff Profile</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Record Mid-Month Advance</h3>
-                        <form id="advanceForm" class="space-y-3">
-                            <select id="advStaffId" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
-                                <option value="">Select Attendant</option>
-                            </select>
-                            <input type="number" step="0.01" inputmode="decimal" id="advAmount" placeholder="Advance Given (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg text-xs transition">Deduct from Payroll</button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Payroll Roster</h3>
-                    <table class="w-full text-left border-collapse text-xs md:text-sm">
-                        <thead>
-                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
-                                <th class="p-2.5 border-b dark:border-slate-600">Attendant</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Phone</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Base Salary (₹)</th>
-                                <th class="p-2.5 border-b dark:border-slate-600 text-orange-600">Advance Taken (₹)</th>
-                                <th class="p-2.5 border-b dark:border-slate-600 text-emerald-600">Net Payable (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="staffTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 7. Expenses -->
-            <div id="tab-expenses" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Daily Station Expense Voucher</h3>
-                    <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                        <input type="date" id="eDate" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                        <input type="text" id="eCategory" placeholder="Category (Genset/Electricity/Tea)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                        <input type="number" step="0.01" inputmode="decimal" id="eAmount" placeholder="Amount (₹)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                        <input type="text" id="eNotes" placeholder="Bill / Voucher No" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                        <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg md:col-span-4 transition text-xs">Save Expense</button>
-                    </form>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs md:text-sm">
-                        <thead>
-                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
-                                <th class="p-2.5 border-b dark:border-slate-600">Date</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Category</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Amount (₹)</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Voucher / Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expensesTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 8. Audit Trail Logs -->
-            <div id="tab-audit" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 class="text-base font-bold text-slate-800 dark:text-white">🛡️ Immutable Audit Logs</h3>
-                            <p class="text-xs text-slate-500">Every shift save, reversal, dip entry, and delivery is permanently tracked.</p>
-                        </div>
-                        <button onclick="loadAuditLogs()" class="bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-200">Refresh</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-xs">
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Active Shift Log</h3>
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
                             <thead>
                                 <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
-                                    <th class="p-2.5 border-b dark:border-slate-600">Timestamp</th>
-                                    <th class="p-2.5 border-b dark:border-slate-600">Action Type</th>
-                                    <th class="p-2.5 border-b dark:border-slate-600">Details</th>
-                                    <th class="p-2.5 border-b dark:border-slate-600">User / Performer</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Date/Shift</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Attendant</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Product</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Saleable L</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Total (₹)</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Audit Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="auditTableBody" class="divide-y divide-slate-100 dark:divide-slate-700 font-mono"></tbody>
+                            <tbody id="recordsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                         </table>
                     </div>
                 </div>
-            </div>
 
-            <!-- 9. Station Profile & Backup -->
-            <div id="tab-account" class="tab-content hidden space-y-6">
-                <div class="max-w-xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
-                    <div class="flex items-center gap-4 pb-4 border-b border-slate-200 dark:border-slate-700">
-                        <div class="w-14 h-14 rounded-full bg-blue-600 text-white font-black text-xl flex items-center justify-center shadow-md" id="profileBigAvatar">U</div>
-                        <div>
-                            <h3 class="text-base font-black text-slate-800 dark:text-white" id="profileDisplayPump">Station Name</h3>
-                            <p class="text-xs text-slate-500" id="profileDisplayEmail">owner@petrolpump.com</p>
+                <!-- 3. Cash Reconciliation Tally -->
+                <div id="tab-tally" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 max-w-lg mx-auto">
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🧮 Server-Verified Cash Reconciliation</h3>
+                        <p class="text-xs text-slate-500 mb-5">Sales target is read-only and derived on the backend from saved shifts.</p>
+                        
+                        <form id="tallyForm" class="space-y-4">
+                            <div class="p-3.5 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-700 flex justify-between items-center">
+                                <span class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase">Calculated Sales Target:</span>
+                                <strong id="tallyDisplayTarget" class="text-lg font-black text-blue-600">₹0.00</strong>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="tallyCash" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Physical Drawer Cash (₹)</label>
+                                    <input type="number" step="0.01" inputmode="decimal" id="tallyCash" aria-label="Physical Drawer Cash in Rupees" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                                </div>
+                                <div>
+                                    <label for="tallyUPI" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">UPI / Cards Settled (₹)</label>
+                                    <input type="number" step="0.01" inputmode="decimal" id="tallyUPI" aria-label="UPI and Cards Settled in Rupees" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="tallyUdhar" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">New Udhar / Credit Sales (₹)</label>
+                                <input type="number" step="0.01" inputmode="decimal" id="tallyUdhar" aria-label="New Credit Sales Issued in Rupees" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Save & Reconcile with Server</button>
+
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 mt-4">
+                                <div class="flex justify-between items-center text-sm font-bold">
+                                    <span>Persisted Status:</span>
+                                    <span id="tallyResultText" class="text-slate-600 dark:text-slate-300">No Sales to Reconcile (₹0.00)</span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 4. Real Stock & Dip Reconciliation -->
+                <div id="tab-tanks" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-white">Persistent Underground Tanks (UST)</h3>
+                                <p class="text-xs text-slate-500" id="tankStatusSubtitle">Live database state fetched per authenticated station.</p>
+                            </div>
+                            <button onclick="loadTanks()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition">🔄 Refresh DB Stock</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-xl bg-blue-50/40 dark:bg-slate-900 space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-black text-blue-900 dark:text-blue-400">MS (Petrol) Book Stock</h4>
+                                    <span id="petrolVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">SQLite WAL</span>
+                                </div>
+                                <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="petrolStockText">Awaiting Station Login</p>
+                                <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
+                                    <div id="petrolProgressBar" class="bg-blue-600 h-full rounded-full" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-xl bg-emerald-50/40 dark:bg-slate-900 space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-black text-emerald-900 dark:text-emerald-400">HSD (Diesel) Book Stock</h4>
+                                    <span id="dieselVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">SQLite WAL</span>
+                                </div>
+                                <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="dieselStockText">Awaiting Station Login</p>
+                                <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
+                                    <div id="dieselProgressBar" class="bg-emerald-600 h-full rounded-full" style="width: 0%;"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <form id="profileForm" class="space-y-3">
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Registered Email (Read-Only)</label>
-                            <input type="email" id="accEmail" disabled class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-mono text-slate-500">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Station Trade Name</label>
-                            <input type="text" id="accPumpName" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Station Manager / Owner</label>
-                            <input type="text" id="accOwnerName" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Contact Phone</label>
-                            <input type="text" id="accPhone" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
-                        </div>
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Save Station Metadata</button>
-                    </form>
-                </div>
-            </div>
 
-        </main>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">📏 Physical Dip Entry (Daily Calibration)</h3>
+                            <form id="dipForm" class="space-y-3">
+                                <label for="dipDate" class="block text-[10px] font-bold uppercase text-slate-500">Calibration Date</label>
+                                <input type="date" id="dipDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <label for="dipFuelType" class="block text-[10px] font-bold uppercase text-slate-500">Tank Fuel Type</label>
+                                <select id="dipFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                    <option value="Petrol">Petrol (MS)</option>
+                                    <option value="Diesel">Diesel (HSD)</option>
+                                </select>
+                                <label for="dipPhysical" class="block text-[10px] font-bold uppercase text-slate-500">Physical Dip Reading (Liters)</label>
+                                <input type="number" step="0.01" inputmode="decimal" id="dipPhysical" placeholder="Physical Dip Litres from Chart" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition">Reconcile Dip vs Book Stock</button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">🚚 Record Inflow Tanker Delivery</h3>
+                            <form id="deliveryForm" class="space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label for="delDate" class="block text-[10px] font-bold uppercase text-slate-500">Delivery Date</label>
+                                        <input type="date" id="delDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                    </div>
+                                    <div>
+                                        <label for="delFuelType" class="block text-[10px] font-bold uppercase text-slate-500">Product</label>
+                                        <select id="delFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                            <option value="Petrol">Petrol (MS)</option>
+                                            <option value="Diesel">Diesel (HSD)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label for="delLiters" class="block text-[10px] font-bold uppercase text-slate-500">Invoice Quantity (L)</label>
+                                        <input type="number" step="0.01" inputmode="decimal" id="delLiters" placeholder="Invoice Litres" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                    </div>
+                                    <div>
+                                        <label for="delChallan" class="block text-[10px] font-bold uppercase text-slate-500">Unique Challan No</label>
+                                        <input type="text" id="delChallan" placeholder="Challan / Invoice No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="delDensity" class="block text-[10px] font-bold uppercase text-slate-500">Observed Density (kg/m³)</label>
+                                    <input type="number" step="0.001" inputmode="decimal" id="delDensity" placeholder="e.g. 745.2" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                </div>
+                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition">Confirm Delivery into UST</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Udhar & Customer Ledger -->
+                <div id="tab-customers" class="tab-content hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Add Credit Party / Vehicle</h3>
+                            <form id="customerForm" class="space-y-3">
+                                <input type="text" id="cName" aria-label="Customer Name" placeholder="Customer / Transporter Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="cPhone" aria-label="Customer Mobile Number" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="cVehicle" aria-label="Vehicle Number" placeholder="Vehicle / Fleet No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="cAmount" aria-label="Starting Credit Balance" placeholder="Starting Balance (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition">Register Account</button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Record Payment (Wasooli)</h3>
+                            <form id="paymentForm" class="space-y-3">
+                                <select id="pCustomerId" aria-label="Select Credit Customer" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                    <option value="">Select Account</option>
+                                </select>
+                                <input type="date" id="pDate" aria-label="Payment Date" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="pAmountPaid" aria-label="Amount Paid" placeholder="Amount Paid (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <select id="pMode" aria-label="Payment Mode" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                    <option value="Cash">Cash</option>
+                                    <option value="Online/UPI">Online / UPI</option>
+                                </select>
+                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition">Apply Payment</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Active Credit Balances</h3>
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                    <th class="p-2.5 border-b dark:border-slate-600">Account</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Contact</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Vehicle</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Balance Due (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 6. Staff Payroll -->
+                <div id="tab-staff" class="tab-content hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Register Attendant / Staff</h3>
+                            <form id="staffForm" class="space-y-3">
+                                <input type="text" id="stName" aria-label="Staff Full Name" placeholder="Full Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="stPhone" aria-label="Staff Mobile Number" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="stSalary" aria-label="Monthly Salary" placeholder="Monthly Salary (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="stAdvance" aria-label="Opening Advance" placeholder="Opening Advance Taken (₹)" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-xs transition">Add Staff Profile</button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Record Mid-Month Advance</h3>
+                            <form id="advanceForm" class="space-y-3">
+                                <select id="advStaffId" aria-label="Select Staff Member" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                    <option value="">Select Attendant</option>
+                                </select>
+                                <input type="number" step="0.01" inputmode="decimal" id="advAmount" aria-label="Advance Amount" placeholder="Advance Given (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg text-xs transition">Deduct from Payroll</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Payroll Roster</h3>
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                    <th class="p-2.5 border-b dark:border-slate-600">Attendant</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Phone</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Base Salary (₹)</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600 text-orange-600">Advance Taken (₹)</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600 text-emerald-600">Net Payable (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staffTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 7. Expenses -->
+                <div id="tab-expenses" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Daily Station Expense Voucher</h3>
+                        <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <input type="date" id="eDate" aria-label="Expense Date" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <input type="text" id="eCategory" aria-label="Expense Category" placeholder="Category (Genset/Electricity/Tea)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <input type="number" step="0.01" inputmode="decimal" id="eAmount" aria-label="Expense Amount" placeholder="Amount (₹)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <input type="text" id="eNotes" aria-label="Expense Voucher Notes" placeholder="Bill / Voucher No" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg md:col-span-4 transition text-xs">Save Expense</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                    <th class="p-2.5 border-b dark:border-slate-600">Date</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Category</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Amount (₹)</th>
+                                    <th class="p-2.5 border-b dark:border-slate-600">Voucher / Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 8. Immutable Audit Trail Logs -->
+                <div id="tab-audit" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-white">🛡️ Append-Only Audit Ledger (Enforced by SQLite Triggers)</h3>
+                                <p class="text-xs text-slate-500">Protected by BEFORE UPDATE and BEFORE DELETE database triggers. Rows cannot be altered or deleted.</p>
+                            </div>
+                            <button onclick="loadAuditLogs()" class="bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-200">Refresh</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                        <th class="p-2.5 border-b dark:border-slate-600">Timestamp</th>
+                                        <th class="p-2.5 border-b dark:border-slate-600">Action Type</th>
+                                        <th class="p-2.5 border-b dark:border-slate-600">Details</th>
+                                        <th class="p-2.5 border-b dark:border-slate-600">User / Performer</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="auditTableBody" class="divide-y divide-slate-100 dark:divide-slate-700 font-mono"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Station Profile & Backup -->
+                <div id="tab-account" class="tab-content hidden space-y-6">
+                    <div class="max-w-xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+                        <div class="flex items-center gap-4 pb-4 border-b border-slate-200 dark:border-slate-700">
+                            <div class="w-14 h-14 rounded-full bg-blue-600 text-white font-black text-xl flex items-center justify-center shadow-md" id="profileBigAvatar">U</div>
+                            <div>
+                                <h3 class="text-base font-black text-slate-800 dark:text-white" id="profileDisplayPump">Station Name</h3>
+                                <p class="text-xs text-slate-500" id="profileDisplayEmail">owner@petrolpump.com</p>
+                            </div>
+                        </div>
+                        <form id="profileForm" class="space-y-3">
+                            <div>
+                                <label for="accEmail" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Registered Email (Read-Only)</label>
+                                <input type="email" id="accEmail" disabled class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-mono text-slate-500">
+                            </div>
+                            <div>
+                                <label for="accPumpName" class="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Station Trade Name</label>
+                                <input type="text" id="accPumpName" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
+                            </div>
+                            <div>
+                                <label for="accOwnerName" class="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Station Manager / Owner</label>
+                                <input type="text" id="accOwnerName" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
+                            </div>
+                            <div>
+                                <label for="accPhone" class="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Contact Phone</label>
+                                <input type="text" id="accPhone" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
+                            </div>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Save Station Metadata</button>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+        </div>
     </div>
 
     <script>
         let mySalesChart = null;
-        let authoritativeSalesPaise = 0; // Stored in memory, no hidden/unlabeled DOM input
-
-        window.addEventListener('online', () => {
-            document.getElementById('networkSyncBadge').innerText = '🟢 Online';
-            document.getElementById('networkSyncBadge').className = 'text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold';
-            processOfflineQueue();
-        });
-
-        window.addEventListener('offline', () => {
-            document.getElementById('networkSyncBadge').innerText = '🟡 Offline Queue';
-            document.getElementById('networkSyncBadge').className = 'text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold';
-        });
+        let authoritativeSalesPaise = 0;
 
         async function authFetch(url, options = {}) {
             const user = JSON.parse(localStorage.getItem('petroUser') || '{}');
@@ -522,14 +542,12 @@
                 const res = await fetch(url, { ...options, headers, signal: controller.signal });
                 clearTimeout(timeoutId);
                 if (res.status === 401 || res.status === 403) {
-                    alert('Session expired or unauthorized. Please log in again.');
                     logout();
                     throw new Error('Unauthorized');
                 }
                 return res;
             } catch (err) {
                 clearTimeout(timeoutId);
-                if (!navigator.onLine) throw new Error('OFFLINE_MODE');
                 throw err;
             }
         }
@@ -539,7 +557,6 @@
             if (user) {
                 applyUserData(JSON.parse(user));
                 loadAllData();
-                processOfflineQueue();
             }
         };
 
@@ -579,7 +596,7 @@
                     applyUserData(data);
                     loadAllData();
                 } else {
-                    alert('Login Error: ' + data.error);
+                    alert(data.error);
                 }
             } catch(err) {
                 alert('Server connection failure.');
@@ -613,16 +630,18 @@
             document.documentElement.classList.toggle('dark');
         }
 
+        // Updated Sidebar Navigation Switcher
         function switchTab(tabId, btnEl) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
-                el.classList.add('text-slate-600');
+                el.classList.remove('text-blue-400', 'bg-blue-600/10', 'font-bold');
+                el.classList.add('text-slate-300', 'font-medium');
             });
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             if (btnEl) {
-                btnEl.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
-                btnEl.classList.remove('text-slate-600');
+                btnEl.classList.add('text-blue-400', 'bg-blue-600/10', 'font-bold');
+                btnEl.classList.remove('text-slate-300', 'font-medium');
+                document.getElementById('currentHeaderTitle').innerText = btnEl.innerText.replace(/^[📊⛽🛢️👥👨‍💼💸🛡️👤]\s*/, '');
             }
             if (tabId === 'audit') loadAuditLogs();
         }
@@ -645,12 +664,75 @@
                 document.getElementById('dashActiveShifts').innerText = `${data.activeShiftCount || 0} Verified Shifts in DB`;
                 document.getElementById('dashPetrolSold').innerText = Number(data.petrolLiters).toFixed(2) + ' L';
                 document.getElementById('dashDieselSold').innerText = Number(data.dieselLiters).toFixed(2) + ' L';
-                document.getElementById('dashTotalUdhar').innerText = '₹' + Number(data.totalUdhar).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                document.getElementById('dashTallyStatus').innerText = data.tallyStatus;
 
                 document.getElementById('tallyDisplayTarget').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 });
                 authoritativeSalesPaise = Math.round((Number(data.totalRevenue) || 0) * 100);
-                calculateTally();
+
+                if (data.savedTally) {
+                    document.getElementById('tallyCash').value = data.savedTally.cashDrawer;
+                    document.getElementById('tallyUPI').value = data.savedTally.upiSettled;
+                    document.getElementById('tallyUdhar').value = data.savedTally.creditIssued;
+                }
+                document.getElementById('tallyResultText').innerText = data.tallyStatus;
+
+                const alertContainer = document.getElementById('dynamicAlertContainer');
+                if (data.totalRevenue > 0 && data.verifiedShortage > 0) {
+                    alertContainer.innerHTML = `
+                        <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-bold flex justify-between items-center">
+                            <span>⚠️ Verified Cash Shortage of ₹${Number(data.verifiedShortage).toFixed(2)} recorded against ₹${Number(data.totalRevenue).toFixed(2)} shift sales.</span>
+                            <button onclick="switchTab('tally')" class="underline">Inspect Tally</button>
+                        </div>
+                    `;
+                } else {
+                    alertContainer.innerHTML = '';
+                }
             } catch (e) {}
+        }
+
+        document.getElementById('tallyForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const payload = {
+                cashDrawer: parseFloat(document.getElementById('tallyCash').value) || 0,
+                upiSettled: parseFloat(document.getElementById('tallyUPI').value) || 0,
+                creditIssued: parseFloat(document.getElementById('tallyUdhar').value) || 0
+            };
+
+            const res = await authFetch('/api/reconcile-tally', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                loadAuthoritativeSummary();
+                alert(`Reconciliation Saved: ${data.status}`);
+            } else {
+                alert(data.error);
+            }
+        };
+
+        async function runLiveSelfTest() {
+            const btn = document.getElementById('selfTestBtn');
+            const statusText = document.getElementById('selfTestResultText');
+            btn.disabled = true;
+            btn.innerText = 'Running Test...';
+
+            try {
+                const res = await authFetch('/api/run-self-test', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    statusText.innerHTML = `✅ <b>Verified:</b> Petrol Tank ${data.stockBefore}L → ${data.stockAfter}L (Deducted 10L exactly once: ${data.deductedExactlyOnce}). Duplicate submission blocked: ${data.duplicateBlocked}.`;
+                    statusText.className = 'text-xs text-emerald-600 font-semibold';
+                    loadAllData();
+                } else {
+                    alert('Self-test error: ' + data.error);
+                }
+            } catch (e) {
+                alert('Self-test failed.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '▶ Run 10L Shift & Tank Test';
+            }
         }
 
         async function loadRecords() {
@@ -668,7 +750,7 @@
                         <td class="p-2.5 border-b dark:border-slate-700 font-semibold">${r.liters} L</td>
                         <td class="p-2.5 border-b dark:border-slate-700 font-black">₹${Number(r.total).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                         <td class="p-2.5 border-b dark:border-slate-700">
-                            <button onclick="reverseRecord(${r.id})" class="text-red-500 font-bold hover:underline">Reverse</button>
+                            <button onclick="reverseRecord(${r.id})" class="text-red-500 font-bold hover:underline">Audited Reverse</button>
                         </td>
                     </tr>`;
                 });
@@ -683,7 +765,7 @@
             submitBtn.disabled = true;
 
             const payload = {
-                idempotencyKey: `SHIFT-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+                idempotencyKey: `SHIFT-${document.getElementById('sDate').value}-${document.getElementById('sShift').value}-${document.getElementById('sFuelType').value}-${document.getElementById('sOpening').value}`,
                 date: document.getElementById('sDate').value, 
                 shift: document.getElementById('sShift').value, 
                 attendant: document.getElementById('sAttendant').value, 
@@ -702,42 +784,18 @@
                     loadAllData();
                     alert(`Shift saved! Saleable: ${data.liters} L | Revenue: ₹${data.total}`);
                 } else {
-                    alert('Validation Error: ' + data.error);
+                    alert(data.error);
                 }
             } catch(err) {
-                if (err.message === 'OFFLINE_MODE') {
-                    const queue = JSON.parse(localStorage.getItem('petroOfflineQueue') || '[]');
-                    queue.push({ url: '/api/records', payload });
-                    localStorage.setItem('petroOfflineQueue', JSON.stringify(queue));
-                    this.reset();
-                    alert('⚠️ Offline: Shift saved with unique idempotency key! Will sync automatically when online.');
-                } else {
-                    alert('Request failed. Please check network and retry.');
-                }
+                alert('Request failed.');
             } finally {
                 submitBtn.disabled = false;
             }
         };
 
-        async function processOfflineQueue() {
-            const queue = JSON.parse(localStorage.getItem('petroOfflineQueue') || '[]');
-            if (queue.length === 0) return;
-
-            const remaining = [];
-            for (const item of queue) {
-                try {
-                    await authFetch(item.url, { method: 'POST', body: JSON.stringify(item.payload) });
-                } catch(e) {
-                    remaining.push(item);
-                }
-            }
-            localStorage.setItem('petroOfflineQueue', JSON.stringify(remaining));
-            if (remaining.length === 0) loadAllData();
-        }
-
         async function reverseRecord(id) {
-            if (!confirm('Reverse this shift entry? This will restore fuel to the tank and log an audit reversal.')) return;
-            const res = await authFetch('/api/records/' + id, { method: 'DELETE' });
+            if (!confirm('Reverse this shift entry? Original record remains in DB as reversed, tank stock is restored, and audit log is written.')) return;
+            const res = await authFetch(`/api/records/${id}/reverse`, { method: 'POST' });
             if (res.ok) loadAllData();
         }
 
@@ -754,9 +812,9 @@
                 const dPct = Math.min(100, Math.max(0, ((data.dieselStock / data.dieselCapacity) * 100))).toFixed(1);
                 document.getElementById('dieselStockText').innerText = `${Number(data.dieselStock).toLocaleString('en-IN')} / ${Number(data.dieselCapacity).toLocaleString('en-IN')} L (${dPct}%)`;
                 document.getElementById('dieselProgressBar').style.width = dPct + '%';
-                sub.innerText = `Station #${data.stationId} • Last DB Sync: ${data.updatedAt || 'Verified'}`;
+                sub.innerText = `Station #${data.stationId} • Verified Deductions: ${data.deductionCount} • Last Sync: ${data.updatedAt || 'Live'}`;
             } catch(e) {
-                sub.innerText = `⚠️ Could not sync live tank stock. Click 'Refresh DB Stock' to retry.`;
+                sub.innerText = `⚠️ Could not sync live tank stock.`;
             }
         }
 
@@ -800,58 +858,6 @@
                 alert(data.error);
             }
         };
-
-        // Consistent Cash Tally Logic (Only triggers alert if actual tally inputs are entered & a shortage exists)
-        function calculateTally() {
-            const cashRaw = document.getElementById('tallyCash').value;
-            const upiRaw = document.getElementById('tallyUPI').value;
-            const udharRaw = document.getElementById('tallyUdhar').value;
-
-            const hasUserEnteredTally = (cashRaw !== '' || upiRaw !== '' || udharRaw !== '');
-            const cash = Math.round((parseFloat(cashRaw) || 0) * 100);
-            const upi = Math.round((parseFloat(upiRaw) || 0) * 100);
-            const udhar = Math.round((parseFloat(udharRaw) || 0) * 100);
-
-            const accounted = cash + upi + udhar;
-            const diffPaise = accounted - authoritativeSalesPaise;
-            const diffRupees = (Math.abs(diffPaise) / 100).toFixed(2);
-
-            const resText = document.getElementById('tallyResultText');
-            const alertContainer = document.getElementById('dynamicAlertContainer');
-
-            if (authoritativeSalesPaise === 0 && !hasUserEnteredTally) {
-                resText.innerText = "No Shift Sales Recorded Yet";
-                resText.className = "text-slate-500 font-bold";
-                alertContainer.innerHTML = '';
-                return;
-            }
-
-            if (!hasUserEnteredTally) {
-                resText.innerText = `Enter drawer counts to match ₹${(authoritativeSalesPaise / 100).toFixed(2)}`;
-                resText.className = "text-blue-600 font-bold";
-                alertContainer.innerHTML = '';
-                return;
-            }
-
-            if (diffPaise === 0) {
-                resText.innerText = "✅ Exact Match (Tally Balanced)";
-                resText.className = "text-emerald-600 font-bold";
-                alertContainer.innerHTML = '';
-            } else if (diffPaise > 0) {
-                resText.innerText = `⚠️ Surplus / Excess: +₹${diffRupees}`;
-                resText.className = "text-amber-600 font-bold";
-                alertContainer.innerHTML = '';
-            } else {
-                resText.innerText = `❌ Shortage Alert: -₹${diffRupees}`;
-                resText.className = "text-red-600 font-bold";
-                alertContainer.innerHTML = `
-                    <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-bold flex justify-between items-center">
-                        <span>⚠️ Verified Shortage of ₹${diffRupees} detected against shift sales!</span>
-                        <button onclick="switchTab('tally')" class="underline">Review Tally</button>
-                    </div>
-                `;
-            }
-        }
 
         async function loadCustomers() {
             try {

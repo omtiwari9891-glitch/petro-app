@@ -218,7 +218,6 @@ function isRealEmail(email) {
     return !blockedDomains.includes(domain);
 }
 
-// Strong Password Policy Validator (Min 10 chars, at least 1 letter & 1 number)
 function isStrongPassword(password) {
     if (!password || typeof password !== 'string') return false;
     if (password.length < 10) return false;
@@ -282,7 +281,6 @@ function buildAuthResponse(user) {
     };
 }
 
-// 1. Auth & Login (10+ Char Password Policy Enforced)
 app.post('/api/login', loginRateLimiter, (req, res) => {
     const { email, password, pumpName } = req.body;
     const cleanEmail = (email || '').trim().toLowerCase();
@@ -344,7 +342,6 @@ app.post('/api/update-profile', authenticateToken, (req, res) => {
     });
 });
 
-// 2. Authoritative Summary & Persisted Cash Tally State
 app.get('/api/summary', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
 
@@ -400,7 +397,6 @@ app.get('/api/summary', authenticateToken, (req, res) => {
     });
 });
 
-// Save & Verify Cash Tally on Server (Prevents Stale/Contradictory Frontend Alerts)
 app.post('/api/reconcile-tally', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
     const { cashDrawer, upiSettled, creditIssued } = req.body;
@@ -448,7 +444,6 @@ app.post('/api/reconcile-tally', authenticateToken, (req, res) => {
     });
 });
 
-// 3. Atomic Shift Records & Single Tank Deduction
 app.get('/api/records', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? AND isReversed = 0 ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -523,7 +518,6 @@ app.post('/api/records', authenticateToken, (req, res) => {
     });
 });
 
-// Audited Reversal (Preserves original row with isReversed = 1, restores tank stock)
 app.post('/api/records/:id/reverse', authenticateToken, (req, res) => {
     const recordId = Number(req.params.id);
     const stationId = req.user.stationId;
@@ -557,14 +551,13 @@ app.post('/api/records/:id/reverse', authenticateToken, (req, res) => {
     });
 });
 
-// 4. End-to-End Automated Verification Self-Test (Tests Shift + Tank Deduction + Duplicate Block)
 app.post('/api/run-self-test', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
     const today = new Date().toISOString().split('T')[0];
     const uniqueOpen = toExactDecimal(1000 + Math.floor(Math.random() * 8000));
-    const uniqueClose = toExactDecimal(uniqueOpen + 10); // 10.00 Liters
+    const uniqueClose = toExactDecimal(uniqueOpen + 10);
     const rate = 96.72;
-    const expectedSale = toExactDecimal(10 * rate); // ₹967.20
+    const expectedSale = toExactDecimal(10 * rate);
     const testKey = `SELFTEST-${stationId}-${uniqueOpen}`;
 
     db.get(`SELECT petrolStock FROM tanks WHERE stationId = ?`, [stationId], (err, tankBefore) => {
@@ -588,7 +581,6 @@ app.post('/api/run-self-test', authenticateToken, (req, res) => {
                     }
 
                     db.run(`COMMIT`, () => {
-                        // Now attempt duplicate insert with same key to verify idempotency protection
                         db.run(`INSERT INTO records (stationId, idempotencyKey, date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total)
                                 VALUES (?, ?, ?, 'Audit-Test', 'System-Verifier', 'Petrol', ?, ?, ?, 0, 10, ?)`,
                             [stationId, testKey, today, rate, uniqueOpen, uniqueClose, expectedSale], (dupErr) => {
@@ -615,7 +607,6 @@ app.post('/api/run-self-test', authenticateToken, (req, res) => {
     });
 });
 
-// 5. Tank Stock, Deliveries & Dip Calibration
 app.get('/api/tanks', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
     db.get(`SELECT * FROM tanks WHERE stationId = ?`, [stationId], (err, row) => {
@@ -726,7 +717,6 @@ app.post('/api/tanks/dip', authenticateToken, (req, res) => {
     });
 });
 
-// 6. Customers, Staff, Expenses & Audit Logs
 app.get('/api/customers', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM customers WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
