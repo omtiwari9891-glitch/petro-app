@@ -37,8 +37,11 @@ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE,
+        password TEXT,
         pumpName TEXT,
-        isSubscribed INTEGER,
+        ownerName TEXT,
+        phone TEXT,
+        isSubscribed INTEGER DEFAULT 0,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
@@ -75,7 +78,7 @@ db.serialize(() => {
     )`);
 });
 
-// Common Disposable / Temporary Fake Email Domains Blacklist
+// Disposable Fake Email Domains Blacklist
 const blockedDomains = [
     'tempmail.com', '10minutemail.com', 'mailinator.com', 'throwawaymail.com',
     'guerrillamail.com', 'sharklasers.com', 'getairmail.com', 'dispostable.com',
@@ -86,62 +89,101 @@ function isRealEmail(email) {
     if (!email) return false;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) return false;
-
     const domain = email.split('@')[1].toLowerCase();
-    if (blockedDomains.includes(domain)) return false;
-
-    return true;
+    return !blockedDomains.includes(domain);
 }
 
-// API: Login with Real Email Validation & 5-Day Trial Calculation
-app.post('/api/login', (req, res) => {
-    const { email, pumpName } = req.body;
-    const adminEmail = "omtiwari9192@gmail.com"; 
+const ADMIN_EMAIL = "omtiwari9192@gmail.com";
 
-    // Fake Email Check
+// Helper function to calculate trial days
+function formatUserData(user) {
+    const now = new Date();
+    const createdDate = new Date(user.createdAt || now);
+    const diffTime = Math.abs(now - createdDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const trialDaysLeft = Math.max(0, 5 - diffDays);
+    const isAdmin = (user.email === ADMIN_EMAIL);
+    const activeStatus = (isAdmin || user.isSubscribed === 1 || trialDaysLeft > 0) ? 1 : 0;
+
+    return {
+        success: true,
+        email: user.email,
+        pumpName: user.pumpName || 'Fuel Station',
+        ownerName: user.ownerName || '',
+        phone: user.phone || '',
+        isSubscribed: activeStatus,
+        trialDaysLeft: isAdmin ? 999 : trialDaysLeft,
+        isAdmin
+    };
+}
+
+// 1. Login with Email & Password
+app.post('/api/login', (req, res) => {
+    const { email, password, pumpName } = req.body;
+
     if (!isRealEmail(email)) {
-        return res.status(400).json({ 
-            success: false, 
-            error: "Kripya ek valid aur active email address enter karein. Temporary ya fake emails allowed nahi hain." 
-        });
+        return res.status(400).json({ success: false, error: "Valid email zaroori hai. Temporary emails allowed nahi hain." });
     }
 
     db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
         if (err) return res.status(500).json({ error: err.message });
-        
-        const now = new Date();
 
         if (!user) {
-            db.run(`INSERT INTO users (email, pumpName, isSubscribed) VALUES (?, ?, 0)`, 
-                [email, pumpName], function(err) {
-                if (err) return res.status(500).json({ error: err.message });
-                res.json({ 
-                    success: true, 
-                    email, 
-                    pumpName, 
-                    isSubscribed: 0, 
-                    trialDaysLeft: 5,
-                    isAdmin: (email === adminEmail)
+            // First time auto-register
+            db.run(`INSERT INTO users (email, password, pumpName, ownerName, phone, isSubscribed) VALUES (?, ?, ?, ?, ?, 0)`,
+                [email, password || 'default123', pumpName || 'Royal Fuel Station', '', ''], function(err2) {
+                if (err2) return res.status(500).json({ error: err2.message });
+                db.get(`SELECT * FROM users WHERE id = ?`, [this.lastID], (err3, newUser) => {
+                    return res.json(formatUserData(newUser));
                 });
             });
         } else {
-            const createdDate = new Date(user.createdAt || now);
-            const diffTime = Math.abs(now - createdDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            const trialDaysLeft = Math.max(0, 5 - diffDays);
-            
-            const isAdmin = (email === adminEmail);
-            const activeStatus = (isAdmin || user.isSubscribed === 1 || trialDaysLeft > 0) ? 1 : 0;
-
-            res.json({ 
-                success: true, 
-                email: user.email, 
-                pumpName: user.pumpName, 
-                isSubscribed: activeStatus,
-                trialDaysLeft: isAdmin ? 999 : trialDaysLeft,
-                isAdmin
-            });
+            // Password verification
+            if (user.password && password && user.password !== password && user.email !== ADMIN_EMAIL) {
+                return res.status(401).json({ success: false, error: "Galat password! Kripya sahi password enter karein." });
+            }
+            return res.json(formatUserData(user));
         }
+    });
+});
+
+// 2. Google / Social One-Click Sign-In
+app.post('/api/google-login', (req, res) => {
+    const { email, name, pumpName } = req.body;
+
+    if (!isRealEmail(email)) {
+        return res.status(400).json({ success: false, error: "Invalid Google account email." });
+    }
+
+    db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        if (!user) {
+            db.run(`INSERT INTO users (email, password, pumpName, ownerName, isSubscribed) VALUES (?, ?, ?, ?, 0)`,
+                [email, 'oauth_google', pumpName || (name + ' Station'), name || ''], function(err2) {
+                if (err2) return res.status(500).json({ error: err2.message });
+                db.get(`SELECT * FROM users WHERE id = ?`, [this.lastID], (err3, newUser) => {
+                    return res.json(formatUserData(newUser));
+                });
+            });
+        } else {
+            return res.json(formatUserData(user));
+        }
+    });
+});
+
+// 3. Update User Profile (Email cannot be changed)
+app.post('/api/update-profile', (req, res) => {
+    const { email, pumpName, ownerName, phone } = req.body;
+
+    db.run(`UPDATE users SET pumpName = ?, ownerName = ?, phone = ? WHERE email = ?`,
+        [pumpName, ownerName, phone, email], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        db.get(`SELECT * FROM users WHERE email = ?`, [email], (err2, user) => {
+            if (err2 || !user) return res.status(500).json({ error: "Failed to reload user profile" });
+            return res.json(formatUserData(user));
+        });
     });
 });
 

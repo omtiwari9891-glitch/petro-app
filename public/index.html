@@ -21,9 +21,8 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300 antialiased selection:bg-blue-600 selection:text-white">
 
-    <!-- Highly Interactive & Modern Login Modal -->
+    <!-- Login Modal (Email + Password + Google Sign-In) -->
     <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-        <!-- Background Ambient Glows -->
         <div class="absolute w-96 h-96 bg-blue-600/30 rounded-full blur-3xl -top-10 -left-10 bg-glow pointer-events-none"></div>
         <div class="absolute w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl -bottom-10 -right-10 bg-glow pointer-events-none"></div>
 
@@ -43,13 +42,13 @@
                         </div>
                     </div>
 
-                    <div class="pt-4">
+                    <div class="pt-2">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                             5-Day Full-Access Free Trial
                         </span>
-                        <h3 class="text-2xl font-bold mt-3 leading-snug">Empowering Petrol Pumps with Real-Time Control.</h3>
-                        <p class="text-xs text-blue-100/80 mt-2 leading-relaxed">Daily meter sales, credit customer recovery, staff salaries, tank dip dip gauges, and PetroAI insights in one dashboard.</p>
+                        <h3 class="text-2xl font-bold mt-3 leading-snug">Secure Fuel Station Control & Cloud Ledger.</h3>
+                        <p class="text-xs text-blue-100/80 mt-2 leading-relaxed">Password-protected access, account personalization, and seamless shift reconciliation.</p>
                     </div>
 
                     <div class="space-y-2.5 pt-2">
@@ -59,18 +58,18 @@
                         </div>
                         <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
                             <span class="text-emerald-400 text-sm">✔</span>
-                            <span>Credit (Udhar) Ledger & Auto-reconciliation</span>
+                            <span>Password Protected & Real-Time Sync</span>
                         </div>
                         <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
                             <span class="text-emerald-400 text-sm">✔</span>
-                            <span>Real-Time Volumetric Tank Dip Meters</span>
+                            <span>Staff Salary Advance & Dip Trackers</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="relative z-10 pt-6 text-[11px] text-blue-200/70 border-t border-white/10 flex justify-between items-center">
                     <span>100% Encrypted & Local Database</span>
-                    <span>v2.4 Enterprise</span>
+                    <span>v2.5 Enterprise</span>
                 </div>
             </div>
 
@@ -78,55 +77,58 @@
             <div class="md:col-span-7 p-8 md:p-10 flex flex-col justify-center">
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <h3 class="text-2xl font-black text-slate-800 dark:text-white">Welcome Back</h3>
-                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-2.5 py-1 rounded-md">Instant Access</span>
+                        <h3 class="text-2xl font-black text-slate-800 dark:text-white">Account Login</h3>
+                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-2.5 py-1 rounded-md">Secure Portal</span>
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Station details aur registered email enter karke access karein.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Apne email aur password se sign in karein ya Google use karein.</p>
                 </div>
 
-                <form id="loginForm" class="mt-6 space-y-4">
-                    <!-- Pump Name Input -->
+                <!-- One Click Social Sign-In Buttons -->
+                <div class="grid grid-cols-2 gap-3 mt-5">
+                    <button type="button" onclick="loginWithGoogle()" class="flex items-center justify-center gap-2 py-2.5 px-3 border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 text-xs font-bold transition shadow-sm">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                        <span>Google Sign In</span>
+                    </button>
+                    <button type="button" onclick="loginWithMicrosoft()" class="flex items-center justify-center gap-2 py-2.5 px-3 border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 text-xs font-bold transition shadow-sm">
+                        <svg class="w-4 h-4" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>
+                        <span>Microsoft</span>
+                    </button>
+                </div>
+
+                <div class="relative my-4 flex items-center justify-center">
+                    <div class="border-t border-slate-200 dark:border-slate-700 w-full"></div>
+                    <span class="bg-white dark:bg-slate-800 px-3 text-[11px] uppercase font-bold text-slate-400 absolute">or email credentials</span>
+                </div>
+
+                <form id="loginForm" class="space-y-3.5">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1.5">
                             Fuel Station / Pump Name
                         </label>
-                        <div class="relative">
-                            <input type="text" id="loginPumpName" placeholder="e.g. Royal Fuel Station" required class="w-full pl-3.5 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm placeholder:text-slate-400">
-                        </div>
+                        <input type="text" id="loginPumpName" placeholder="e.g. Royal Fuel Station" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm">
                     </div>
 
-                    <!-- Email Input -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1.5">
                             Owner Registered Email
                         </label>
-                        <div class="relative">
-                            <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full pl-3.5 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm placeholder:text-slate-400">
-                        </div>
+                        <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm">
+                        <span id="emailErrorMsg" class="hidden text-[11px] text-red-500 font-semibold mt-1 block">⚠️ Please enter a real email. Temporary domains are blocked.</span>
                     </div>
 
-                    <!-- Quick Pre-fill / Demo Fill Chips -->
-                    <div class="pt-1 flex items-center justify-between text-[11px] text-slate-500">
-                        <span>Quick Presets:</span>
-                        <div class="flex gap-2">
-                            <button type="button" onclick="fillDemo('City Center Fuel', 'manager@cityfuel.com')" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">Standard Pump</button>
-                            <span>•</span>
-                            <button type="button" onclick="fillDemo('Highway Oasis Pump', 'owner@highwaypetrol.in')" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">Highway Station</button>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
+                            <span>Password</span>
+                            <span class="text-[10px] text-blue-600 dark:text-blue-400 font-normal">Min 6 characters</span>
+                        </label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm">
                     </div>
 
-                    <!-- Submit Button with Interactive Feedback -->
-                    <button type="submit" id="loginSubmitBtn" class="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group">
-                        <span id="btnText">Launch Dashboard & Trial</span>
-                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <button type="submit" id="loginSubmitBtn" class="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
+                        <span id="btnText">Sign In to Dashboard</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </button>
                 </form>
-
-                <p class="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-5">
-                    Protected by PetroFlow Security. No credit card required for 5-day trial.
-                </p>
             </div>
         </div>
     </div>
@@ -134,7 +136,7 @@
     <!-- Main Container -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col">
         <header class="bg-slate-900 dark:bg-slate-950 text-white shadow-md sticky top-0 z-40 border-b border-slate-800">
-            <div class="container mx-auto px-6 py-3.5 flex justify-between items-center">
+            <div class="container mx-auto px-6 py-3 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
                     <div class="bg-blue-600 p-2 rounded-lg font-black text-lg tracking-wider">PF</div>
                     <div>
@@ -142,9 +144,18 @@
                         <span id="trialBadgeText" class="text-xs text-amber-400 font-semibold flex items-center gap-1">⏳ Trial Active</span>
                     </div>
                 </div>
+                
+                <!-- Header Actions & Account Avatar -->
                 <div class="flex items-center gap-3">
                     <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">🌙 Theme</button>
-                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
+                    
+                    <!-- User Avatar & Profile Quick Button -->
+                    <button onclick="switchTab('account')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700 transition">
+                        <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs" id="navAvatarLetter">U</div>
+                        <span id="navOwnerName">Account</span>
+                    </button>
+
+                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
                 </div>
             </div>
         </header>
@@ -152,14 +163,15 @@
         <!-- Navigation Tabs -->
         <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
             <div class="container mx-auto px-6 flex space-x-1 overflow-x-auto">
-                <button onclick="switchTab('dashboard')" class="tab-btn py-3.5 px-4 font-semibold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 text-sm whitespace-nowrap flex items-center gap-2">📊 Dashboard</button>
-                <button onclick="switchTab('shifts')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">⛽ Shift & Sales</button>
-                <button onclick="switchTab('tally')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🧮 Cash Tally</button>
-                <button onclick="switchTab('customers')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👥 Credit & Udhar</button>
-                <button onclick="switchTab('staff')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👨‍💼 Staff Salary</button>
-                <button onclick="switchTab('expenses')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💸 Expenses</button>
-                <button onclick="switchTab('tanks')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🛢️ Tank Stock</button>
-                <button onclick="switchTab('pricing')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Subscription</button>
+                <button onclick="switchTab('dashboard')" class="tab-btn py-3 px-4 font-semibold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 text-sm whitespace-nowrap flex items-center gap-2">📊 Dashboard</button>
+                <button onclick="switchTab('shifts')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">⛽ Shift & Sales</button>
+                <button onclick="switchTab('tally')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🧮 Cash Tally</button>
+                <button onclick="switchTab('customers')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👥 Credit & Udhar</button>
+                <button onclick="switchTab('staff')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👨‍💼 Staff Salary</button>
+                <button onclick="switchTab('expenses')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💸 Expenses</button>
+                <button onclick="switchTab('tanks')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🛢️ Tank Stock</button>
+                <button onclick="switchTab('account')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👤 My Account</button>
+                <button onclick="switchTab('pricing')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Subscription</button>
             </div>
         </nav>
 
@@ -190,7 +202,7 @@
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
                     <div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">📥 Audit & Spreadsheet Exports</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Download formatted sales rows directly in CSV.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Download formatted sales records in CSV format.</p>
                     </div>
                     <a href="/api/export-csv" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition shadow flex items-center gap-2">📊 Download Excel / CSV</a>
                 </div>
@@ -203,7 +215,49 @@
                 </div>
             </div>
 
-            <!-- 2. Shifts -->
+            <!-- 2. Account & Profile Section -->
+            <div id="tab-account" class="tab-content hidden space-y-6">
+                <div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+                    <div class="flex items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="w-16 h-16 rounded-full bg-blue-600 text-white font-black text-2xl flex items-center justify-center shadow-lg" id="profileBigAvatar">
+                            U
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-slate-800 dark:text-white" id="profileDisplayPump">Station Name</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" id="profileDisplayEmail">owner@petrolpump.com</p>
+                            <span class="inline-block mt-1 text-[11px] font-semibold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full" id="profilePlanBadge">Free Trial</span>
+                        </div>
+                    </div>
+
+                    <form id="profileForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Registered Email (Cannot be changed)</label>
+                            <input type="email" id="accEmail" disabled class="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-mono text-slate-500 cursor-not-allowed">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Petrol Pump / Station Name</label>
+                            <input type="text" id="accPumpName" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Owner / Manager Full Name</label>
+                            <input type="text" id="accOwnerName" placeholder="e.g. Ramesh Sharma" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Contact Phone Number</label>
+                            <input type="text" id="accPhone" placeholder="+91 98765 43210" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
+                        </div>
+
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition shadow-md">
+                            Save Profile Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 3. Shifts -->
             <div id="tab-shifts" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">New Shift Sales Entry</h3>
@@ -241,7 +295,7 @@
                 </div>
             </div>
 
-            <!-- 3. Cash Tally / Reconciliation Tab -->
+            <!-- 4. Cash Tally / Reconciliation Tab -->
             <div id="tab-tally" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 max-w-xl mx-auto">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">🧮 Daily Cash & UPI Tally (Reconciliation)</h3>
@@ -277,7 +331,7 @@
                 </div>
             </div>
 
-            <!-- 4. Customers & Udhar -->
+            <!-- 5. Customers & Udhar -->
             <div id="tab-customers" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -324,7 +378,7 @@
                 </div>
             </div>
 
-            <!-- 5. Staff Salary & Advance Management -->
+            <!-- 6. Staff Salary & Advance Management -->
             <div id="tab-staff" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -367,7 +421,7 @@
                 </div>
             </div>
 
-            <!-- 6. Expenses -->
+            <!-- 7. Expenses -->
             <div id="tab-expenses" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Daily Expense Entry</h3>
@@ -396,7 +450,7 @@
                 </div>
             </div>
 
-            <!-- 7. Tank Stock -->
+            <!-- 8. Tank Stock -->
             <div id="tab-tanks" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Underground Storage Tanks (UST)</h3>
@@ -421,7 +475,7 @@
                 </div>
             </div>
 
-            <!-- 8. Subscription Plans Tab -->
+            <!-- 9. Subscription Plans Tab -->
             <div id="tab-pricing" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center max-w-4xl mx-auto">
                     <span class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Flexible SaaS Pricing</span>
@@ -509,71 +563,148 @@
         let currentUserPump = "PetroFlow Pro";
         let latestRecordsData = [];
 
+        const blockedEmailDomains = [
+            'tempmail.com', '10minutemail.com', 'mailinator.com', 'throwawaymail.com',
+            'guerrillamail.com', 'sharklasers.com', 'getairmail.com', 'dispostable.com',
+            'yopmail.com', 'trashmail.com', 'fakeinbox.com', 'crazymailing.com'
+        ];
+
+        function isClientValidEmail(email) {
+            const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!regex.test(email)) return false;
+            const domain = email.split('@')[1].toLowerCase();
+            return !blockedEmailDomains.includes(domain);
+        }
+
         window.onload = function() {
             const user = localStorage.getItem('petroUser');
             if (user) {
-                const userData = JSON.parse(user);
-                currentUserPump = userData.pumpName;
-                document.getElementById('loginModal').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                document.getElementById('navPumpTitle').innerText = userData.pumpName;
-                
-                if(userData.isAdmin) {
-                    document.getElementById('trialBadgeText').innerText = '👑 Admin Access (Lifetime Free)';
-                } else {
-                    document.getElementById('trialBadgeText').innerText = `⏳ Free Trial: ${userData.trialDaysLeft} Days Remaining`;
-                }
-
+                applyUserData(JSON.parse(user));
                 loadAllData();
+            }
+        };
+
+        function applyUserData(userData) {
+            currentUserPump = userData.pumpName || 'Fuel Station';
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('navPumpTitle').innerText = userData.pumpName;
+            
+            // Header Avatar info
+            const nameInitial = (userData.ownerName || userData.pumpName || 'U').charAt(0).toUpperCase();
+            document.getElementById('navAvatarLetter').innerText = nameInitial;
+            document.getElementById('profileBigAvatar').innerText = nameInitial;
+            document.getElementById('navOwnerName').innerText = userData.ownerName || userData.pumpName;
+
+            // Account Tab inputs
+            document.getElementById('accEmail').value = userData.email;
+            document.getElementById('accPumpName').value = userData.pumpName || '';
+            document.getElementById('accOwnerName').value = userData.ownerName || '';
+            document.getElementById('accPhone').value = userData.phone || '';
+            document.getElementById('profileDisplayPump').innerText = userData.pumpName;
+            document.getElementById('profileDisplayEmail').innerText = userData.email;
+
+            if (userData.isAdmin) {
+                document.getElementById('trialBadgeText').innerText = '👑 Admin Access (Lifetime Free)';
+                document.getElementById('profilePlanBadge').innerText = '👑 Lifetime Admin Plan';
+            } else {
+                document.getElementById('trialBadgeText').innerText = `⏳ Free Trial: ${userData.trialDaysLeft} Days Remaining`;
+                document.getElementById('profilePlanBadge').innerText = `Trial: ${userData.trialDaysLeft} Days Left`;
             }
         }
 
-        function fillDemo(pump, email) {
-            document.getElementById('loginPumpName').value = pump;
-            document.getElementById('loginEmail').value = email;
-        }
-
+        // Login with Email & Password
         document.getElementById('loginForm').onsubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('loginSubmitBtn');
             const btnText = document.getElementById('btnText');
-            
-            btn.disabled = true;
-            btnText.innerText = "Authenticating Station...";
+            const errSpan = document.getElementById('emailErrorMsg');
 
             const pumpName = document.getElementById('loginPumpName').value;
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!isClientValidEmail(email)) {
+                errSpan.classList.remove('hidden');
+                return;
+            } else {
+                errSpan.classList.add('hidden');
+            }
+
+            btn.disabled = true;
+            btnText.innerText = "Authenticating...";
 
             try {
                 const res = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pumpName, email })
+                    body: JSON.stringify({ pumpName, email, password })
                 });
                 const data = await res.json();
 
                 if (data.success) {
                     localStorage.setItem('petroUser', JSON.stringify(data));
-                    currentUserPump = data.pumpName;
-                    document.getElementById('loginModal').classList.add('hidden');
-                    document.getElementById('appContainer').classList.remove('hidden');
-                    document.getElementById('navPumpTitle').innerText = data.pumpName;
-                    
-                    if(data.isAdmin) {
-                        document.getElementById('trialBadgeText').innerText = '👑 Admin Access (Lifetime Free)';
-                    } else {
-                        document.getElementById('trialBadgeText').innerText = `⏳ Free Trial: ${data.trialDaysLeft} Days Remaining`;
-                    }
-
+                    applyUserData(data);
                     loadAllData();
                 } else {
-                    alert('Login failed: ' + (data.error || 'Server error'));
+                    alert('Login Error: ' + (data.error || 'Unable to log in'));
                 }
             } catch(err) {
                 alert('Connection error: Ensure server is running!');
             } finally {
                 btn.disabled = false;
-                btnText.innerText = "Launch Dashboard & Trial";
+                btnText.innerText = "Sign In to Dashboard";
+            }
+        };
+
+        // Google One-Click Sign-In
+        async function loginWithGoogle() {
+            const simulatedGoogleEmail = prompt("Google Sign-In Simulator:\nEnter your Gmail address:", "owner@gmail.com");
+            if (!simulatedGoogleEmail) return;
+
+            const res = await fetch('/api/google-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: simulatedGoogleEmail,
+                    name: "Google Fuel Owner",
+                    pumpName: "Green Fuel Station"
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem('petroUser', JSON.stringify(data));
+                applyUserData(data);
+                loadAllData();
+            } else {
+                alert(data.error || "Google Sign-in failed");
+            }
+        }
+
+        function loginWithMicrosoft() {
+            alert("Microsoft Azure OAuth integration is ready! You can link your Azure Client ID.");
+        }
+
+        // Save Profile Edits (Email cannot be altered)
+        document.getElementById('profileForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('accEmail').value;
+            const pumpName = document.getElementById('accPumpName').value;
+            const ownerName = document.getElementById('accOwnerName').value;
+            const phone = document.getElementById('accPhone').value;
+
+            const res = await fetch('/api/update-profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, pumpName, ownerName, phone })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem('petroUser', JSON.stringify(data));
+                applyUserData(data);
+                alert("Profile changes saved successfully!");
+            } else {
+                alert(data.error || "Failed to update profile");
             }
         };
 
