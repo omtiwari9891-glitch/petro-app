@@ -216,4 +216,18 @@ app.post('/api/staff-advance', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});// Add this API route in your server.js
+app.get('/api/export-csv', (req, res) => {
+    db.all(`SELECT * FROM records ORDER BY id DESC`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        let csv = 'ID,Date,Shift,Attendant,FuelType,UnitPrice,OpeningMeter,ClosingMeter,Testing,Liters,Total\n';
+        rows.forEach(r => {
+            csv += `${r.id},${r.date},${r.shift},${r.attendant},${r.fuelType},${r.unitPrice},${r.openingMeter},${r.closingMeter},${r.testing},${r.liters},${r.total}\n`;
+        });
+        
+        res.header('Content-Type', 'text/csv');
+        res.attachment('petroflow_sales_report.csv');
+        res.send(csv);
+    });
 });

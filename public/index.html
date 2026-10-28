@@ -1,29 +1,32 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetroFlow Pro - Enterprise Petrol Pump Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
 </head>
-<body class="bg-slate-50 font-sans">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
 
     <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 bg-slate-900 bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-96 border border-slate-100">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-2xl w-96 border border-slate-100 dark:border-slate-700">
             <div class="text-center mb-6">
-                <span class="bg-blue-100 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Enterprise ERP + AI</span>
-                <h2 class="text-2xl font-extrabold mt-2 text-slate-800">PetroFlow Pro</h2>
+                <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Enterprise ERP + AI</span>
+                <h2 class="text-2xl font-extrabold mt-2 text-slate-800 dark:text-white">PetroFlow Pro</h2>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pump Name</label>
-                    <input type="text" id="loginPumpName" placeholder="e.g. Royal Fuel Station" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Pump Name</label>
+                    <input type="text" id="loginPumpName" placeholder="e.g. Royal Fuel Station" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Owner Email</label>
-                    <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Owner Email</label>
+                    <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">Start Trial / Login</button>
             </form>
@@ -32,7 +35,7 @@
 
     <!-- Main Container -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col">
-        <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40">
+        <header class="bg-slate-900 dark:bg-slate-950 text-white shadow-md sticky top-0 z-40 border-b border-slate-800">
             <div class="container mx-auto px-6 py-3.5 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
                     <div class="bg-blue-600 p-2 rounded-lg font-black text-lg tracking-wider">PF</div>
@@ -41,20 +44,24 @@
                         <span id="trialBadgeText" class="text-xs text-amber-400 font-semibold flex items-center gap-1">⏳ Trial Active</span>
                     </div>
                 </div>
-                <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">🌙 Dark Mode</button>
+                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
+                </div>
             </div>
         </header>
 
         <!-- Navigation Tabs -->
-        <nav class="bg-white border-b border-slate-200 shadow-sm">
+        <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
             <div class="container mx-auto px-6 flex space-x-1 overflow-x-auto">
-                <button onclick="switchTab('dashboard')" class="tab-btn py-3.5 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 text-sm whitespace-nowrap flex items-center gap-2">📊 Dashboard</button>
-                <button onclick="switchTab('shifts')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">⛽ Shift & Sales</button>
-                <button onclick="switchTab('customers')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👥 Credit & Udhar</button>
-                <button onclick="switchTab('staff')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👨‍💼 Staff Salary</button>
-                <button onclick="switchTab('expenses')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💸 Expenses</button>
-                <button onclick="switchTab('tanks')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🛢️ Tank Stock</button>
-                <button onclick="switchTab('pricing')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Subscription Plans</button>
+                <button onclick="switchTab('dashboard')" class="tab-btn py-3.5 px-4 font-semibold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 text-sm whitespace-nowrap flex items-center gap-2">📊 Dashboard</button>
+                <button onclick="switchTab('shifts')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">⛽ Shift & Sales</button>
+                <button onclick="switchTab('tally')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🧮 Cash Tally</button>
+                <button onclick="switchTab('customers')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👥 Credit & Udhar</button>
+                <button onclick="switchTab('staff')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👨‍💼 Staff Salary</button>
+                <button onclick="switchTab('expenses')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💸 Expenses</button>
+                <button onclick="switchTab('tanks')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🛢️ Tank Stock</button>
+                <button onclick="switchTab('pricing')" class="tab-btn py-3.5 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Subscription</button>
             </div>
         </nav>
 
@@ -64,26 +71,31 @@
             <!-- 1. Dashboard -->
             <div id="tab-dashboard" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <p class="text-xs font-bold uppercase text-slate-400">Total Revenue</p>
-                        <h3 id="dashTotalRevenue" class="text-2xl font-black text-slate-800 mt-2">₹0.00</h3>
+                        <h3 id="dashTotalRevenue" class="text-2xl font-black text-slate-800 dark:text-white mt-2">₹0.00</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <p class="text-xs font-bold uppercase text-slate-400">Petrol Sold</p>
-                        <h3 id="dashPetrolSold" class="text-2xl font-black text-blue-600 mt-2">0.00 L</h3>
+                        <h3 id="dashPetrolSold" class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-2">0.00 L</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <p class="text-xs font-bold uppercase text-slate-400">Diesel Sold</p>
-                        <h3 id="dashDieselSold" class="text-2xl font-black text-emerald-600 mt-2">0.00 L</h3>
+                        <h3 id="dashDieselSold" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2">0.00 L</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <p class="text-xs font-bold uppercase text-slate-400">Pending Udhar</p>
-                        <h3 id="dashTotalUdhar" class="text-2xl font-black text-red-600 mt-2">₹0.00</h3>
+                        <h3 id="dashTotalUdhar" class="text-2xl font-black text-red-600 dark:text-red-400 mt-2">₹0.00</h3>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">📈 Sales & Revenue Analytics</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">📥 Export Reports & Data</h3>
+                    <a href="/api/export-csv" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition shadow flex items-center gap-2">📊 Download Excel / CSV Report</a>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">📈 Sales & Revenue Analytics</h3>
                     <div class="w-full h-72">
                         <canvas id="salesChart"></canvas>
                     </div>
@@ -92,65 +104,101 @@
 
             <!-- 2. Shifts -->
             <div id="tab-shifts" class="tab-content hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">New Shift Sales Entry</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">New Shift Sales Entry</h3>
                     <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <input type="date" id="sDate" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="text" id="sShift" placeholder="Morning / Evening" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="text" id="sAttendant" placeholder="Attendant Name" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <select id="sFuelType" class="border border-slate-300 p-2.5 rounded-lg text-sm">
+                        <input type="date" id="sDate" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="text" id="sShift" placeholder="Morning / Evening" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="text" id="sAttendant" placeholder="Attendant Name" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <select id="sFuelType" class="border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
                             <option value="Petrol">Petrol</option>
                             <option value="Diesel">Diesel</option>
                         </select>
-                        <input type="number" step="0.01" id="sUnitPrice" placeholder="Unit Price (₹)" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters" value="0" class="border border-slate-300 p-2.5 rounded-lg text-sm">
+                        <input type="number" step="0.01" id="sUnitPrice" placeholder="Unit Price (₹)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters" value="0" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg md:col-span-4 transition shadow-md">Save Shift Entry</button>
                     </form>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Shift Records & Invoices</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Shift Records & Invoices</h3>
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-600">
-                                <th class="p-3 border-b">Date & Shift</th>
-                                <th class="p-3 border-b">Attendant</th>
-                                <th class="p-3 border-b">Fuel</th>
-                                <th class="p-3 border-b">Liters</th>
-                                <th class="p-3 border-b">Total (₹)</th>
-                                <th class="p-3 border-b">Actions</th>
+                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                <th class="p-3 border-b dark:border-slate-600">Date & Shift</th>
+                                <th class="p-3 border-b dark:border-slate-600">Attendant</th>
+                                <th class="p-3 border-b dark:border-slate-600">Fuel</th>
+                                <th class="p-3 border-b dark:border-slate-600">Liters</th>
+                                <th class="p-3 border-b dark:border-slate-600">Total (₹)</th>
+                                <th class="p-3 border-b dark:border-slate-600">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="recordsTableBody" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="recordsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 3. Customers & Udhar -->
+            <!-- 3. Cash Tally / Reconciliation Tab -->
+            <div id="tab-tally" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 max-w-xl mx-auto">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">🧮 Daily Cash & UPI Tally (Reconciliation)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Match total sales revenue with actual physical cash drawer and online receipts.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Total System Sales Revenue (₹)</label>
+                            <input type="number" id="tallyTotalSales" placeholder="0.00" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-2.5 rounded-lg text-sm font-bold text-blue-600" disabled>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Actual Cash in Drawer (₹)</label>
+                                <input type="number" step="0.01" id="tallyCash" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">UPI / Online Received (₹)</label>
+                                <input type="number" step="0.01" id="tallyUPI" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Credit / Udhar Given (₹)</label>
+                            <input type="number" step="0.01" id="tallyUdhar" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        </div>
+                        
+                        <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 mt-4">
+                            <div class="flex justify-between text-sm font-bold">
+                                <span>Difference / Shortage / Excess:</span>
+                                <span id="tallyResultText" class="text-slate-700 dark:text-slate-300">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Customers & Udhar -->
             <div id="tab-customers" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 class="text-lg font-bold text-slate-800 mb-4">Add Credit Customer (Udhar)</h3>
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Add Credit Customer (Udhar)</h3>
                         <form id="customerForm" class="space-y-4">
-                            <input type="text" id="cName" placeholder="Customer Name" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <input type="text" id="cPhone" placeholder="Phone" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <input type="text" id="cVehicle" placeholder="Vehicle No" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <input type="number" step="0.01" id="cAmount" placeholder="Initial Udhar Amount (₹)" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
+                            <input type="text" id="cName" placeholder="Customer Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="text" id="cPhone" placeholder="Phone" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="text" id="cVehicle" placeholder="Vehicle No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="number" step="0.01" id="cAmount" placeholder="Initial Udhar Amount (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg transition">Save Customer</button>
                         </form>
                     </div>
 
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 class="text-lg font-bold text-slate-800 mb-4">Receive Payment (Wasooli)</h3>
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Receive Payment (Wasooli)</h3>
                         <form id="paymentForm" class="space-y-4">
-                            <select id="pCustomerId" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
+                            <select id="pCustomerId" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
                                 <option value="">Select Customer</option>
                             </select>
-                            <input type="date" id="pDate" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <input type="number" step="0.01" id="pAmountPaid" placeholder="Amount Received (₹)" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <select id="pMode" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
+                            <input type="date" id="pDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="number" step="0.01" id="pAmountPaid" placeholder="Amount Received (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <select id="pMode" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
                                 <option value="Cash">Cash</option>
                                 <option value="Online/UPI">Online / UPI</option>
                             </select>
@@ -159,111 +207,111 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Customer Ledger List</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Customer Ledger List</h3>
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-600">
-                                <th class="p-3 border-b">Name</th>
-                                <th class="p-3 border-b">Phone</th>
-                                <th class="p-3 border-b">Vehicle No</th>
-                                <th class="p-3 border-b">Balance Due (₹)</th>
+                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                <th class="p-3 border-b dark:border-slate-600">Name</th>
+                                <th class="p-3 border-b dark:border-slate-600">Phone</th>
+                                <th class="p-3 border-b dark:border-slate-600">Vehicle No</th>
+                                <th class="p-3 border-b dark:border-slate-600">Balance Due (₹)</th>
                             </tr>
                         </thead>
-                        <tbody id="customersTableBody" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="customersTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 4. Staff Salary & Advance Management -->
+            <!-- 5. Staff Salary & Advance Management -->
             <div id="tab-staff" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 class="text-lg font-bold text-slate-800 mb-4">Register New Staff / Attendant</h3>
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Register New Staff / Attendant</h3>
                         <form id="staffForm" class="space-y-4">
-                            <input type="text" id="stName" placeholder="Staff Name" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <input type="text" id="stPhone" placeholder="Phone Number" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <input type="number" step="0.01" id="stSalary" placeholder="Monthly Salary (₹)" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
-                            <input type="number" step="0.01" id="stAdvance" placeholder="Initial Advance Taken (₹, Optional)" value="0" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
+                            <input type="text" id="stName" placeholder="Staff Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="text" id="stPhone" placeholder="Phone Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="number" step="0.01" id="stSalary" placeholder="Monthly Salary (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="number" step="0.01" id="stAdvance" placeholder="Initial Advance Taken (₹, Optional)" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg transition">Add Staff</button>
                         </form>
                     </div>
 
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 class="text-lg font-bold text-slate-800 mb-4">Issue / Record Advance Money</h3>
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Issue / Record Advance Money</h3>
                         <form id="advanceForm" class="space-y-4">
-                            <select id="advStaffId" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
+                            <select id="advStaffId" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
                                 <option value="">Select Staff Member</option>
                             </select>
-                            <input type="number" step="0.01" id="advAmount" placeholder="Advance Amount to Add (₹)" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm">
+                            <input type="number" step="0.01" id="advAmount" placeholder="Advance Amount to Add (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-lg transition">Add Advance Money</button>
                         </form>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Staff Salary & Advance Ledger</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Staff Salary & Advance Ledger</h3>
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-600">
-                                <th class="p-3 border-b">Staff Name</th>
-                                <th class="p-3 border-b">Phone</th>
-                                <th class="p-3 border-b">Monthly Salary (₹)</th>
-                                <th class="p-3 border-b text-orange-600">Advance Taken (₹)</th>
-                                <th class="p-3 border-b text-emerald-600">Net Payable Salary (₹)</th>
+                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                <th class="p-3 border-b dark:border-slate-600">Staff Name</th>
+                                <th class="p-3 border-b dark:border-slate-600">Phone</th>
+                                <th class="p-3 border-b dark:border-slate-600">Monthly Salary (₹)</th>
+                                <th class="p-3 border-b dark:border-slate-600 text-orange-600">Advance Taken (₹)</th>
+                                <th class="p-3 border-b dark:border-slate-600 text-emerald-600">Net Payable Salary (₹)</th>
                             </tr>
                         </thead>
-                        <tbody id="staffTableBody" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="staffTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 5. Expenses -->
+            <!-- 6. Expenses -->
             <div id="tab-expenses" class="tab-content hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Daily Expense Entry</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Daily Expense Entry</h3>
                     <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <input type="date" id="eDate" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="text" id="eCategory" placeholder="Category (Salary/Electricity/Misc)" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="number" step="0.01" id="eAmount" placeholder="Amount (₹)" required class="border border-slate-300 p-2.5 rounded-lg text-sm">
-                        <input type="text" id="eNotes" placeholder="Notes / Ref" class="border border-slate-300 p-2.5 rounded-lg text-sm">
+                        <input type="date" id="eDate" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="text" id="eCategory" placeholder="Category (Salary/Electricity/Misc)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="number" step="0.01" id="eAmount" placeholder="Amount (₹)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="text" id="eNotes" placeholder="Notes / Ref" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                         <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg md:col-span-4 transition">Save Expense</button>
                     </form>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Expense Records</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Expense Records</h3>
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-600">
-                                <th class="p-3 border-b">Date</th>
-                                <th class="p-3 border-b">Category</th>
-                                <th class="p-3 border-b">Amount (₹)</th>
-                                <th class="p-3 border-b">Notes</th>
+                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
+                                <th class="p-3 border-b dark:border-slate-600">Date</th>
+                                <th class="p-3 border-b dark:border-slate-600">Category</th>
+                                <th class="p-3 border-b dark:border-slate-600">Amount (₹)</th>
+                                <th class="p-3 border-b dark:border-slate-600">Notes</th>
                             </tr>
                         </thead>
-                        <tbody id="expensesTableBody" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="expensesTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 6. Tank Stock -->
+            <!-- 7. Tank Stock -->
             <div id="tab-tanks" class="tab-content hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">Underground Storage Tanks (UST)</h3>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Underground Storage Tanks (UST)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                        <div class="border border-slate-200 p-6 rounded-xl bg-blue-50/50 space-y-4">
-                            <h4 class="font-black text-blue-900 text-lg">MS (Petrol) Tank</h4>
-                            <p class="text-sm font-bold text-slate-700" id="petrolStockText">14,500 Liters (72.5%)</p>
-                            <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden border border-slate-300">
+                        <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-blue-50/50 dark:bg-slate-900 space-y-4">
+                            <h4 class="font-black text-blue-900 dark:text-blue-400 text-lg">MS (Petrol) Tank</h4>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="petrolStockText">14,500 Liters (72.5%)</p>
+                            <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-4 overflow-hidden border border-slate-300 dark:border-slate-700">
                                 <div id="petrolProgressBar" class="bg-blue-600 h-full rounded-full" style="width: 72.5%;"></div>
                             </div>
                             <button onclick="refillTank('Petrol', 2000)" class="bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg">+ Add Tanker (+2,000L)</button>
                         </div>
-                        <div class="border border-slate-200 p-6 rounded-xl bg-emerald-50/50 space-y-4">
-                            <h4 class="font-black text-emerald-900 text-lg">HSD (Diesel) Tank</h4>
-                            <p class="text-sm font-bold text-slate-700" id="dieselStockText">18,200 Liters (72.8%)</p>
-                            <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden border border-slate-300">
+                        <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-emerald-50/50 dark:bg-slate-900 space-y-4">
+                            <h4 class="font-black text-emerald-900 dark:text-emerald-400 text-lg">HSD (Diesel) Tank</h4>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="dieselStockText">18,200 Liters (72.8%)</p>
+                            <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-4 overflow-hidden border border-slate-300 dark:border-slate-700">
                                 <div id="dieselProgressBar" class="bg-emerald-600 h-full rounded-full" style="width: 72.8%;"></div>
                             </div>
                             <button onclick="refillTank('Diesel', 3000)" class="bg-emerald-600 text-white text-xs font-bold py-2 px-3 rounded-lg">+ Add Tanker (+3,000L)</button>
@@ -272,39 +320,37 @@
                 </div>
             </div>
 
-            <!-- 7. Subscription Plans Tab -->
+            <!-- 8. Subscription Plans Tab -->
             <div id="tab-pricing" class="tab-content hidden space-y-6">
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 text-center max-w-4xl mx-auto">
-                    <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Flexible SaaS Pricing</span>
-                    <h2 class="text-3xl font-black text-slate-800 mt-2">Upgrade Your Petrol Pump Subscription</h2>
-                    <p class="text-slate-500 text-sm mt-1">Choose the ideal plan to keep your pump management running seamlessly.</p>
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center max-w-4xl mx-auto">
+                    <span class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Flexible SaaS Pricing</span>
+                    <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-2">Upgrade Your Petrol Pump Subscription</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Choose the ideal plan to keep your pump management running seamlessly.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 text-left">
-                        <!-- Starter Plan -->
-                        <div class="border border-slate-200 p-6 rounded-xl bg-slate-50 flex flex-col justify-between">
+                        <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-slate-50 dark:bg-slate-900 flex flex-col justify-between">
                             <div>
-                                <h3 class="font-bold text-slate-800 text-lg">Starter Plan</h3>
-                                <p class="text-xs text-slate-500 mt-1">For single nozzle small pumps</p>
-                                <div class="my-4"><span class="text-3xl font-black text-slate-900">₹999</span><span class="text-xs text-slate-500"> / month</span></div>
-                                <ul class="text-xs space-y-2 text-slate-600">
+                                <h3 class="font-bold text-slate-800 dark:text-white text-lg">Starter Plan</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">For single nozzle small pumps</p>
+                                <div class="my-4"><span class="text-3xl font-black text-slate-900 dark:text-white">₹999</span><span class="text-xs text-slate-500"> / month</span></div>
+                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
                                     <li>✔ Shift & Sales Entry</li>
                                     <li>✔ Basic Tank Stock</li>
                                     <li>✔ Expense Manager</li>
                                 </ul>
                             </div>
-                            <button onclick="buyPlan('Starter Plan', 999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Starter</button>
+                            <button onclick="buyPlan('Starter Plan', 999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Starter</button>
                         </div>
 
-                        <!-- Professional Plan -->
-                        <div class="border-2 border-blue-600 p-6 rounded-xl bg-white shadow-lg flex flex-col justify-between relative">
-                            <span class="absolute -top-3 left-1/2 -transform -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase">Most Popular</span>
+                        <div class="border-2 border-blue-600 p-6 rounded-xl bg-white dark:bg-slate-900 shadow-lg flex flex-col justify-between relative">
+                            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase">Most Popular</span>
                             <div>
-                                <h3 class="font-bold text-blue-900 text-lg">Professional</h3>
-                                <p class="text-xs text-slate-500 mt-1">For standard active petrol pumps</p>
-                                <div class="my-4"><span class="text-3xl font-black text-slate-900">₹2,499</span><span class="text-xs text-slate-500"> / month</span></div>
-                                <ul class="text-xs space-y-2 text-slate-600">
+                                <h3 class="font-bold text-blue-900 dark:text-blue-400 text-lg">Professional</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">For standard active petrol pumps</p>
+                                <div class="my-4"><span class="text-3xl font-black text-slate-900 dark:text-white">₹2,499</span><span class="text-xs text-slate-500"> / month</span></div>
+                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
                                     <li>✔ Everything in Starter</li>
-                                    <li>✔ Credit & Udhar Customer Ledger</li>
+                                    <li>✔ Credit & Udhar Ledger</li>
                                     <li>✔ Staff Salary & Advance Mgmt</li>
                                     <li>✔ PDF Bill / Invoice Printing</li>
                                 </ul>
@@ -312,20 +358,19 @@
                             <button onclick="buyPlan('Professional Plan', 2499)" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Choose Pro</button>
                         </div>
 
-                        <!-- Enterprise Plan -->
-                        <div class="border border-slate-200 p-6 rounded-xl bg-slate-50 flex flex-col justify-between">
+                        <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-slate-50 dark:bg-slate-900 flex flex-col justify-between">
                             <div>
-                                <h3 class="font-bold text-slate-800 text-lg">Enterprise</h3>
-                                <p class="text-xs text-slate-500 mt-1">For multi-pump station owners</p>
-                                <div class="my-4"><span class="text-3xl font-black text-slate-900">₹4,999</span><span class="text-xs text-slate-500"> / month</span></div>
-                                <ul class="text-xs space-y-2 text-slate-600">
+                                <h3 class="font-bold text-slate-800 dark:text-white text-lg">Enterprise</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">For multi-pump station owners</p>
+                                <div class="my-4"><span class="text-3xl font-black text-slate-900 dark:text-white">₹4,999</span><span class="text-xs text-slate-500"> / month</span></div>
+                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
                                     <li>✔ Everything in Pro</li>
                                     <li>✔ Advanced Analytics Graphs</li>
-                                    <li>✔ Priority Phone & WhatsApp Support</li>
-                                    <li>✔ Multi-User Role Access</li>
+                                    <li>✔ Priority Support</li>
+                                    <li>✔ Multi-User Access</li>
                                 </ul>
                             </div>
-                            <button onclick="buyPlan('Enterprise Plan', 4999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Enterprise</button>
+                            <button onclick="buyPlan('Enterprise Plan', 4999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Enterprise</button>
                         </div>
                     </div>
                 </div>
@@ -335,18 +380,18 @@
 
         <!-- AI Assistant Floating Widget -->
         <div class="fixed bottom-6 right-6 z-50">
-            <div id="aiChatBox" class="hidden bg-white w-80 rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col mb-3">
+            <div id="aiChatBox" class="hidden bg-white dark:bg-slate-800 w-80 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col mb-3">
                 <div class="bg-blue-600 text-white p-3.5 flex justify-between items-center">
                     <h4 class="font-bold text-sm flex items-center gap-2">🤖 PetroAI Assistant</h4>
                     <button onclick="toggleAIChat()" class="text-white hover:text-slate-200 font-bold text-sm">✕</button>
                 </div>
-                <div id="aiChatMessages" class="p-3.5 h-64 overflow-y-auto text-xs space-y-2 bg-slate-50 flex flex-col">
-                    <div class="bg-blue-50 text-blue-900 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100">
+                <div id="aiChatMessages" class="p-3.5 h-64 overflow-y-auto text-xs space-y-2 bg-slate-50 dark:bg-slate-900 flex flex-col">
+                    <div class="bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-300 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100 dark:border-slate-700">
                         Hello! Main aapka AI assistant hoon. Aap mujhse pump ki sales, stock ya udhar ke baare mein pooch sakte hain.
                     </div>
                 </div>
-                <div class="p-2.5 bg-white border-t border-slate-200 flex gap-2">
-                    <input type="text" id="aiInput" placeholder="Ask AI anything..." class="flex-grow border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="p-2.5 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex gap-2">
+                    <input type="text" id="aiInput" placeholder="Ask AI anything..." class="flex-grow border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button onclick="sendAIMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">Send</button>
                 </div>
             </div>
@@ -409,15 +454,26 @@
             location.reload();
         }
 
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
-                el.classList.add('text-slate-600');
+                el.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600');
+                el.classList.add('text-slate-600', 'dark:text-slate-300');
             });
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            event.currentTarget.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
-            event.currentTarget.classList.remove('text-slate-600');
+            event.currentTarget.classList.add('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600');
+            event.currentTarget.classList.remove('text-slate-600', 'dark:text-slate-300');
         }
 
         function loadAllData() {
@@ -432,8 +488,7 @@
         }
 
         function toggleAIChat() {
-            const box = document.getElementById('aiChatBox');
-            box.classList.toggle('hidden');
+            document.getElementById('aiChatBox').classList.toggle('hidden');
         }
 
         function sendAIMessage() {
@@ -442,25 +497,21 @@
             if(!msg) return;
 
             const chatMessages = document.getElementById('aiChatMessages');
-            chatMessages.innerHTML += `<div class="bg-slate-200 text-slate-800 p-2.5 rounded-xl self-end max-w-[85%]">${msg}</div>`;
+            chatMessages.innerHTML += `<div class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white p-2.5 rounded-xl self-end max-w-[85%]">${msg}</div>`;
             input.value = '';
 
-            // AI Smart Response Logic
             setTimeout(() => {
                 let reply = "Main samajh nahi paya. Aap 'sales', 'stock', ya 'udhar' ke baare mein pooch sakte hain.";
                 const lower = msg.toLowerCase();
                 if(lower.includes('sales') || lower.includes('revenue') || lower.includes('bikri')) {
                     let totalRev = latestRecordsData.reduce((sum, r) => sum + r.total, 0);
                     reply = `Aapki total recorded sales revenue abhi tak ₹${totalRev.toLocaleString()} ki hai.`;
-                } else if(lower.includes('stock') || lower.includes('tank') || lower.includes('diesel') || lower.includes('petrol')) {
+                } else if(lower.includes('stock') || lower.includes('tank')) {
                     reply = `Current Tank Stock: Petrol -> ${globalPetrolStock} Liters, Diesel -> ${globalDieselStock} Liters.`;
                 } else if(lower.includes('udhar') || lower.includes('credit')) {
                     reply = `Aapke customer ledger mein pending udhar ka data Dashboard par available hai.`;
-                } else if(lower.includes('hello') || lower.includes('hi')) {
-                    reply = `Hello! Main aapki kya sahayata kar sakta hoon?`;
                 }
-
-                chatMessages.innerHTML += `<div class="bg-blue-50 text-blue-900 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100">${reply}</div>`;
+                chatMessages.innerHTML += `<div class="bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-300 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100 dark:border-slate-700">${reply}</div>`;
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }, 500);
         }
@@ -480,13 +531,13 @@
                 if(r.fuelType === 'Diesel') dieselL += r.liters;
 
                 tbody.innerHTML += `<tr>
-                    <td class="p-3 border-b">${r.date} (${r.shift})</td>
-                    <td class="p-3 border-b">${r.attendant}</td>
-                    <td class="p-3 border-b">${r.fuelType}</td>
-                    <td class="p-3 border-b font-semibold">${r.liters} L</td>
-                    <td class="p-3 border-b font-black">₹${r.total.toLocaleString()}</td>
-                    <td class="p-3 border-b flex gap-2">
-                        <button onclick='printInvoice(${JSON.stringify(r)})' class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-bold hover:bg-blue-200">🖨️ Bill</button>
+                    <td class="p-3 border-b dark:border-slate-700">${r.date} (${r.shift})</td>
+                    <td class="p-3 border-b dark:border-slate-700">${r.attendant}</td>
+                    <td class="p-3 border-b dark:border-slate-700">${r.fuelType}</td>
+                    <td class="p-3 border-b dark:border-slate-700 font-semibold">${r.liters} L</td>
+                    <td class="p-3 border-b dark:border-slate-700 font-black">₹${r.total.toLocaleString()}</td>
+                    <td class="p-3 border-b dark:border-slate-700 flex gap-2">
+                        <button onclick='printInvoice(${JSON.stringify(r)})' class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-xs font-bold">🖨️ Bill</button>
                         <button onclick="deleteRecord(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Delete</button>
                     </td>
                 </tr>`;
@@ -495,7 +546,31 @@
             document.getElementById('dashTotalRevenue').innerText = '₹' + totalRev.toLocaleString();
             document.getElementById('dashPetrolSold').innerText = petrolL.toFixed(2) + ' L';
             document.getElementById('dashDieselSold').innerText = dieselL.toFixed(2) + ' L';
+            document.getElementById('tallyTotalSales').value = totalRev;
+            calculateTally();
             renderSalesGraph(data.records);
+        }
+
+        function calculateTally() {
+            const totalSales = parseFloat(document.getElementById('tallyTotalSales').value) || 0;
+            const cash = parseFloat(document.getElementById('tallyCash').value) || 0;
+            const upi = parseFloat(document.getElementById('tallyUPI').value) || 0;
+            const udhar = parseFloat(document.getElementById('tallyUdhar').value) || 0;
+
+            const accounted = cash + upi + udhar;
+            const diff = accounted - totalSales;
+
+            const resText = document.getElementById('tallyResultText');
+            if (diff === 0) {
+                resText.innerText = "✅ Perfect Tally! (Matched)";
+                resText.className = "text-emerald-600 font-bold";
+            } else if (diff > 0) {
+                resText.innerText = `⚠️ Excess Cash: +₹${diff.toFixed(2)}`;
+                resText.className = "text-amber-600 font-bold";
+            } else {
+                resText.innerText = `❌ Shortage: -₹${Math.abs(diff).toFixed(2)}`;
+                resText.className = "text-red-600 font-bold";
+            }
         }
 
         function printInvoice(r) {
@@ -562,7 +637,7 @@
             let totalUdhar = 0;
             data.customers.forEach(c => {
                 totalUdhar += c.udharAmount;
-                tbody.innerHTML += `<tr><td class="p-3 border-b">${c.name}</td><td class="p-3 border-b">${c.phone}</td><td class="p-3 border-b">${c.vehicleNo}</td><td class="p-3 border-b text-red-600 font-bold">₹${c.udharAmount.toLocaleString()}</td></tr>`;
+                tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${c.name}</td><td class="p-3 border-b dark:border-slate-700">${c.phone}</td><td class="p-3 border-b dark:border-slate-700">${c.vehicleNo}</td><td class="p-3 border-b dark:border-slate-700 text-red-600 font-bold">₹${c.udharAmount.toLocaleString()}</td></tr>`;
                 select.innerHTML += `<option value="${c.id}">${c.name} (${c.vehicleNo}) - Due: ₹${c.udharAmount}</option>`;
             });
             document.getElementById('dashTotalUdhar').innerText = '₹' + totalUdhar.toLocaleString();
@@ -596,11 +671,11 @@
             data.staff.forEach(st => {
                 const netPayable = st.monthlySalary - st.advanceTaken;
                 tbody.innerHTML += `<tr>
-                    <td class="p-3 border-b font-medium">${st.name}</td>
-                    <td class="p-3 border-b">${st.phone}</td>
-                    <td class="p-3 border-b">₹${st.monthlySalary.toLocaleString()}</td>
-                    <td class="p-3 border-b text-orange-600 font-bold">₹${st.advanceTaken.toLocaleString()}</td>
-                    <td class="p-3 border-b text-emerald-600 font-black">₹${netPayable.toLocaleString()}</td>
+                    <td class="p-3 border-b dark:border-slate-700 font-medium">${st.name}</td>
+                    <td class="p-3 border-b dark:border-slate-700">${st.phone}</td>
+                    <td class="p-3 border-b dark:border-slate-700">₹${st.monthlySalary.toLocaleString()}</td>
+                    <td class="p-3 border-b dark:border-slate-700 text-orange-600 font-bold">₹${st.advanceTaken.toLocaleString()}</td>
+                    <td class="p-3 border-b dark:border-slate-700 text-emerald-600 font-black">₹${netPayable.toLocaleString()}</td>
                 </tr>`;
                 select.innerHTML += `<option value="${st.id}">${st.name} (Salary: ₹${st.monthlySalary}, Advance: ₹${st.advanceTaken})</option>`;
             });
@@ -630,7 +705,7 @@
             const tbody = document.getElementById('expensesTableBody');
             tbody.innerHTML = '';
             data.expenses.forEach(e => {
-                tbody.innerHTML += `<tr><td class="p-3 border-b">${e.date}</td><td class="p-3 border-b">${e.category}</td><td class="p-3 border-b text-amber-600 font-bold">₹${e.amount.toLocaleString()}</td><td class="p-3 border-b">${e.notes || '-'}</td></tr>`;
+                tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${e.date}</td><td class="p-3 border-b dark:border-slate-700">${e.category}</td><td class="p-3 border-b dark:border-slate-700 text-amber-600 font-bold">₹${e.amount.toLocaleString()}</td><td class="p-3 border-b dark:border-slate-700">${e.notes || '-'}</td></tr>`;
             });
         }
 
