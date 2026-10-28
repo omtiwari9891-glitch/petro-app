@@ -9,125 +9,52 @@
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
-    <style>
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
-        }
-        .bg-glow {
-            animation: pulseGlow 6s ease-in-out infinite;
-        }
-    </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300 antialiased selection:bg-blue-600 selection:text-white">
 
-    <!-- Login Modal (Email + Password + Google Sign-In) -->
+    <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-        <div class="absolute w-96 h-96 bg-blue-600/30 rounded-full blur-3xl -top-10 -left-10 bg-glow pointer-events-none"></div>
-        <div class="absolute w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl -bottom-10 -right-10 bg-glow pointer-events-none"></div>
-
-        <div class="relative w-full max-w-4xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden grid grid-cols-1 md:grid-cols-12 transition-all">
+        <div class="relative w-full max-w-4xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden grid grid-cols-1 md:grid-cols-12">
             
-            <!-- Left Branding Showcase Panel -->
-            <div class="md:col-span-5 bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 p-8 text-white flex flex-col justify-between relative overflow-hidden">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent)]"></div>
-                <div class="relative z-10 space-y-6">
+            <div class="md:col-span-5 bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 p-8 text-white flex flex-col justify-between">
+                <div class="space-y-6">
                     <div class="flex items-center space-x-3">
-                        <div class="w-11 h-11 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 text-white font-black text-xl shadow-inner">
-                            ⛽
-                        </div>
+                        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center text-xl">⛽</div>
                         <div>
-                            <h2 class="text-xl font-black tracking-wide leading-none">PetroFlow Pro</h2>
-                            <p class="text-xs text-blue-200 mt-0.5">Next-Gen Fuel Station ERP</p>
+                            <h2 class="text-xl font-black">PetroFlow Pro</h2>
+                            <p class="text-xs text-blue-200">Next-Gen Fuel Station ERP</p>
                         </div>
                     </div>
-
-                    <div class="pt-2">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                            5-Day Full-Access Free Trial
-                        </span>
-                        <h3 class="text-2xl font-bold mt-3 leading-snug">Secure Multi-Tenant Fuel Station Control.</h3>
-                        <p class="text-xs text-blue-100/80 mt-2 leading-relaxed">JWT authorization, complete station data isolation, and audit-grade financial tracking.</p>
-                    </div>
-
-                    <div class="space-y-2.5 pt-2">
-                        <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
-                            <span class="text-emerald-400 text-sm">✔</span>
-                            <span>Isolated Station Data & Encrypted Passwords</span>
-                        </div>
-                        <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
-                            <span class="text-emerald-400 text-sm">✔</span>
-                            <span>Direct Shift Closing & Instant Cash Memo</span>
-                        </div>
-                        <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
-                            <span class="text-emerald-400 text-sm">✔</span>
-                            <span>PetroAI Assistant with Troubleshooting</span>
-                        </div>
+                    <div>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">5-Day Full Free Trial</span>
+                        <h3 class="text-2xl font-bold mt-3">Multi-Tenant Isolated Cloud Ledger</h3>
+                        <p class="text-xs text-blue-100 mt-2">Every station has dedicated, isolated tables for shifts, tanks, customer ledgers, and staff payroll.</p>
                     </div>
                 </div>
-
-                <div class="relative z-10 pt-6 text-[11px] text-blue-200/70 border-t border-white/10 flex justify-between items-center">
-                    <span>100% Encrypted & Local Database</span>
-                    <span>v2.7 Enterprise</span>
+                <div class="text-[11px] text-blue-200/70 border-t border-white/10 pt-4">
+                    <span>Role-Based Station Isolation • v3.0 Live</span>
                 </div>
             </div>
 
-            <!-- Right Interactive Form Panel -->
             <div class="md:col-span-7 p-8 md:p-10 flex flex-col justify-center">
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <h3 class="text-2xl font-black text-slate-800 dark:text-white">Account Login</h3>
-                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-2.5 py-1 rounded-md">JWT Protected</span>
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Apne email aur password se secure login karein.</p>
-                </div>
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Account Login</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Enter pump details and password to access your station dashboard.</p>
 
-                <!-- One Click Social Sign-In Buttons -->
-                <div class="grid grid-cols-2 gap-3 mt-5">
-                    <button type="button" onclick="loginWithGoogle()" class="flex items-center justify-center gap-2 py-2.5 px-3 border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 text-xs font-bold transition shadow-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-                        <span>Google Sign In</span>
-                    </button>
-                    <button type="button" onclick="loginWithMicrosoft()" class="flex items-center justify-center gap-2 py-2.5 px-3 border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 text-xs font-bold transition shadow-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>
-                        <span>Microsoft</span>
-                    </button>
-                </div>
-
-                <div class="relative my-4 flex items-center justify-center">
-                    <div class="border-t border-slate-200 dark:border-slate-700 w-full"></div>
-                    <span class="bg-white dark:bg-slate-800 px-3 text-[11px] uppercase font-bold text-slate-400 absolute">or email credentials</span>
-                </div>
-
-                <form id="loginForm" class="space-y-3.5">
+                <form id="loginForm" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1.5">
-                            Fuel Station / Pump Name
-                        </label>
-                        <input type="text" id="loginPumpName" placeholder="e.g. Royal Fuel Station" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Fuel Station Name</label>
+                        <input type="text" id="loginPumpName" placeholder="e.g. Royal Fuel Station" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
-
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1.5">
-                            Owner Registered Email
-                        </label>
-                        <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm">
-                        <span id="emailErrorMsg" class="hidden text-[11px] text-red-500 font-semibold mt-1 block">⚠️ Please enter a real email. Temporary domains are blocked.</span>
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Owner Email</label>
+                        <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
+                        <span id="emailErrorMsg" class="hidden text-[11px] text-red-500 font-semibold mt-1">⚠️ Temporary/disposable email addresses are blocked.</span>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
-                            <span>Password</span>
-                            <span class="text-[10px] text-blue-600 dark:text-blue-400 font-normal">Min 6 characters</span>
-                        </label>
-                        <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition shadow-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Password (Min. 6 chars)</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
-
-                    <button type="submit" id="loginSubmitBtn" class="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
-                        <span id="btnText">Sign In to Dashboard</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </button>
+                    <button type="submit" id="loginSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/25">Sign In to Station</button>
                 </form>
             </div>
         </div>
@@ -135,48 +62,45 @@
 
     <!-- Main Container -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col">
-        <header class="bg-slate-900 dark:bg-slate-950 text-white shadow-md sticky top-0 z-40 border-b border-slate-800">
+        <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40 border-b border-slate-800">
             <div class="container mx-auto px-6 py-3 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="bg-blue-600 p-2 rounded-lg font-black text-lg tracking-wider">PF</div>
+                    <div class="bg-blue-600 p-2 rounded-lg font-black text-lg">PF</div>
                     <div>
                         <h1 id="navPumpTitle" class="text-base font-bold leading-tight">PetroFlow Pro</h1>
-                        <span id="trialBadgeText" class="text-xs text-amber-400 font-semibold flex items-center gap-1">⏳ Trial Active</span>
+                        <span id="trialBadgeText" class="text-xs text-amber-400 font-semibold">⏳ Free Trial</span>
                     </div>
                 </div>
-                
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">🌙 Theme</button>
-                    
-                    <button onclick="switchTab('account')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700 transition">
-                        <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs" id="navAvatarLetter">U</div>
+                    <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700">🌙 Theme</button>
+                    <button onclick="switchTab('account')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700">
+                        <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs" id="navAvatarLetter">U</div>
                         <span id="navOwnerName">Account</span>
                     </button>
-
-                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
+                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700">Logout</button>
                 </div>
             </div>
         </header>
 
         <!-- Navigation Tabs -->
-        <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+        <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
             <div class="container mx-auto px-6 flex space-x-1 overflow-x-auto">
-                <button onclick="switchTab('dashboard')" class="tab-btn py-3 px-4 font-semibold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 text-sm whitespace-nowrap flex items-center gap-2">📊 Dashboard</button>
-                <button onclick="switchTab('shifts')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">⛽ Shift & Sales</button>
-                <button onclick="switchTab('tally')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🧮 Cash Tally</button>
-                <button onclick="switchTab('customers')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👥 Credit & Udhar</button>
-                <button onclick="switchTab('staff')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👨‍💼 Staff Salary</button>
-                <button onclick="switchTab('expenses')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💸 Expenses</button>
-                <button onclick="switchTab('tanks')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🛢️ Tank Stock</button>
-                <button onclick="switchTab('account')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👤 My Account</button>
-                <button onclick="switchTab('pricing')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Plans (from ₹16/d)</button>
+                <button onclick="switchTab('dashboard')" class="tab-btn py-3 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 text-sm whitespace-nowrap">📊 Dashboard</button>
+                <button onclick="switchTab('shifts')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">⛽ Shift & Sales</button>
+                <button onclick="switchTab('tally')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">🧮 Cash Tally</button>
+                <button onclick="switchTab('customers')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">👥 Credit & Udhar</button>
+                <button onclick="switchTab('staff')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">👨‍💼 Staff Salary</button>
+                <button onclick="switchTab('expenses')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">💸 Expenses</button>
+                <button onclick="switchTab('tanks')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">🛢️ Tank Stock</button>
+                <button onclick="switchTab('account')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">👤 My Account</button>
+                <button onclick="switchTab('pricing')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap">💎 Plans</button>
             </div>
         </nav>
 
         <!-- Body Content -->
         <main class="container mx-auto px-6 py-8 flex-grow space-y-6">
             
-            <!-- 1. Dashboard -->
+            <!-- Dashboard Tab -->
             <div id="tab-dashboard" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -185,77 +109,35 @@
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <p class="text-xs font-bold uppercase text-slate-400">Petrol Sold</p>
-                        <h3 id="dashPetrolSold" class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-2">0.00 L</h3>
+                        <h3 id="dashPetrolSold" class="text-2xl font-black text-blue-600 mt-2">0.00 L</h3>
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <p class="text-xs font-bold uppercase text-slate-400">Diesel Sold</p>
-                        <h3 id="dashDieselSold" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2">0.00 L</h3>
+                        <h3 id="dashDieselSold" class="text-2xl font-black text-emerald-600 mt-2">0.00 L</h3>
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <p class="text-xs font-bold uppercase text-slate-400">Pending Udhar</p>
-                        <h3 id="dashTotalUdhar" class="text-2xl font-black text-red-600 dark:text-red-400 mt-2">₹0.00</h3>
+                        <h3 id="dashTotalUdhar" class="text-2xl font-black text-red-600 mt-2">₹0.00</h3>
                     </div>
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">📥 Audit & Spreadsheet Exports</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Download formatted sales records in CSV format.</p>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">📥 Audit Reports</h3>
+                        <p class="text-xs text-slate-500">Download formatted station records in CSV format.</p>
                     </div>
-                    <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition shadow flex items-center gap-2">📊 Download Excel / CSV</button>
+                    <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition shadow">📊 Download CSV</button>
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">📈 Sales & Revenue Analytics</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">📈 Sales Analytics</h3>
                     <div class="w-full h-72">
                         <canvas id="salesChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. Account & Profile Section -->
-            <div id="tab-account" class="tab-content hidden space-y-6">
-                <div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
-                    <div class="flex items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-700">
-                        <div class="w-16 h-16 rounded-full bg-blue-600 text-white font-black text-2xl flex items-center justify-center shadow-lg" id="profileBigAvatar">
-                            U
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-black text-slate-800 dark:text-white" id="profileDisplayPump">Station Name</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400" id="profileDisplayEmail">owner@petrolpump.com</p>
-                            <span class="inline-block mt-1 text-[11px] font-semibold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full" id="profilePlanBadge">Free Trial</span>
-                        </div>
-                    </div>
-
-                    <form id="profileForm" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Registered Email (Cannot be changed)</label>
-                            <input type="email" id="accEmail" disabled class="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-mono text-slate-500 cursor-not-allowed">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Petrol Pump / Station Name</label>
-                            <input type="text" id="accPumpName" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Owner / Manager Full Name</label>
-                            <input type="text" id="accOwnerName" placeholder="e.g. Ramesh Sharma" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Contact Phone Number</label>
-                            <input type="text" id="accPhone" placeholder="+91 98765 43210" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                        </div>
-
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition shadow-md">
-                            Save Profile Changes
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- 3. Shifts -->
+            <!-- Shifts Tab -->
             <div id="tab-shifts" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">New Shift Sales Entry</h3>
@@ -293,35 +175,35 @@
                 </div>
             </div>
 
-            <!-- 4. Cash Tally / Reconciliation Tab -->
+            <!-- Cash Tally Tab (Auto-Calculated System Total) -->
             <div id="tab-tally" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 max-w-xl mx-auto">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">🧮 Daily Cash & UPI Tally (Reconciliation)</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Match total sales revenue with actual physical cash drawer and online receipts.</p>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🧮 Daily Cash & UPI Reconciliation</h3>
+                    <p class="text-xs text-slate-500 mb-6">Total sales is automatically pulled from recorded shifts.</p>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Total System Sales Revenue (₹)</label>
-                            <input type="number" id="tallyTotalSales" placeholder="0.00" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-2.5 rounded-lg text-sm font-bold text-blue-600" disabled>
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">System Sales Total (₹)</label>
+                            <input type="number" id="tallyTotalSales" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-2.5 rounded-lg text-sm font-bold text-blue-600" disabled>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Actual Cash in Drawer (₹)</label>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Physical Cash in Drawer (₹)</label>
                                 <input type="number" step="0.01" id="tallyCash" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">UPI / Online Received (₹)</label>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Online UPI / Card (₹)</label>
                                 <input type="number" step="0.01" id="tallyUPI" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Credit / Udhar Given (₹)</label>
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">New Credit / Udhar Issued (₹)</label>
                             <input type="number" step="0.01" id="tallyUdhar" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                         </div>
                         
                         <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 mt-4">
                             <div class="flex justify-between text-sm font-bold">
-                                <span>Difference / Shortage / Excess:</span>
+                                <span>Reconciliation Status:</span>
                                 <span id="tallyResultText" class="text-slate-700 dark:text-slate-300">₹0.00</span>
                             </div>
                         </div>
@@ -329,7 +211,7 @@
                 </div>
             </div>
 
-            <!-- 5. Customers & Udhar -->
+            <!-- Customers Tab -->
             <div id="tab-customers" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -376,27 +258,27 @@
                 </div>
             </div>
 
-            <!-- 6. Staff Salary & Advance Management -->
+            <!-- Staff Tab -->
             <div id="tab-staff" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Register New Staff / Attendant</h3>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Register New Staff</h3>
                         <form id="staffForm" class="space-y-4">
                             <input type="text" id="stName" placeholder="Staff Name" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             <input type="text" id="stPhone" placeholder="Phone Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             <input type="number" step="0.01" id="stSalary" placeholder="Monthly Salary (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                            <input type="number" step="0.01" id="stAdvance" placeholder="Initial Advance Taken (₹, Optional)" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="number" step="0.01" id="stAdvance" placeholder="Initial Advance (₹)" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg transition">Add Staff</button>
                         </form>
                     </div>
 
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Issue / Record Advance Money</h3>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Record Advance</h3>
                         <form id="advanceForm" class="space-y-4">
                             <select id="advStaffId" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
-                                <option value="">Select Staff Member</option>
+                                <option value="">Select Staff</option>
                             </select>
-                            <input type="number" step="0.01" id="advAmount" placeholder="Advance Amount to Add (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                            <input type="number" step="0.01" id="advAmount" placeholder="Advance Amount (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-lg transition">Add Advance Money</button>
                         </form>
                     </div>
@@ -411,7 +293,7 @@
                                 <th class="p-3 border-b dark:border-slate-600">Phone</th>
                                 <th class="p-3 border-b dark:border-slate-600">Monthly Salary (₹)</th>
                                 <th class="p-3 border-b dark:border-slate-600 text-orange-600">Advance Taken (₹)</th>
-                                <th class="p-3 border-b dark:border-slate-600 text-emerald-600">Net Payable Salary (₹)</th>
+                                <th class="p-3 border-b dark:border-slate-600 text-emerald-600">Net Payable (₹)</th>
                             </tr>
                         </thead>
                         <tbody id="staffTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
@@ -419,13 +301,13 @@
                 </div>
             </div>
 
-            <!-- 7. Expenses -->
+            <!-- Expenses Tab -->
             <div id="tab-expenses" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Daily Expense Entry</h3>
                     <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <input type="date" id="eDate" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
-                        <input type="text" id="eCategory" placeholder="Category (Salary/Electricity/Misc)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="text" id="eCategory" placeholder="Category" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                         <input type="number" step="0.01" id="eAmount" placeholder="Amount (₹)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                         <input type="text" id="eNotes" placeholder="Notes / Ref" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                         <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg md:col-span-4 transition">Save Expense</button>
@@ -433,7 +315,6 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Expense Records</h3>
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
@@ -448,206 +329,125 @@
                 </div>
             </div>
 
-            <!-- 8. Tank Stock -->
+            <!-- Tank Stock Tab (Persisted Real Stock & Delivery Challan Form) -->
             <div id="tab-tanks" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Underground Storage Tanks (UST)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Live Underground Storage Tanks (UST)</h3>
+                    <p class="text-xs text-slate-500 mb-6">Stock is persistent in SQLite and auto-deducted per shift meter reading.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-blue-50/50 dark:bg-slate-900 space-y-4">
                             <h4 class="font-black text-blue-900 dark:text-blue-400 text-lg">MS (Petrol) Tank</h4>
-                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="petrolStockText">14,500 Liters (72.5%)</p>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="petrolStockText">Loading...</p>
                             <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-4 overflow-hidden border border-slate-300 dark:border-slate-700">
-                                <div id="petrolProgressBar" class="bg-blue-600 h-full rounded-full" style="width: 72.5%;"></div>
+                                <div id="petrolProgressBar" class="bg-blue-600 h-full rounded-full" style="width: 0%;"></div>
                             </div>
-                            <button onclick="refillTank('Petrol', 2000)" class="bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg">+ Add Tanker (+2,000L)</button>
                         </div>
                         <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-emerald-50/50 dark:bg-slate-900 space-y-4">
                             <h4 class="font-black text-emerald-900 dark:text-emerald-400 text-lg">HSD (Diesel) Tank</h4>
-                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="dieselStockText">18,200 Liters (72.8%)</p>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="dieselStockText">Loading...</p>
                             <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-4 overflow-hidden border border-slate-300 dark:border-slate-700">
-                                <div id="dieselProgressBar" class="bg-emerald-600 h-full rounded-full" style="width: 72.8%;"></div>
+                                <div id="dieselProgressBar" class="bg-emerald-600 h-full rounded-full" style="width: 0%;"></div>
                             </div>
-                            <button onclick="refillTank('Diesel', 3000)" class="bg-emerald-600 text-white text-xs font-bold py-2 px-3 rounded-lg">+ Add Tanker (+3,000L)</button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Traceable Tanker Delivery Form -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Record Tanker Delivery (Fuel Inflow)</h3>
+                    <form id="deliveryForm" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <input type="date" id="delDate" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <select id="delFuelType" class="border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg text-sm">
+                            <option value="Petrol">Petrol (MS)</option>
+                            <option value="Diesel">Diesel (HSD)</option>
+                        </select>
+                        <input type="number" step="0.01" id="delLiters" placeholder="Delivery Liters" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="text" id="delChallan" placeholder="Challan / Invoice No" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <input type="number" step="0.001" id="delDensity" placeholder="Density (e.g. 745.2)" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg md:col-span-5 transition shadow">Add Verified Tanker Delivery</button>
+                    </form>
                 </div>
             </div>
 
-            <!-- 9. Modern Affordable Subscription Plans (from ₹16/Day) -->
-            <div id="tab-pricing" class="tab-content hidden space-y-8">
-                <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 text-white text-center shadow-lg relative overflow-hidden">
-                    <div class="relative z-10 max-w-2xl mx-auto space-y-2">
-                        <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase">⚡ India's Most Affordable Pump ERP</span>
-                        <h2 class="text-3xl font-black">Apne Pump Ka Poora Hisab Sambhalein Sirf ₹16/Din Mein</h2>
-                        <p class="text-blue-100 text-xs">Chai ke kharche se bhi kam mein complete digital control. No hidden charges. Cancel anytime.</p>
+            <!-- Account Tab -->
+            <div id="tab-account" class="tab-content hidden space-y-6">
+                <div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+                    <div class="flex items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="w-16 h-16 rounded-full bg-blue-600 text-white font-black text-2xl flex items-center justify-center shadow-lg" id="profileBigAvatar">U</div>
+                        <div>
+                            <h3 class="text-xl font-black text-slate-800 dark:text-white" id="profileDisplayPump">Station Name</h3>
+                            <p class="text-xs text-slate-500" id="profileDisplayEmail">owner@petrolpump.com</p>
+                        </div>
                     </div>
+                    <form id="profileForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Registered Email (Read-Only)</label>
+                            <input type="email" id="accEmail" disabled class="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-mono text-slate-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Fuel Station Name</label>
+                            <input type="text" id="accPumpName" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Owner Name</label>
+                            <input type="text" id="accOwnerName" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Phone</label>
+                            <input type="text" id="accPhone" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+                        </div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition">Save Changes</button>
+                    </form>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto text-left">
-                    <!-- 1. Micro / Single-Nozzle Plan -->
-                    <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-2xl bg-white dark:bg-slate-800 flex flex-col justify-between shadow-sm hover:shadow-md transition">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h3 class="font-bold text-slate-800 dark:text-white text-lg">Micro / Kisan Seva</h3>
-                                <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 rounded-full text-slate-600 dark:text-slate-300">₹16/Day</span>
-                            </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Single nozzle ya chote gramin petrol pump ke liye.</p>
-                            <div class="my-5">
-                                <span class="text-3xl font-black text-slate-900 dark:text-white">₹499</span>
-                                <span class="text-xs text-slate-500"> / month</span>
-                                <p class="text-[11px] text-emerald-600 font-semibold mt-1">Or ₹4,799/year (Save 20%)</p>
-                            </div>
-                            <ul class="text-xs space-y-2.5 text-slate-600 dark:text-slate-300">
-                                <li class="flex items-center gap-2"><span>✔</span> Daily Shift & Meter Entry</li>
-                                <li class="flex items-center gap-2"><span>✔</span> Cash & UPI Tally Matching</li>
-                                <li class="flex items-center gap-2"><span>✔</span> Daily Expense Tracker</li>
-                                <li class="flex items-center gap-2"><span>✔</span> PetroAI Usage Guide</li>
-                            </ul>
-                        </div>
-                        <button onclick="buyPlan('Micro Plan', 499)" class="mt-6 w-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
-                            <span>Get Started @ ₹16/d</span>
-                        </button>
-                    </div>
-
-                    <!-- 2. Smart Pro Plan (Most Popular) -->
-                    <div class="border-2 border-blue-600 p-6 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex flex-col justify-between relative transform md:-translate-y-2">
-                        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black tracking-wider px-3 py-1 rounded-full uppercase shadow">Most Popular Choice</span>
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h3 class="font-bold text-blue-900 dark:text-blue-400 text-lg">Smart Pro</h3>
-                                <span class="text-[10px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 px-2.5 py-0.5 rounded-full">₹33/Day</span>
-                            </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Standard 2-4 nozzle petrol pumps ke liye best.</p>
-                            <div class="my-5">
-                                <span class="text-3xl font-black text-slate-900 dark:text-white">₹999</span>
-                                <span class="text-xs text-slate-500"> / month</span>
-                                <p class="text-[11px] text-emerald-600 font-semibold mt-1">Or ₹9,499/year (2 Mahine Free)</p>
-                            </div>
-                            <ul class="text-xs space-y-2.5 text-slate-600 dark:text-slate-300 font-medium">
-                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> Everything in Micro Plan</li>
-                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> <b>Credit & Udhar Ledger (Wasooli)</b></li>
-                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> <b>Staff Salary & Advance Mgmt</b></li>
-                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> <b>Thermal Bill / Invoice Printing</b></li>
-                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> Technical Issue Resolver AI</li>
-                            </ul>
-                        </div>
-                        <button onclick="buyPlan('Smart Pro Plan', 999)" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1.5">
-                            <span>Upgrade to Pro @ ₹33/d</span>
-                        </button>
-                    </div>
-
-                    <!-- 3. Enterprise Plan -->
-                    <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-2xl bg-white dark:bg-slate-800 flex flex-col justify-between shadow-sm hover:shadow-md transition">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h3 class="font-bold text-slate-800 dark:text-white text-lg">Enterprise</h3>
-                                <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 rounded-full text-slate-600 dark:text-slate-300">₹83/Day</span>
-                            </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Highway multi-dispenser & multi-pump chain ke liye.</p>
-                            <div class="my-5">
-                                <span class="text-3xl font-black text-slate-900 dark:text-white">₹2,499</span>
-                                <span class="text-xs text-slate-500"> / month</span>
-                                <p class="text-[11px] text-emerald-600 font-semibold mt-1">Or ₹23,999/year (Priority VIP)</p>
-                            </div>
-                            <ul class="text-xs space-y-2.5 text-slate-600 dark:text-slate-300">
-                                <li class="flex items-center gap-2"><span>✔</span> Everything in Smart Pro</li>
-                                <li class="flex items-center gap-2"><span>✔</span> <b>Excel / CSV One-Click Export</b></li>
-                                <li class="flex items-center gap-2"><span>✔</span> Advanced Revenue Chart Trends</li>
-                                <li class="flex items-center gap-2"><span>✔</span> Dedicated WhatsApp & Phone Support</li>
-                            </ul>
-                        </div>
-                        <button onclick="buyPlan('Enterprise Plan', 2499)" class="mt-6 w-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
-                            <span>Choose Enterprise</span>
-                        </button>
-                    </div>
+            <!-- Pricing Tab -->
+            <div id="tab-pricing" class="tab-content hidden space-y-6">
+                <div class="text-center max-w-xl mx-auto mb-6">
+                    <h2 class="text-2xl font-black">Flexible Subscription Plans</h2>
+                    <p class="text-xs text-slate-500 mt-1">Starting from ₹16/day for single nozzle pumps.</p>
                 </div>
-
-                <!-- UPI Payment Simulator Modal -->
-                <div id="paymentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl max-w-sm w-full text-center space-y-4 border border-slate-200 dark:border-slate-700 shadow-2xl">
-                        <h3 class="text-lg font-black" id="payModalTitle">Plan Upgrade</h3>
-                        <p class="text-xs text-slate-500" id="payModalSub">Direct UPI / QR Code Payment</p>
-                        
-                        <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-slate-700">
-                            <div class="w-32 h-32 bg-slate-200 dark:bg-slate-800 flex items-center justify-center rounded-lg text-4xl shadow-inner">
-                                📱
-                            </div>
-                            <p class="text-xs font-mono font-bold mt-2 text-blue-600">BHIM / PhonePe / GPay UPI</p>
-                            <span class="text-lg font-black mt-1" id="payModalAmount">₹0.00</span>
-                        </div>
-
-                        <div class="flex gap-2">
-                            <button onclick="confirmSimulatedPayment()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition">I Have Paid (Activate)</button>
-                            <button onclick="closePaymentModal()" class="px-4 bg-slate-200 dark:bg-slate-700 text-xs font-bold py-2.5 rounded-xl">Cancel</button>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <h4 class="font-bold text-lg">Micro Plan</h4>
+                        <p class="text-2xl font-black mt-2">₹499 <span class="text-xs font-normal text-slate-400">/ mo</span></p>
+                        <p class="text-xs text-slate-500 mt-1">₹16/day for single nozzle rural pumps.</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border-2 border-blue-600 shadow-xl">
+                        <span class="text-[10px] font-bold uppercase bg-blue-600 text-white px-2 py-0.5 rounded-full">Most Popular</span>
+                        <h4 class="font-bold text-lg mt-2">Smart Pro</h4>
+                        <p class="text-2xl font-black mt-2 text-blue-600">₹999 <span class="text-xs font-normal text-slate-400">/ mo</span></p>
+                        <p class="text-xs text-slate-500 mt-1">₹33/day for standard stations with udhar ledger.</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <h4 class="font-bold text-lg">Enterprise</h4>
+                        <p class="text-2xl font-black mt-2">₹2,499 <span class="text-xs font-normal text-slate-400">/ mo</span></p>
+                        <p class="text-xs text-slate-500 mt-1">Multi-dispenser highway pumps with priority support.</p>
                     </div>
                 </div>
             </div>
 
         </main>
-
-        <!-- AI Assistant Floating Widget -->
-        <div class="fixed bottom-6 right-6 z-50">
-            <div id="aiChatBox" class="hidden bg-white dark:bg-slate-800 w-80 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col mb-3">
-                <div class="bg-blue-600 text-white p-3.5 flex justify-between items-center">
-                    <h4 class="font-bold text-sm flex items-center gap-2">🤖 PetroAI Assistant</h4>
-                    <button onclick="toggleAIChat()" class="text-white hover:text-slate-200 font-bold text-sm">✕</button>
-                </div>
-                <div id="aiChatMessages" class="p-3.5 h-64 overflow-y-auto text-xs space-y-2 bg-slate-50 dark:bg-slate-900 flex flex-col">
-                    <div class="bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-300 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100 dark:border-slate-700">
-                        Hello! Main aapka <b>PetroAI Support Assistant</b> hoon. Website chalane ki jankari chahiye ya koi technical problem theek karni hai, mujhse pooch sakte hain!
-                    </div>
-                </div>
-                <div class="p-2.5 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex gap-2">
-                    <input type="text" id="aiInput" placeholder="Ask: 'bill print nahi ho raha' ya 'shift kaise karein'..." class="flex-grow border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button onclick="sendAIMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">Send</button>
-                </div>
-            </div>
-            <button onclick="toggleAIChat()" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-105">
-                🤖
-            </button>
-        </div>
     </div>
 
     <script>
-        let globalPetrolStock = 14500;
-        let globalDieselStock = 18200;
         let mySalesChart = null;
         let currentUserPump = "PetroFlow Pro";
         let latestRecordsData = [];
-        let pendingPlanName = "";
 
-        // Helper for Authenticated API Requests with JWT Token
         async function authFetch(url, options = {}) {
             const user = JSON.parse(localStorage.getItem('petroUser') || '{}');
-            const headers = {
-                'Content-Type': 'application/json',
-                ...(options.headers || {})
-            };
-            if (user && user.token) {
-                headers['Authorization'] = `Bearer ${user.token}`;
-            }
+            const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+            if (user && user.token) headers['Authorization'] = `Bearer ${user.token}`;
 
             const res = await fetch(url, { ...options, headers });
             if (res.status === 401 || res.status === 403) {
-                alert('Session expired or unauthorized. Please log in again.');
+                alert('Session expired. Please log in again.');
                 logout();
                 throw new Error('Unauthorized');
             }
             return res;
-        }
-
-        const blockedEmailDomains = [
-            'tempmail.com', '10minutemail.com', 'mailinator.com', 'throwawaymail.com',
-            'guerrillamail.com', 'sharklasers.com', 'getairmail.com', 'dispostable.com',
-            'yopmail.com', 'trashmail.com', 'fakeinbox.com', 'crazymailing.com'
-        ];
-
-        function isClientValidEmail(email) {
-            const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!regex.test(email)) return false;
-            const domain = email.split('@')[1].toLowerCase();
-            return !blockedEmailDomains.includes(domain);
         }
 
         window.onload = function() {
@@ -664,9 +464,9 @@
             document.getElementById('appContainer').classList.remove('hidden');
             document.getElementById('navPumpTitle').innerText = userData.pumpName;
             
-            const nameInitial = (userData.ownerName || userData.pumpName || 'U').charAt(0).toUpperCase();
-            document.getElementById('navAvatarLetter').innerText = nameInitial;
-            document.getElementById('profileBigAvatar').innerText = nameInitial;
+            const initial = (userData.ownerName || userData.pumpName || 'U').charAt(0).toUpperCase();
+            document.getElementById('navAvatarLetter').innerText = initial;
+            document.getElementById('profileBigAvatar').innerText = initial;
             document.getElementById('navOwnerName').innerText = userData.ownerName || userData.pumpName;
 
             document.getElementById('accEmail').value = userData.email;
@@ -675,36 +475,13 @@
             document.getElementById('accPhone').value = userData.phone || '';
             document.getElementById('profileDisplayPump').innerText = userData.pumpName;
             document.getElementById('profileDisplayEmail').innerText = userData.email;
-
-            if (userData.isAdmin) {
-                document.getElementById('trialBadgeText').innerText = '👑 Admin Access (Lifetime Free)';
-                document.getElementById('profilePlanBadge').innerText = '👑 Lifetime Admin Plan';
-            } else {
-                document.getElementById('trialBadgeText').innerText = `⏳ Free Trial: ${userData.trialDaysLeft} Days Remaining`;
-                document.getElementById('profilePlanBadge').innerText = `Trial: ${userData.trialDaysLeft} Days Left`;
-            }
         }
 
-        // Login Form Submission
         document.getElementById('loginForm').onsubmit = async function(e) {
             e.preventDefault();
-            const btn = document.getElementById('loginSubmitBtn');
-            const btnText = document.getElementById('btnText');
-            const errSpan = document.getElementById('emailErrorMsg');
-
             const pumpName = document.getElementById('loginPumpName').value;
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
-
-            if (!isClientValidEmail(email)) {
-                errSpan.classList.remove('hidden');
-                return;
-            } else {
-                errSpan.classList.add('hidden');
-            }
-
-            btn.disabled = true;
-            btnText.innerText = "Authenticating...";
 
             try {
                 const res = await fetch('/api/login', {
@@ -713,43 +490,34 @@
                     body: JSON.stringify({ pumpName, email, password })
                 });
                 const data = await res.json();
-
                 if (data.success) {
                     localStorage.setItem('petroUser', JSON.stringify(data));
                     applyUserData(data);
                     loadAllData();
                 } else {
-                    alert('Login Error: ' + (data.error || 'Unable to log in'));
+                    alert('Login Error: ' + data.error);
                 }
             } catch(err) {
-                alert('Connection error: Ensure server is running!');
-            } finally {
-                btn.disabled = false;
-                btnText.innerText = "Sign In to Dashboard";
+                alert('Failed to connect to server.');
             }
         };
 
-        // Profile Form Update (JWT authFetch)
         document.getElementById('profileForm').onsubmit = async function(e) {
             e.preventDefault();
-            const pumpName = document.getElementById('accPumpName').value;
-            const ownerName = document.getElementById('accOwnerName').value;
-            const phone = document.getElementById('accPhone').value;
-
-            try {
-                const res = await authFetch('/api/update-profile', {
-                    method: 'POST',
-                    body: JSON.stringify({ pumpName, ownerName, phone })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    localStorage.setItem('petroUser', JSON.stringify(data));
-                    applyUserData(data);
-                    alert("Profile changes saved successfully!");
-                } else {
-                    alert(data.error || "Failed to update profile");
-                }
-            } catch(e) {}
+            const res = await authFetch('/api/update-profile', {
+                method: 'POST',
+                body: JSON.stringify({
+                    pumpName: document.getElementById('accPumpName').value,
+                    ownerName: document.getElementById('accOwnerName').value,
+                    phone: document.getElementById('accPhone').value
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem('petroUser', JSON.stringify(data));
+                applyUserData(data);
+                alert("Profile saved successfully!");
+            }
         };
 
         function logout() {
@@ -758,25 +526,18 @@
         }
 
         function toggleDarkMode() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                html.classList.add('light');
-            } else {
-                html.classList.remove('light');
-                html.classList.add('dark');
-            }
+            document.documentElement.classList.toggle('dark');
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600');
-                el.classList.add('text-slate-600', 'dark:text-slate-300');
+                el.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                el.classList.add('text-slate-600');
             });
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            event.currentTarget.classList.add('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600');
-            event.currentTarget.classList.remove('text-slate-600', 'dark:text-slate-300');
+            event.currentTarget.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            event.currentTarget.classList.remove('text-slate-600');
         }
 
         function loadAllData() {
@@ -784,133 +545,108 @@
             loadCustomers();
             loadStaff();
             loadExpenses();
-        }
-
-        async function downloadCSVReport() {
-            try {
-                const res = await authFetch('/api/export-csv');
-                const blob = await res.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `sales_report_${Date.now()}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-            } catch (err) {
-                alert('Export failed. Check your connection or session.');
-            }
-        }
-
-        function buyPlan(planName, price) {
-            pendingPlanName = planName;
-            document.getElementById('payModalTitle').innerText = planName;
-            document.getElementById('payModalAmount').innerText = '₹' + price + ' (Inc. GST)';
-            document.getElementById('paymentModal').classList.remove('hidden');
-        }
-
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.add('hidden');
-        }
-
-        function confirmSimulatedPayment() {
-            closePaymentModal();
-            alert(`🎉 Payment of ${pendingPlanName} confirmed successfully via UPI! Your subscription is now active.`);
-        }
-
-        function toggleAIChat() {
-            document.getElementById('aiChatBox').classList.toggle('hidden');
-        }
-
-        // Smart PetroAI Support Assistant
-        function sendAIMessage() {
-            const input = document.getElementById('aiInput');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            const chatMessages = document.getElementById('aiChatMessages');
-            chatMessages.innerHTML += `<div class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white p-2.5 rounded-xl self-end max-w-[85%]">${msg}</div>`;
-            input.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            setTimeout(() => {
-                let reply = "Main samajh nahi paya. Aap mujhse pooch sakte hain:<br>• 'Shift entry kaise karein?'<br>• 'Bill print nahi ho raha'<br>• 'Sales ya stock report'<br>• 'Data load issue fix'";
-                const lower = msg.toLowerCase();
-
-                if (lower.includes('issue') || lower.includes('problem') || lower.includes('error') || lower.includes('theek') || lower.includes('fix') || lower.includes('kharab') || lower.includes('nahi ho raha')) {
-                    if (lower.includes('print') || lower.includes('bill') || lower.includes('invoice')) {
-                        reply = "🛠️ <b>Bill Print Issue Fix:</b><br>1. Browser ke URL bar ke right corner par dekhein, pop-up block toh nahi hai.<br>2. Pop-up setting ko <b>'Always allow'</b> par set karein.<br>3. Check karein printer connected aur online hai.";
-                    } else if (lower.includes('load') || lower.includes('connection') || lower.includes('server') || lower.includes('data')) {
-                        reply = "🛠️ <b>Data / Connection Fix:</b><br>1. Terminal mein check karein server run ho raha hai (`node server.js`).<br>2. Page ko hard reload karein: <b>Ctrl + Shift + R</b>.<br>3. Check karein JWT token valid hai ya dobara login karein.";
-                    } else if (lower.includes('meter') || lower.includes('calc') || lower.includes('hisab')) {
-                        reply = "🛠️ <b>Meter Reading Fix:</b><br>Formula: <code>(Closing Meter - Opening Meter) - Testing Liters</code>.<br>Hamesha Closing Meter ko Opening Meter se bada enter karein.";
-                    } else {
-                        reply = "🛠️ <b>General Troubleshooting:</b><br>1. Browser cache clear karein.<br>2. F12 daba kar 'Console' tab mein red line error check karein.<br>3. Server terminal mein <code>Ctrl + C</code> daba kar dobara <code>node server.js</code> chalayein.";
-                    }
-                }
-                else if (lower.includes('kaise') || lower.includes('guide') || lower.includes('help') || lower.includes('chalae') || lower.includes('use') || lower.includes('sikhao')) {
-                    if (lower.includes('shift') || lower.includes('sale') || lower.includes('entry')) {
-                        reply = "📖 <b>Shift Sales Kaise Karein:</b><br>1. <b>'Shift & Sales'</b> tab par jayein.<br>2. Date, attendant, fuel type (Petrol/Diesel), rate, aur meter reading bharein.<br>3. 'Save Shift Entry' dabayein; underground tank stock aur total revenue apne aap adjust ho jayega.";
-                    } else if (lower.includes('udhar') || lower.includes('customer') || lower.includes('wasooli') || lower.includes('credit')) {
-                        reply = "📖 <b>Udhar & Wasooli Guide:</b><br>1. <b>'Credit & Udhar'</b> tab mein 'Add Credit Customer' se customer aur vehicle number register karein.<br>2. Jab customer paise de, toh 'Receive Payment' form se cash/UPI wasooli note karein.";
-                    } else if (lower.includes('salary') || lower.includes('advance') || lower.includes('staff')) {
-                        reply = "📖 <b>Staff Salary & Advance:</b><br>1. <b>'Staff Salary'</b> tab par jayein.<br>2. Staff ka naam aur monthly salary add karein.<br>3. Advance lene par 'Issue Advance' form bharein, system net salary automatic subtract kar dega.";
-                    } else if (lower.includes('tally') || lower.includes('cash') || lower.includes('galla')) {
-                        reply = "📖 <b>Cash Tally (Reconciliation):</b><br>1. <b>'Cash Tally'</b> tab kholein.<br>2. Shift khatam hone par drawer ka physical cash aur UPI balance enter karein.<br>3. System match karke batayega ki koi shortage ya excess toh nahi hai.";
-                    } else {
-                        reply = "📖 <b>PetroFlow Pro Navigation:</b><br>• <b>Dashboard:</b> Total revenue, chart aur stock summary.<br>• <b>Shift & Sales:</b> Daily nozzle meter entries.<br>• <b>Tank Stock:</b> Fuel dip volume aur tanker entry (+2,000L).<br>• <b>My Account:</b> Station aur owner details update karne ke liye.";
-                    }
-                }
-                else if (lower.includes('sales') || lower.includes('revenue') || lower.includes('bikri')) {
-                    let totalRev = latestRecordsData.reduce((sum, r) => sum + r.total, 0);
-                    reply = `📊 Aapki recorded sales revenue total <b>₹${totalRev.toLocaleString()}</b> hai.`;
-                } else if (lower.includes('stock') || lower.includes('tank') || lower.includes('diesel') || lower.includes('petrol')) {
-                    reply = `🛢️ <b>Current Stock:</b><br>Petrol Tank: ${globalPetrolStock.toLocaleString()} L<br>Diesel Tank: ${globalDieselStock.toLocaleString()} L`;
-                } else if (lower.includes('hi') || lower.includes('hello') || lower.includes('namaste')) {
-                    reply = "Namaste! Main aapka <b>PetroAI Assistant</b> hoon. Website chalane ki jankari chahiye ya koi technical error theek karna hai, mujhse pooch sakte hain.";
-                }
-
-                chatMessages.innerHTML += `<div class="bg-blue-50 dark:bg-slate-800 text-blue-950 dark:text-blue-200 p-3 rounded-xl self-start max-w-[90%] border border-blue-100 dark:border-slate-700 leading-relaxed text-[11px] shadow-sm">${reply}</div>`;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 350);
+            loadTanks();
         }
 
         async function loadRecords() {
-            try {
-                const res = await authFetch('/api/records');
-                const data = await res.json();
-                latestRecordsData = data.records;
-                const tbody = document.getElementById('recordsTableBody');
-                tbody.innerHTML = '';
-                
-                let totalRev = 0, petrolL = 0, dieselL = 0;
+            const res = await authFetch('/api/records');
+            const data = await res.json();
+            latestRecordsData = data.records;
+            const tbody = document.getElementById('recordsTableBody');
+            tbody.innerHTML = '';
+            
+            let totalRev = 0, petrolL = 0, dieselL = 0;
+            data.records.forEach(r => {
+                totalRev += r.total;
+                if(r.fuelType === 'Petrol') petrolL += r.liters;
+                if(r.fuelType === 'Diesel') dieselL += r.liters;
 
-                data.records.forEach(r => {
-                    totalRev += r.total;
-                    if(r.fuelType === 'Petrol') petrolL += r.liters;
-                    if(r.fuelType === 'Diesel') dieselL += r.liters;
+                tbody.innerHTML += `<tr>
+                    <td class="p-3 border-b dark:border-slate-700">${r.date} (${r.shift})</td>
+                    <td class="p-3 border-b dark:border-slate-700">${r.attendant}</td>
+                    <td class="p-3 border-b dark:border-slate-700">${r.fuelType}</td>
+                    <td class="p-3 border-b dark:border-slate-700 font-semibold">${r.liters} L</td>
+                    <td class="p-3 border-b dark:border-slate-700 font-black">₹${r.total.toLocaleString()}</td>
+                    <td class="p-3 border-b dark:border-slate-700">
+                        <button onclick="deleteRecord(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Delete</button>
+                    </td>
+                </tr>`;
+            });
 
-                    tbody.innerHTML += `<tr>
-                        <td class="p-3 border-b dark:border-slate-700">${r.date} (${r.shift})</td>
-                        <td class="p-3 border-b dark:border-slate-700">${r.attendant}</td>
-                        <td class="p-3 border-b dark:border-slate-700">${r.fuelType}</td>
-                        <td class="p-3 border-b dark:border-slate-700 font-semibold">${r.liters} L</td>
-                        <td class="p-3 border-b dark:border-slate-700 font-black">₹${r.total.toLocaleString()}</td>
-                        <td class="p-3 border-b dark:border-slate-700 flex gap-2">
-                            <button onclick='printInvoice(${JSON.stringify(r)})' class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-xs font-bold">🖨️ Bill</button>
-                            <button onclick="deleteRecord(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Delete</button>
-                        </td>
-                    </tr>`;
-                });
-
-                document.getElementById('dashTotalRevenue').innerText = '₹' + totalRev.toLocaleString();
-                document.getElementById('dashPetrolSold').innerText = petrolL.toFixed(2) + ' L';
-                document.getElementById('dashDieselSold').innerText = dieselL.toFixed(2) + ' L';
-                document.getElementById('tallyTotalSales').value = totalRev;
-                calculateTally();
-                renderSalesGraph(data.records);
-            } catch(e) {}
+            document.getElementById('dashTotalRevenue').innerText = '₹' + totalRev.toLocaleString();
+            document.getElementById('dashPetrolSold').innerText = petrolL.toFixed(2) + ' L';
+            document.getElementById('dashDieselSold').innerText = dieselL.toFixed(2) + ' L';
+            document.getElementById('tallyTotalSales').value = totalRev;
+            calculateTally();
+            renderSalesGraph(data.records);
         }
+
+        document.getElementById('shiftForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const payload = { 
+                date: document.getElementById('sDate').value, 
+                shift: document.getElementById('sShift').value, 
+                attendant: document.getElementById('sAttendant').value, 
+                fuelType: document.getElementById('sFuelType').value, 
+                unitPrice: parseFloat(document.getElementById('sUnitPrice').value), 
+                openingMeter: parseFloat(document.getElementById('sOpening').value), 
+                closingMeter: parseFloat(document.getElementById('sClosing').value), 
+                testing: parseFloat(document.getElementById('sTesting').value) || 0 
+            };
+            
+            const res = await authFetch('/api/records', { method: 'POST', body: JSON.stringify(payload) });
+            const data = await res.json();
+            if(res.ok) {
+                this.reset();
+                loadRecords();
+                loadTanks();
+                alert('Shift recorded and fuel deducted from tank!');
+            } else {
+                alert('Error: ' + data.error);
+            }
+        };
+
+        async function deleteRecord(id) {
+            await authFetch('/api/records/' + id, { method: 'DELETE' });
+            loadRecords();
+            loadTanks();
+        }
+
+        // Live Persistent Tank Stock
+        async function loadTanks() {
+            const res = await authFetch('/api/tanks');
+            const data = await res.json();
+
+            const pPct = ((data.petrolStock / data.petrolCapacity) * 100).toFixed(1);
+            document.getElementById('petrolStockText').innerText = `${data.petrolStock.toLocaleString()} / ${data.petrolCapacity.toLocaleString()} Liters (${pPct}%)`;
+            document.getElementById('petrolProgressBar').style.width = pPct + '%';
+
+            const dPct = ((data.dieselStock / data.dieselCapacity) * 100).toFixed(1);
+            document.getElementById('dieselStockText').innerText = `${data.dieselStock.toLocaleString()} / ${data.dieselCapacity.toLocaleString()} Liters (${dPct}%)`;
+            document.getElementById('dieselProgressBar').style.width = dPct + '%';
+        }
+
+        // Record Delivery Form Submission
+        document.getElementById('deliveryForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const payload = {
+                date: document.getElementById('delDate').value,
+                fuelType: document.getElementById('delFuelType').value,
+                liters: parseFloat(document.getElementById('delLiters').value),
+                challanNo: document.getElementById('delChallan').value,
+                density: parseFloat(document.getElementById('delDensity').value) || 0
+            };
+
+            const res = await authFetch('/api/tanks/delivery', { method: 'POST', body: JSON.stringify(payload) });
+            const data = await res.json();
+            if(res.ok) {
+                this.reset();
+                loadTanks();
+                alert('Tanker delivery recorded and stock updated!');
+            } else {
+                alert(data.error);
+            }
+        };
 
         function calculateTally() {
             const totalSales = parseFloat(document.getElementById('tallyTotalSales').value) || 0;
@@ -923,7 +659,7 @@
 
             const resText = document.getElementById('tallyResultText');
             if (diff === 0) {
-                resText.innerText = "✅ Perfect Tally! (Matched)";
+                resText.innerText = "✅ Exact Match (Tally Cleared)";
                 resText.className = "text-emerald-600 font-bold";
             } else if (diff > 0) {
                 resText.innerText = `⚠️ Excess Cash: +₹${diff.toFixed(2)}`;
@@ -934,14 +670,138 @@
             }
         }
 
-        function printInvoice(r) {
-            const win = window.open('', '', 'height=600,width=400');
-            win.document.write(`<html><head><title>Invoice</title><style>body{font-family:sans-serif;padding:20px;text-align:center;}h2,p{margin:5px 0;}.box{border:1px dashed #000;padding:10px;text-align:left;margin-top:10px;}</style></head><body>`);
-            win.document.write(`<h2>${currentUserPump}</h2><p>Fuel Cash Memo / Invoice</p>`);
-            win.document.write(`<div class="box"><p><b>Date:</b> ${r.date}</p><p><b>Shift:</b> ${r.shift}</p><p><b>Attendant:</b> ${r.attendant}</p><p><b>Fuel:</b> ${r.fuelType}</p><p><b>Rate:</b> ₹${r.unitPrice}</p><p><b>Liters Sold:</b> ${r.liters} L</p><hr><p><b>Total Amount: ₹${r.total}</b></p></div>`);
-            win.document.write(`<p style="margin-top:20px;font-size:12px;">Thank You! Visit Again.</p></body></html>`);
-            win.document.close();
-            win.print();
+        async function loadCustomers() {
+            const res = await authFetch('/api/customers');
+            const data = await res.json();
+            const tbody = document.getElementById('customersTableBody');
+            const select = document.getElementById('pCustomerId');
+            tbody.innerHTML = '';
+            select.innerHTML = '<option value="">Select Customer</option>';
+            let totalUdhar = 0;
+            data.customers.forEach(c => {
+                totalUdhar += c.udharAmount;
+                tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${c.name}</td><td class="p-3 border-b dark:border-slate-700">${c.phone}</td><td class="p-3 border-b dark:border-slate-700">${c.vehicleNo}</td><td class="p-3 border-b dark:border-slate-700 text-red-600 font-bold">₹${c.udharAmount.toLocaleString()}</td></tr>`;
+                select.innerHTML += `<option value="${c.id}">${c.name} (${c.vehicleNo}) - Due: ₹${c.udharAmount}</option>`;
+            });
+            document.getElementById('dashTotalUdhar').innerText = '₹' + totalUdhar.toLocaleString();
+        }
+
+        document.getElementById('customerForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/customers', { 
+                method: 'POST', 
+                body: JSON.stringify({
+                    name: document.getElementById('cName').value, 
+                    phone: document.getElementById('cPhone').value, 
+                    vehicleNo: document.getElementById('cVehicle').value, 
+                    udharAmount: parseFloat(document.getElementById('cAmount').value)
+                }) 
+            });
+            this.reset();
+            loadCustomers();
+        };
+
+        document.getElementById('paymentForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/customer-payment', { 
+                method: 'POST', 
+                body: JSON.stringify({
+                    customerId: document.getElementById('pCustomerId').value, 
+                    date: document.getElementById('pDate').value, 
+                    amountPaid: parseFloat(document.getElementById('pAmountPaid').value), 
+                    paymentMode: document.getElementById('pMode').value
+                }) 
+            });
+            this.reset();
+            loadCustomers();
+            alert('Payment received!');
+        };
+
+        async function loadStaff() {
+            const res = await authFetch('/api/staff');
+            const data = await res.json();
+            const tbody = document.getElementById('staffTableBody');
+            const select = document.getElementById('advStaffId');
+            tbody.innerHTML = '';
+            select.innerHTML = '<option value="">Select Staff Member</option>';
+
+            data.staff.forEach(st => {
+                const netPayable = st.monthlySalary - st.advanceTaken;
+                tbody.innerHTML += `<tr>
+                    <td class="p-3 border-b dark:border-slate-700 font-medium">${st.name}</td>
+                    <td class="p-3 border-b dark:border-slate-700">${st.phone}</td>
+                    <td class="p-3 border-b dark:border-slate-700">₹${st.monthlySalary.toLocaleString()}</td>
+                    <td class="p-3 border-b dark:border-slate-700 text-orange-600 font-bold">₹${st.advanceTaken.toLocaleString()}</td>
+                    <td class="p-3 border-b dark:border-slate-700 text-emerald-600 font-black">₹${netPayable.toLocaleString()}</td>
+                </tr>`;
+                select.innerHTML += `<option value="${st.id}">${st.name}</option>`;
+            });
+        }
+
+        document.getElementById('staffForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/staff', { 
+                method: 'POST', 
+                body: JSON.stringify({
+                    name: document.getElementById('stName').value, 
+                    phone: document.getElementById('stPhone').value, 
+                    monthlySalary: parseFloat(document.getElementById('stSalary').value), 
+                    advanceTaken: parseFloat(document.getElementById('stAdvance').value) || 0 
+                }) 
+            });
+            this.reset();
+            loadStaff();
+        };
+
+        document.getElementById('advanceForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/staff-advance', { 
+                method: 'POST', 
+                body: JSON.stringify({
+                    staffId: document.getElementById('advStaffId').value, 
+                    advanceAmount: parseFloat(document.getElementById('advAmount').value) 
+                }) 
+            });
+            this.reset();
+            loadStaff();
+            alert('Advance recorded!');
+        };
+
+        async function loadExpenses() {
+            const res = await authFetch('/api/expenses');
+            const data = await res.json();
+            const tbody = document.getElementById('expensesTableBody');
+            tbody.innerHTML = '';
+            data.expenses.forEach(e => {
+                tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${e.date}</td><td class="p-3 border-b dark:border-slate-700">${e.category}</td><td class="p-3 border-b dark:border-slate-700 text-amber-600 font-bold">₹${e.amount.toLocaleString()}</td><td class="p-3 border-b dark:border-slate-700">${e.notes || '-'}</td></tr>`;
+            });
+        }
+
+        document.getElementById('expenseForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/expenses', { 
+                method: 'POST', 
+                body: JSON.stringify({
+                    date: document.getElementById('eDate').value, 
+                    category: document.getElementById('eCategory').value, 
+                    amount: parseFloat(document.getElementById('eAmount').value), 
+                    notes: document.getElementById('eNotes').value 
+                }) 
+            });
+            this.reset();
+            loadExpenses();
+        };
+
+        async function downloadCSVReport() {
+            const res = await authFetch('/api/export-csv');
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sales_report_${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
         }
 
         function renderSalesGraph(records) {
@@ -960,213 +820,6 @@
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
-        }
-
-        document.getElementById('shiftForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const opening = parseFloat(document.getElementById('sOpening').value);
-            const closing = parseFloat(document.getElementById('sClosing').value);
-            const testing = parseFloat(document.getElementById('sTesting').value) || 0;
-            const unitPrice = parseFloat(document.getElementById('sUnitPrice').value);
-            const fuelType = document.getElementById('sFuelType').value;
-            const liters = (closing - opening) - testing;
-
-            if(fuelType === 'Petrol') { globalPetrolStock = Math.max(0, globalPetrolStock - liters); }
-            else { globalDieselStock = Math.max(0, globalDieselStock - liters); }
-            updateTankUI();
-
-            const payload = { 
-                date: document.getElementById('sDate').value, 
-                shift: document.getElementById('sShift').value, 
-                attendant: document.getElementById('sAttendant').value, 
-                fuelType, 
-                unitPrice, 
-                openingMeter: opening, 
-                closingMeter: closing, 
-                testing 
-            };
-            
-            try {
-                const res = await authFetch('/api/records', { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
-                const data = await res.json();
-                if(res.ok) {
-                    this.reset();
-                    loadRecords();
-                    alert('Shift recorded successfully!');
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            } catch(e) {}
-        };
-
-        async function deleteRecord(id) {
-            try {
-                await authFetch('/api/records/' + id, { method: 'DELETE' });
-                loadRecords();
-            } catch(e) {}
-        }
-
-        async function loadCustomers() {
-            try {
-                const res = await authFetch('/api/customers');
-                const data = await res.json();
-                const tbody = document.getElementById('customersTableBody');
-                const select = document.getElementById('pCustomerId');
-                tbody.innerHTML = '';
-                select.innerHTML = '<option value="">Select Customer</option>';
-                let totalUdhar = 0;
-                data.customers.forEach(c => {
-                    totalUdhar += c.udharAmount;
-                    tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${c.name}</td><td class="p-3 border-b dark:border-slate-700">${c.phone}</td><td class="p-3 border-b dark:border-slate-700">${c.vehicleNo}</td><td class="p-3 border-b dark:border-slate-700 text-red-600 font-bold">₹${c.udharAmount.toLocaleString()}</td></tr>`;
-                    select.innerHTML += `<option value="${c.id}">${c.name} (${c.vehicleNo}) - Due: ₹${c.udharAmount}</option>`;
-                });
-                document.getElementById('dashTotalUdhar').innerText = '₹' + totalUdhar.toLocaleString();
-            } catch(e) {}
-        }
-
-        document.getElementById('customerForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const payload = { 
-                name: document.getElementById('cName').value, 
-                phone: document.getElementById('cPhone').value, 
-                vehicleNo: document.getElementById('cVehicle').value, 
-                udharAmount: parseFloat(document.getElementById('cAmount').value) 
-            };
-            try {
-                await authFetch('/api/customers', { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
-                this.reset();
-                loadCustomers();
-            } catch(e) {}
-        };
-
-        document.getElementById('paymentForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const payload = { 
-                customerId: document.getElementById('pCustomerId').value, 
-                date: document.getElementById('pDate').value, 
-                amountPaid: parseFloat(document.getElementById('pAmountPaid').value), 
-                paymentMode: document.getElementById('pMode').value 
-            };
-            try {
-                await authFetch('/api/customer-payment', { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
-                this.reset();
-                loadCustomers();
-                alert('Payment received!');
-            } catch(e) {}
-        };
-
-        async function loadStaff() {
-            try {
-                const res = await authFetch('/api/staff');
-                const data = await res.json();
-                const tbody = document.getElementById('staffTableBody');
-                const select = document.getElementById('advStaffId');
-                tbody.innerHTML = '';
-                select.innerHTML = '<option value="">Select Staff Member</option>';
-
-                data.staff.forEach(st => {
-                    const netPayable = st.monthlySalary - st.advanceTaken;
-                    tbody.innerHTML += `<tr>
-                        <td class="p-3 border-b dark:border-slate-700 font-medium">${st.name}</td>
-                        <td class="p-3 border-b dark:border-slate-700">${st.phone}</td>
-                        <td class="p-3 border-b dark:border-slate-700">₹${st.monthlySalary.toLocaleString()}</td>
-                        <td class="p-3 border-b dark:border-slate-700 text-orange-600 font-bold">₹${st.advanceTaken.toLocaleString()}</td>
-                        <td class="p-3 border-b dark:border-slate-700 text-emerald-600 font-black">₹${netPayable.toLocaleString()}</td>
-                    </tr>`;
-                    select.innerHTML += `<option value="${st.id}">${st.name} (Salary: ₹${st.monthlySalary}, Advance: ₹${st.advanceTaken})</option>`;
-                });
-            } catch(e) {}
-        }
-
-        document.getElementById('staffForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const payload = { 
-                name: document.getElementById('stName').value, 
-                phone: document.getElementById('stPhone').value, 
-                monthlySalary: parseFloat(document.getElementById('stSalary').value), 
-                advanceTaken: parseFloat(document.getElementById('stAdvance').value) || 0 
-            };
-            try {
-                await authFetch('/api/staff', { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
-                this.reset();
-                loadStaff();
-                alert('Staff registered successfully!');
-            } catch(e) {}
-        };
-
-        document.getElementById('advanceForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const payload = { 
-                staffId: document.getElementById('advStaffId').value, 
-                advanceAmount: parseFloat(document.getElementById('advAmount').value) 
-            };
-            try {
-                await authFetch('/api/staff-advance', { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
-                this.reset();
-                loadStaff();
-                alert('Advance money recorded successfully!');
-            } catch(e) {}
-        };
-
-        async function loadExpenses() {
-            try {
-                const res = await authFetch('/api/expenses');
-                const data = await res.json();
-                const tbody = document.getElementById('expensesTableBody');
-                tbody.innerHTML = '';
-                data.expenses.forEach(e => {
-                    tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${e.date}</td><td class="p-3 border-b dark:border-slate-700">${e.category}</td><td class="p-3 border-b dark:border-slate-700 text-amber-600 font-bold">₹${e.amount.toLocaleString()}</td><td class="p-3 border-b dark:border-slate-700">${e.notes || '-'}</td></tr>`;
-                });
-            } catch(e) {}
-        }
-
-        document.getElementById('expenseForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const payload = { 
-                date: document.getElementById('eDate').value, 
-                category: document.getElementById('eCategory').value, 
-                amount: parseFloat(document.getElementById('eAmount').value), 
-                notes: document.getElementById('eNotes').value 
-            };
-            try {
-                await authFetch('/api/expenses', { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
-                this.reset();
-                loadExpenses();
-            } catch(e) {}
-        };
-
-        function refillTank(type, liters) {
-            if(type === 'Petrol') globalPetrolStock = Math.min(20000, globalPetrolStock + liters);
-            else globalDieselStock = Math.min(25000, globalDieselStock + liters);
-            updateTankUI();
-            alert(liters + ' Liters added to ' + type + ' tank!');
-        }
-
-        function updateTankUI() {
-            const pPct = ((globalPetrolStock / 20000) * 100).toFixed(1);
-            document.getElementById('petrolStockText').innerText = globalPetrolStock.toLocaleString() + ' Liters (' + pPct + '%)';
-            document.getElementById('petrolProgressBar').style.width = pPct + '%';
-            const dPct = ((globalDieselStock / 25000) * 100).toFixed(1);
-            document.getElementById('dieselStockText').innerText = globalDieselStock.toLocaleString() + ' Liters (' + dPct + '%)';
-            document.getElementById('dieselProgressBar').style.width = dPct + '%';
         }
     </script>
 </body>

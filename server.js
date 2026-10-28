@@ -22,7 +22,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     else console.log('Connected to SQLite database with Station Isolation.');
 });
 
-// Database Schemas with stationId column for strict multi-tenancy
+// Database Schemas with stationId column
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,6 +87,17 @@ db.serialize(() => {
         advanceTaken REAL DEFAULT 0
     )`);
 
+    // Persistent Tank Stock Table per Station
+    db.run(`CREATE TABLE IF NOT EXISTS tanks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER UNIQUE,
+        petrolStock REAL DEFAULT 15000,
+        dieselStock REAL DEFAULT 20000,
+        petrolCapacity REAL DEFAULT 20000,
+        dieselCapacity REAL DEFAULT 25000
+    )`);
+
+    // Fuel Delivery Challan Ledger
     db.run(`CREATE TABLE IF NOT EXISTS fuel_deliveries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -94,11 +105,11 @@ db.serialize(() => {
         fuelType TEXT,
         liters REAL,
         challanNo TEXT,
-        density REAL
+        density REAL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 });
 
-// Disposable Email Domains Blacklist
 const blockedDomains = [
     'tempmail.com', '10minutemail.com', 'mailinator.com', 'throwawaymail.com',
     'guerrillamail.com', 'sharklasers.com', 'getairmail.com', 'dispostable.com',
@@ -113,25 +124,19 @@ function isRealEmail(email) {
     return !blockedDomains.includes(domain);
 }
 
-// JWT Authentication & Station Isolation Middleware
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) {
-        return res.status(401).json({ success: false, error: 'Unauthorized: Session missing' });
-    }
+    if (!token) return res.status(401).json({ success: false, error: 'Unauthorized: Session missing' });
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(403).json({ success: false, error: 'Session expired. Please login again.' });
-        }
-        req.user = decoded; // { stationId, email, pumpName }
+        if (err) return res.status(403).json({ success: false, error: 'Session expired. Please login again.' });
+        req.user = decoded;
         next();
     });
 }
 
-// Helper: Trial & Auth Metadata Generator
 function buildAuthResponse(user) {
     const now = new Date();
     const createdDate = new Date(user.createdAt || now);
@@ -160,7 +165,7 @@ function buildAuthResponse(user) {
     };
 }
 
-// 1. Login & Registration API (With bcrypt hashing)
+// Login & Registration
 app.post('/api/login', (req, res) => {
     const { email, password, pumpName } = req.body;
 
@@ -175,19 +180,22 @@ app.post('/api/login', (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
 
         if (!user) {
-            // First time registration with hashed password
             const salt = bcrypt.genSaltSync(10);
             const passwordHash = bcrypt.hashSync(password, salt);
 
             db.run(`INSERT INTO users (email, passwordHash, pumpName, ownerName, phone, isSubscribed) VALUES (?, ?, ?, ?, ?, 0)`,
                 [email, passwordHash, pumpName || 'Fuel Station', '', ''], function(err2) {
                 if (err2) return res.status(500).json({ error: err2.message });
-                db.get(`SELECT * FROM users WHERE id = ?`, [this.lastID], (err3, newUser) => {
+                const newStationId = this.lastID;
+                
+                // Initialize Tank Stock for new station
+                db.run(`INSERT INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [newStationId]);
+
+                db.get(`SELECT * FROM users WHERE id = ?`, [newStationId], (err3, newUser) => {
                     return res.json(buildAuthResponse(newUser));
                 });
             });
         } else {
-            // Check password
             const isMatch = bcrypt.compareSync(password, user.passwordHash);
             if (!isMatch && user.email !== ADMIN_EMAIL) {
                 return res.status(401).json({ success: false, error: 'Galat password! Kripya sahi password enter karein.' });
@@ -197,7 +205,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// 2. Profile Update (Protected & scoped to own station)
+// Profile Update
 app.post('/api/update-profile', authenticateToken, (req, res) => {
     const { pumpName, ownerName, phone } = req.body;
     const stationId = req.user.stationId;
@@ -213,7 +221,7 @@ app.post('/api/update-profile', authenticateToken, (req, res) => {
     });
 });
 
-// 3. Shift Records (Isolated by stationId)
+// Shift Records & Auto-Deduct Stock from Tanks
 app.get('/api/records', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -230,14 +238,9 @@ app.post('/api/records', authenticateToken, (req, res) => {
     const test = parseFloat(testing) || 0;
     const rate = parseFloat(unitPrice);
 
-    // Rigorous Financial & Calculation Validations
-    if (close < open) {
-        return res.status(400).json({ error: 'Closing meter opening meter se kam nahi ho sakta.' });
-    }
+    if (close < open) return res.status(400).json({ error: 'Closing meter opening meter se kam nahi ho sakta.' });
     const grossLiters = close - open;
-    if (test > grossLiters) {
-        return res.status(400).json({ error: 'Testing volume total nikaale gaye fuel se zyada nahi ho sakti.' });
-    }
+    if (test > grossLiters) return res.status(400).json({ error: 'Testing volume gross volume se zyada nahi ho sakti.' });
 
     const liters = grossLiters - test;
     const total = parseFloat((liters * rate).toFixed(2));
@@ -245,6 +248,11 @@ app.post('/api/records', authenticateToken, (req, res) => {
     const query = `INSERT INTO records (stationId, date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     db.run(query, [stationId, date, shift, attendant, fuelType, rate, open, close, test, liters, total], function(err) {
         if (err) return res.status(500).json({ error: err.message });
+        
+        // Auto-deduct from persistent tank stock
+        const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+        db.run(`UPDATE tanks SET ${col} = MAX(0, ${col} - ?) WHERE stationId = ?`, [liters, stationId]);
+
         res.json({ message: 'Success', id: this.lastID, liters, total });
     });
 });
@@ -256,7 +264,41 @@ app.delete('/api/records/:id', authenticateToken, (req, res) => {
     });
 });
 
-// 4. Customers & Udhar (Isolated by stationId)
+// Tank Stock & Tanker Delivery APIs
+app.get('/api/tanks', authenticateToken, (req, res) => {
+    const stationId = req.user.stationId;
+    db.get(`SELECT * FROM tanks WHERE stationId = ?`, [stationId], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!row) {
+            db.run(`INSERT INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [stationId], () => {
+                res.json({ petrolStock: 15000, dieselStock: 20000, petrolCapacity: 20000, dieselCapacity: 25000 });
+            });
+        } else {
+            res.json(row);
+        }
+    });
+});
+
+app.post('/api/tanks/delivery', authenticateToken, (req, res) => {
+    const stationId = req.user.stationId;
+    const { date, fuelType, liters, challanNo, density } = req.body;
+    const addedLiters = parseFloat(liters);
+
+    if (!addedLiters || addedLiters <= 0) return res.status(400).json({ error: 'Valid liters enter karein.' });
+
+    db.run(`INSERT INTO fuel_deliveries (stationId, date, fuelType, liters, challanNo, density) VALUES (?, ?, ?, ?, ?, ?)`,
+        [stationId, date, fuelType, addedLiters, challanNo || 'CH-AUTO', parseFloat(density) || 0], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+        db.run(`UPDATE tanks SET ${col} = ${col} + ? WHERE stationId = ?`, [addedLiters, stationId], (err2) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            res.json({ success: true, message: `${addedLiters} L added to ${fuelType} tank.` });
+        });
+    });
+});
+
+// Customers & Udhar
 app.get('/api/customers', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM customers WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -290,7 +332,7 @@ app.post('/api/customer-payment', authenticateToken, (req, res) => {
     });
 });
 
-// 5. Staff Management (Isolated by stationId)
+// Staff
 app.get('/api/staff', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM staff WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -316,7 +358,7 @@ app.post('/api/staff-advance', authenticateToken, (req, res) => {
     });
 });
 
-// 6. Expenses (Isolated by stationId)
+// Expenses
 app.get('/api/expenses', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM expenses WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -333,7 +375,7 @@ app.post('/api/expenses', authenticateToken, (req, res) => {
     });
 });
 
-// 7. Secure Station-Isolated CSV Export
+// CSV Export
 app.get('/api/export-csv', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
