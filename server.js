@@ -18,7 +18,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     else console.log('Connected to SQLite database.');
 });
 
-// Database Schema including Staff and Advance Salary tables
+// Database Schema
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,10 +75,36 @@ db.serialize(() => {
     )`);
 });
 
-// API: Login with Admin Bypass & 5-Day Trial Calculation
+// Common Disposable / Temporary Fake Email Domains Blacklist
+const blockedDomains = [
+    'tempmail.com', '10minutemail.com', 'mailinator.com', 'throwawaymail.com',
+    'guerrillamail.com', 'sharklasers.com', 'getairmail.com', 'dispostable.com',
+    'yopmail.com', 'trashmail.com', 'fakeinbox.com', 'crazymailing.com'
+];
+
+function isRealEmail(email) {
+    if (!email) return false;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) return false;
+
+    const domain = email.split('@')[1].toLowerCase();
+    if (blockedDomains.includes(domain)) return false;
+
+    return true;
+}
+
+// API: Login with Real Email Validation & 5-Day Trial Calculation
 app.post('/api/login', (req, res) => {
     const { email, pumpName } = req.body;
     const adminEmail = "omtiwari9192@gmail.com"; 
+
+    // Fake Email Check
+    if (!isRealEmail(email)) {
+        return res.status(400).json({ 
+            success: false, 
+            error: "Kripya ek valid aur active email address enter karein. Temporary ya fake emails allowed nahi hain." 
+        });
+    }
 
     db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -214,7 +240,7 @@ app.post('/api/staff-advance', (req, res) => {
     });
 });
 
-// CSV Export API (Corrected Position)
+// CSV Export API
 app.get('/api/export-csv', (req, res) => {
     db.all(`SELECT * FROM records ORDER BY id DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -230,7 +256,6 @@ app.get('/api/export-csv', (req, res) => {
     });
 });
 
-// Server Listen (Should always be at the end)
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
