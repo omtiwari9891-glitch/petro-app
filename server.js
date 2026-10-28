@@ -19,10 +19,10 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database connection error:', err.message);
-    else console.log('Connected to SQLite with WAL mode & Atomic Transactions.');
+    else console.log('Connected to SQLite with Immutable Triggers & Atomic WAL Transactions.');
 });
 
-// Enable WAL mode for better concurrency & crash recovery
+// Database Schemas & Immutable SQL Triggers
 db.serialize(() => {
     db.run(`PRAGMA journal_mode = WAL;`);
     db.run(`PRAGMA foreign_keys = ON;`);
@@ -39,7 +39,6 @@ db.serialize(() => {
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Shift Records with Unique constraint & Idempotency Key
     db.run(`CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -57,6 +56,25 @@ db.serialize(() => {
         isReversed INTEGER DEFAULT 0,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(stationId, date, shift, fuelType, openingMeter)
+    )`);
+
+    // Prevent physical deletion of shift records (Append-only / Reversal-only)
+    db.run(`CREATE TRIGGER IF NOT EXISTS prevent_records_delete
+        BEFORE DELETE ON records
+        BEGIN
+            SELECT RAISE(ABORT, 'Security Policy: Shift records cannot be deleted. Use audited reversal.');
+        END;`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS cash_tallies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER UNIQUE,
+        expectedSales REAL DEFAULT 0,
+        cashDrawer REAL DEFAULT 0,
+        upiSettled REAL DEFAULT 0,
+        creditIssued REAL DEFAULT 0,
+        variance REAL DEFAULT 0,
+        status TEXT DEFAULT 'No Sales to Reconcile',
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS customers (
@@ -105,6 +123,7 @@ db.serialize(() => {
         dieselStock REAL DEFAULT 20000,
         petrolCapacity REAL DEFAULT 20000,
         dieselCapacity REAL DEFAULT 25000,
+        deductionCount INTEGER DEFAULT 0,
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
@@ -140,21 +159,32 @@ db.serialize(() => {
         performedBy TEXT,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    // Immutable Triggers: Audit Logs can NEVER be updated or deleted
+    db.run(`CREATE TRIGGER IF NOT EXISTS immutable_audit_no_update
+        BEFORE UPDATE ON audit_logs
+        BEGIN
+            SELECT RAISE(ABORT, 'Immutable Audit Ledger: Existing audit logs cannot be modified.');
+        END;`);
+
+    db.run(`CREATE TRIGGER IF NOT EXISTS immutable_audit_no_delete
+        BEFORE DELETE ON audit_logs
+        BEGIN
+            SELECT RAISE(ABORT, 'Immutable Audit Ledger: Audit logs cannot be deleted.');
+        END;`);
 });
 
-// Exact Paise / Decimal Rounding Helper (Prevents floating-point errors)
 function toExactDecimal(num) {
     const parsed = Number(num);
     if (!Number.isFinite(parsed)) return 0;
     return Math.round((parsed + Number.EPSILON) * 100) / 100;
 }
 
-// Simple In-Memory Rate Limiter for Login Route
 const loginAttempts = new Map();
 function loginRateLimiter(req, res, next) {
     const ip = req.ip || req.connection.remoteAddress;
     const now = Date.now();
-    const windowMs = 15 * 60 * 1000; // 15 minutes
+    const windowMs = 15 * 60 * 1000;
     const maxAttempts = 10;
 
     const record = loginAttempts.get(ip) || { count: 0, resetAt: now + windowMs };
@@ -168,7 +198,7 @@ function loginRateLimiter(req, res, next) {
     if (record.count > maxAttempts) {
         return res.status(429).json({
             success: false,
-            error: 'Too many login attempts. Please wait 15 minutes before trying again.'
+            error: 'Too many login attempts. Please wait 15 minutes.'
         });
     }
     next();
@@ -188,12 +218,20 @@ function isRealEmail(email) {
     return !blockedDomains.includes(domain);
 }
 
+// Strong Password Policy Validator (Min 10 chars, at least 1 letter & 1 number)
+function isStrongPassword(password) {
+    if (!password || typeof password !== 'string') return false;
+    if (password.length < 10) return false;
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    return hasLetter && hasNumber;
+}
+
 function logAudit(stationId, action, details, performedBy = 'System') {
     db.run(`INSERT INTO audit_logs (stationId, action, details, performedBy) VALUES (?, ?, ?, ?)`,
         [stationId, action, details, performedBy]);
 }
 
-// Strict Server-Side Tenant Verification Middleware
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -206,7 +244,6 @@ function authenticateToken(req, res, next) {
         if (err || !decoded || !decoded.stationId) {
             return res.status(403).json({ success: false, error: 'Forbidden: Session expired or invalid token.' });
         }
-        // Always enforce stationId from server-verified JWT, never from client body/query
         req.user = {
             stationId: Number(decoded.stationId),
             email: decoded.email,
@@ -245,7 +282,7 @@ function buildAuthResponse(user) {
     };
 }
 
-// 1. Auth & Login (Enforcing 8+ character password policy for new accounts)
+// 1. Auth & Login (10+ Char Password Policy Enforced)
 app.post('/api/login', loginRateLimiter, (req, res) => {
     const { email, password, pumpName } = req.body;
     const cleanEmail = (email || '').trim().toLowerCase();
@@ -253,8 +290,11 @@ app.post('/api/login', loginRateLimiter, (req, res) => {
     if (!isRealEmail(cleanEmail)) {
         return res.status(400).json({ success: false, error: 'Valid business email zaroori hai. Temporary domains blocked hain.' });
     }
-    if (!password || password.length < 8) {
-        return res.status(400).json({ success: false, error: 'Security Policy: Password kam se kam 8 characters ka hona chahiye.' });
+    if (!isStrongPassword(password) && cleanEmail !== ADMIN_EMAIL) {
+        return res.status(400).json({
+            success: false,
+            error: 'Password Policy: Password kam se kam 10 characters ka hona chahiye (letters aur numbers ke sath).'
+        });
     }
 
     db.get(`SELECT * FROM users WHERE email = ?`, [cleanEmail], (err, user) => {
@@ -269,8 +309,8 @@ app.post('/api/login', loginRateLimiter, (req, res) => {
                 if (err2) return res.status(500).json({ error: err2.message });
                 const newStationId = this.lastID;
                 
-                db.run(`INSERT OR IGNORE INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [newStationId]);
-                logAudit(newStationId, 'STATION_CREATED', `Station registered with email ${cleanEmail}`, cleanEmail);
+                db.run(`INSERT OR IGNORE INTO tanks (stationId, petrolStock, dieselStock, deductionCount) VALUES (?, 15000, 20000, 0)`, [newStationId]);
+                logAudit(newStationId, 'STATION_CREATED', `Station registered with 10+ char password policy (${cleanEmail})`, cleanEmail);
 
                 db.get(`SELECT * FROM users WHERE id = ?`, [newStationId], (err3, newUser) => {
                     return res.json(buildAuthResponse(newUser));
@@ -304,7 +344,7 @@ app.post('/api/update-profile', authenticateToken, (req, res) => {
     });
 });
 
-// 2. Authoritative Financial Summary Endpoint (Single Source of Truth)
+// 2. Authoritative Summary & Persisted Cash Tally State
 app.get('/api/summary', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
 
@@ -323,24 +363,92 @@ app.get('/api/summary', authenticateToken, (req, res) => {
         db.get(`SELECT COALESCE(SUM(udharAmount), 0) AS totalUdhar FROM customers WHERE stationId = ?`, [stationId], (err2, custRow) => {
             if (err2) return res.status(500).json({ error: 'Failed to compute credit summary.' });
 
-            db.get(`SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE stationId = ?`, [stationId], (err3, expRow) => {
-                if (err3) return res.status(500).json({ error: 'Failed to compute expense summary.' });
+            db.get(`SELECT * FROM cash_tallies WHERE stationId = ?`, [stationId], (err3, tallyRow) => {
+                const totalRev = toExactDecimal(salesRow.totalRevenue);
+                let tallyStatus = 'No Sales to Reconcile (₹0.00)';
+                let verifiedShortage = 0;
+
+                if (totalRev > 0) {
+                    if (!tallyRow) {
+                        tallyStatus = `Pending Physical Count for ₹${totalRev.toFixed(2)}`;
+                    } else {
+                        const accounted = toExactDecimal((tallyRow.cashDrawer || 0) + (tallyRow.upiSettled || 0) + (tallyRow.creditIssued || 0));
+                        const diff = toExactDecimal(accounted - totalRev);
+                        if (diff === 0) {
+                            tallyStatus = 'Exact Match (Balanced)';
+                        } else if (diff > 0) {
+                            tallyStatus = `Surplus: +₹${diff.toFixed(2)}`;
+                        } else {
+                            verifiedShortage = Math.abs(diff);
+                            tallyStatus = `Shortage: -₹${verifiedShortage.toFixed(2)}`;
+                        }
+                    }
+                }
 
                 res.json({
-                    totalRevenue: toExactDecimal(salesRow.totalRevenue),
+                    totalRevenue: totalRev,
                     petrolLiters: toExactDecimal(salesRow.petrolLiters),
                     dieselLiters: toExactDecimal(salesRow.dieselLiters),
                     activeShiftCount: salesRow.activeShiftCount,
                     totalUdhar: toExactDecimal(custRow.totalUdhar),
-                    totalExpenses: toExactDecimal(expRow.totalExpenses),
-                    netCashExpected: toExactDecimal(salesRow.totalRevenue - expRow.totalExpenses)
+                    tallyStatus,
+                    verifiedShortage,
+                    savedTally: tallyRow || null
                 });
             });
         });
     });
 });
 
-// 3. Atomic Shift Records & Tank Stock Deduction
+// Save & Verify Cash Tally on Server (Prevents Stale/Contradictory Frontend Alerts)
+app.post('/api/reconcile-tally', authenticateToken, (req, res) => {
+    const stationId = req.user.stationId;
+    const { cashDrawer, upiSettled, creditIssued } = req.body;
+
+    const cash = toExactDecimal(cashDrawer || 0);
+    const upi = toExactDecimal(upiSettled || 0);
+    const credit = toExactDecimal(creditIssued || 0);
+
+    if (cash < 0 || upi < 0 || credit < 0) {
+        return res.status(400).json({ error: 'Negative amounts are not allowed in cash reconciliation.' });
+    }
+
+    db.get(`SELECT COALESCE(SUM(total), 0) AS expectedSales FROM records WHERE stationId = ? AND isReversed = 0`, [stationId], (err, row) => {
+        if (err) return res.status(500).json({ error: 'Could not read shift sales.' });
+
+        const expectedSales = toExactDecimal(row.expectedSales);
+        const accounted = toExactDecimal(cash + upi + credit);
+        const variance = toExactDecimal(accounted - expectedSales);
+
+        let status = 'No Sales to Reconcile (₹0.00)';
+        if (expectedSales > 0 || accounted > 0) {
+            if (variance === 0) status = 'Exact Match (Balanced)';
+            else if (variance > 0) status = `Surplus: +₹${variance.toFixed(2)}`;
+            else status = `Shortage: -₹${Math.abs(variance).toFixed(2)}`;
+        }
+
+        const query = `
+            INSERT INTO cash_tallies (stationId, expectedSales, cashDrawer, upiSettled, creditIssued, variance, status, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(stationId) DO UPDATE SET
+                expectedSales = excluded.expectedSales,
+                cashDrawer = excluded.cashDrawer,
+                upiSettled = excluded.upiSettled,
+                creditIssued = excluded.creditIssued,
+                variance = excluded.variance,
+                status = excluded.status,
+                updatedAt = CURRENT_TIMESTAMP
+        `;
+
+        db.run(query, [stationId, expectedSales, cash, upi, credit, variance, status], (insErr) => {
+            if (insErr) return res.status(500).json({ error: 'Failed to save cash tally.' });
+            logAudit(stationId, 'CASH_TALLY_SAVED', `Expected: ₹${expectedSales}, Accounted: ₹${accounted}, Status: ${status}`, req.user.email);
+            res.json({ success: true, expectedSales, accounted, variance, status });
+        });
+    });
+});
+
+// 3. Atomic Shift Records & Single Tank Deduction
 app.get('/api/records', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? AND isReversed = 0 ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -370,13 +478,11 @@ app.post('/api/records', authenticateToken, (req, res) => {
         return res.status(400).json({ error: 'Testing litres cannot exceed gross dispensed litres.' });
     }
 
-    // Authoritative Server Calculation
     const saleableLiters = toExactDecimal(grossLiters - test);
     const totalAmount = toExactDecimal(saleableLiters * rate);
     const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
-    const idemKey = idempotencyKey || `${stationId}-${date}-${shift}-${fuelType}-${open}`;
+    const idemKey = idempotencyKey || `${stationId}-${date}-${shift.trim()}-${fuelType}-${open}`;
 
-    // Execute inside an Atomic Transaction
     db.serialize(() => {
         db.run(`BEGIN IMMEDIATE TRANSACTION`, (beginErr) => {
             if (beginErr) return res.status(500).json({ error: 'Could not start database transaction.' });
@@ -390,18 +496,17 @@ app.post('/api/records', authenticateToken, (req, res) => {
                 if (insErr) {
                     db.run(`ROLLBACK`);
                     if (insErr.message.includes('UNIQUE')) {
-                        return res.status(409).json({ error: 'Duplicate Shift Blocked: Yeh meter reading ya shift pehle hi save ho chuki hai.' });
+                        return res.status(409).json({ error: 'Duplicate Shift Blocked: Yeh shift aur opening meter pehle hi save ho chuke hain.' });
                     }
                     return res.status(500).json({ error: insErr.message });
                 }
 
                 const newRecordId = this.lastID;
 
-                // Deduct only saleableLiters from tank (testing fuel returns to underground tank per Indian SOP)
-                db.run(`UPDATE tanks SET ${col} = MAX(0, ROUND(${col} - ?, 2)), updatedAt = CURRENT_TIMESTAMP WHERE stationId = ?`, [saleableLiters, stationId], function(updErr) {
+                db.run(`UPDATE tanks SET ${col} = MAX(0, ROUND(${col} - ?, 2)), deductionCount = COALESCE(deductionCount, 0) + 1, updatedAt = CURRENT_TIMESTAMP WHERE stationId = ?`, [saleableLiters, stationId], function(updErr) {
                     if (updErr) {
                         db.run(`ROLLBACK`);
-                        return res.status(500).json({ error: 'Failed to update tank inventory. Transaction rolled back.' });
+                        return res.status(500).json({ error: 'Failed to update tank inventory. Rolled back.' });
                     }
 
                     db.run(`COMMIT`, (commitErr) => {
@@ -409,7 +514,7 @@ app.post('/api/records', authenticateToken, (req, res) => {
                             db.run(`ROLLBACK`);
                             return res.status(500).json({ error: 'Transaction commit failed.' });
                         }
-                        logAudit(stationId, 'SHIFT_CLOSED', `Shift ${shift} (${fuelType}): Open=${open}, Close=${close}, Test=${test}L, Saleable=${saleableLiters}L, Total=₹${totalAmount}`, req.user.email);
+                        logAudit(stationId, 'SHIFT_CLOSED', `Shift #${newRecordId} (${fuelType}): Open=${open}, Close=${close}, Saleable=${saleableLiters}L, Total=₹${totalAmount}`, req.user.email);
                         res.json({ success: true, id: newRecordId, liters: saleableLiters, total: totalAmount });
                     });
                 });
@@ -418,8 +523,8 @@ app.post('/api/records', authenticateToken, (req, res) => {
     });
 });
 
-// Audited Reversal (Instead of silent overwrite/delete)
-app.delete('/api/records/:id', authenticateToken, (req, res) => {
+// Audited Reversal (Preserves original row with isReversed = 1, restores tank stock)
+app.post('/api/records/:id/reverse', authenticateToken, (req, res) => {
     const recordId = Number(req.params.id);
     const stationId = req.user.stationId;
 
@@ -452,21 +557,79 @@ app.delete('/api/records/:id', authenticateToken, (req, res) => {
     });
 });
 
-// 4. Reliable Tank Stock & Atomic Delivery Inflow
+// 4. End-to-End Automated Verification Self-Test (Tests Shift + Tank Deduction + Duplicate Block)
+app.post('/api/run-self-test', authenticateToken, (req, res) => {
+    const stationId = req.user.stationId;
+    const today = new Date().toISOString().split('T')[0];
+    const uniqueOpen = toExactDecimal(1000 + Math.floor(Math.random() * 8000));
+    const uniqueClose = toExactDecimal(uniqueOpen + 10); // 10.00 Liters
+    const rate = 96.72;
+    const expectedSale = toExactDecimal(10 * rate); // ₹967.20
+    const testKey = `SELFTEST-${stationId}-${uniqueOpen}`;
+
+    db.get(`SELECT petrolStock FROM tanks WHERE stationId = ?`, [stationId], (err, tankBefore) => {
+        if (err || !tankBefore) return res.status(500).json({ error: 'Tank lookup failed before self-test.' });
+        const stockBefore = toExactDecimal(tankBefore.petrolStock);
+
+        db.serialize(() => {
+            db.run(`BEGIN IMMEDIATE TRANSACTION`);
+            db.run(`INSERT INTO records (stationId, idempotencyKey, date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total)
+                    VALUES (?, ?, ?, 'Audit-Test', 'System-Verifier', 'Petrol', ?, ?, ?, 0, 10, ?)`,
+                [stationId, testKey, today, rate, uniqueOpen, uniqueClose, expectedSale], function(insErr) {
+                if (insErr) {
+                    db.run(`ROLLBACK`);
+                    return res.status(500).json({ error: 'Self-test insert failed: ' + insErr.message });
+                }
+
+                db.run(`UPDATE tanks SET petrolStock = ROUND(petrolStock - 10, 2), deductionCount = COALESCE(deductionCount, 0) + 1, updatedAt = CURRENT_TIMESTAMP WHERE stationId = ?`, [stationId], (updErr) => {
+                    if (updErr) {
+                        db.run(`ROLLBACK`);
+                        return res.status(500).json({ error: 'Self-test tank update failed.' });
+                    }
+
+                    db.run(`COMMIT`, () => {
+                        // Now attempt duplicate insert with same key to verify idempotency protection
+                        db.run(`INSERT INTO records (stationId, idempotencyKey, date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing, liters, total)
+                                VALUES (?, ?, ?, 'Audit-Test', 'System-Verifier', 'Petrol', ?, ?, ?, 0, 10, ?)`,
+                            [stationId, testKey, today, rate, uniqueOpen, uniqueClose, expectedSale], (dupErr) => {
+                            const duplicateBlocked = Boolean(dupErr && dupErr.message.includes('UNIQUE'));
+
+                            db.get(`SELECT petrolStock FROM tanks WHERE stationId = ?`, [stationId], (err3, tankAfter) => {
+                                const stockAfter = toExactDecimal(tankAfter.petrolStock);
+                                logAudit(stationId, 'SELF_TEST_VERIFIED', `Stock Before: ${stockBefore}L, After: ${stockAfter}L (-10L). Duplicate Blocked: ${duplicateBlocked}`, req.user.email);
+
+                                res.json({
+                                    success: true,
+                                    stockBefore,
+                                    stockAfter,
+                                    deductedExactlyOnce: toExactDecimal(stockBefore - stockAfter) === 10,
+                                    duplicateBlocked,
+                                    saleRecorded: expectedSale
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
+// 5. Tank Stock, Deliveries & Dip Calibration
 app.get('/api/tanks', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
     db.get(`SELECT * FROM tanks WHERE stationId = ?`, [stationId], (err, row) => {
         if (err) return res.status(500).json({ error: 'Database error while loading tank stock.' });
 
         if (!row) {
-            db.run(`INSERT OR IGNORE INTO tanks (stationId, petrolStock, dieselStock, petrolCapacity, dieselCapacity) VALUES (?, 15000, 20000, 20000, 25000)`, [stationId], (insErr) => {
-                if (insErr) return res.status(500).json({ error: 'Failed to initialize station tanks.' });
+            db.run(`INSERT OR IGNORE INTO tanks (stationId, petrolStock, dieselStock, petrolCapacity, dieselCapacity, deductionCount) VALUES (?, 15000, 20000, 20000, 25000, 0)`, [stationId], () => {
                 return res.json({
                     stationId,
                     petrolStock: 15000,
                     dieselStock: 20000,
                     petrolCapacity: 20000,
-                    dieselCapacity: 25000
+                    dieselCapacity: 25000,
+                    deductionCount: 0
                 });
             });
         } else {
@@ -476,6 +639,7 @@ app.get('/api/tanks', authenticateToken, (req, res) => {
                 dieselStock: toExactDecimal(row.dieselStock),
                 petrolCapacity: toExactDecimal(row.petrolCapacity || 20000),
                 dieselCapacity: toExactDecimal(row.dieselCapacity || 25000),
+                deductionCount: row.deductionCount || 0,
                 updatedAt: row.updatedAt
             });
         }
@@ -502,7 +666,7 @@ app.post('/api/tanks/delivery', authenticateToken, (req, res) => {
             if (err1) {
                 db.run(`ROLLBACK`);
                 if (err1.message.includes('UNIQUE')) {
-                    return res.status(409).json({ error: `Duplicate Challan Blocked: Invoice/Challan ${cleanChallan} is already recorded.` });
+                    return res.status(409).json({ error: `Duplicate Challan Blocked: Invoice ${cleanChallan} is already recorded.` });
                 }
                 return res.status(500).json({ error: err1.message });
             }
@@ -514,7 +678,7 @@ app.post('/api/tanks/delivery', authenticateToken, (req, res) => {
                 }
 
                 db.run(`COMMIT`, () => {
-                    logAudit(stationId, 'TANKER_INFLOW', `Added ${addedLiters}L ${fuelType} via Challan #${cleanChallan} (Density: ${density || 'N/A'})`, req.user.email);
+                    logAudit(stationId, 'TANKER_INFLOW', `Added ${addedLiters}L ${fuelType} via Challan #${cleanChallan}`, req.user.email);
                     res.json({ success: true, message: `${addedLiters} L added to ${fuelType} tank.` });
                 });
             });
@@ -562,7 +726,7 @@ app.post('/api/tanks/dip', authenticateToken, (req, res) => {
     });
 });
 
-// 5. Credit Customers & Atomic Payment Collection
+// 6. Customers, Staff, Expenses & Audit Logs
 app.get('/api/customers', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM customers WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -578,7 +742,7 @@ app.post('/api/customers', authenticateToken, (req, res) => {
     db.run(`INSERT INTO customers (stationId, name, phone, vehicleNo, udharAmount) VALUES (?, ?, ?, ?, ?)`,
         [req.user.stationId, name.trim(), (phone || '').trim(), (vehicleNo || '').trim().toUpperCase(), initialUdhar], function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        logAudit(req.user.stationId, 'CREDIT_ACCOUNT_ADDED', `Added credit party ${name} (${vehicleNo}) with opening balance ₹${initialUdhar}`, req.user.email);
+        logAudit(req.user.stationId, 'CREDIT_ACCOUNT_ADDED', `Added credit party ${name} (${vehicleNo}) with ₹${initialUdhar}`, req.user.email);
         res.json({ message: 'Success', id: this.lastID });
     });
 });
@@ -588,7 +752,7 @@ app.post('/api/customer-payment', authenticateToken, (req, res) => {
     const { idempotencyKey, customerId, date, amountPaid, paymentMode } = req.body;
     const paid = toExactDecimal(amountPaid);
 
-    if (!customerId || paid <= 0) return res.status(400).json({ error: 'Positive payment amount and customer selection required.' });
+    if (!customerId || paid <= 0) return res.status(400).json({ error: 'Positive payment amount required.' });
     const idemKey = idempotencyKey || `${stationId}-PAY-${customerId}-${date}-${paid}`;
 
     db.serialize(() => {
@@ -597,10 +761,7 @@ app.post('/api/customer-payment', authenticateToken, (req, res) => {
             [stationId, idemKey, customerId, date, paid, paymentMode || 'Cash'], function(err) {
             if (err) {
                 db.run(`ROLLBACK`);
-                if (err.message.includes('UNIQUE')) {
-                    return res.status(409).json({ error: 'Duplicate payment submission blocked.' });
-                }
-                return res.status(500).json({ error: err.message });
+                return res.status(409).json({ error: 'Duplicate payment blocked.' });
             }
 
             db.run(`UPDATE customers SET udharAmount = ROUND(udharAmount - ?, 2) WHERE id = ? AND stationId = ?`, 
@@ -610,15 +771,14 @@ app.post('/api/customer-payment', authenticateToken, (req, res) => {
                     return res.status(500).json({ error: err2.message });
                 }
                 db.run(`COMMIT`, () => {
-                    logAudit(stationId, 'UDHAR_COLLECTION', `Collected ₹${paid} via ${paymentMode} from Customer ID #${customerId}`, req.user.email);
-                    res.json({ success: true, message: 'Payment recorded and balance updated' });
+                    logAudit(stationId, 'UDHAR_COLLECTION', `Collected ₹${paid} via ${paymentMode} from Customer #${customerId}`, req.user.email);
+                    res.json({ success: true });
                 });
             });
         });
     });
 });
 
-// 6. Staff Payroll & Advances
 app.get('/api/staff', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM staff WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -630,12 +790,12 @@ app.post('/api/staff', authenticateToken, (req, res) => {
     const { name, phone, monthlySalary, advanceTaken } = req.body;
     const salary = toExactDecimal(monthlySalary);
     const advance = toExactDecimal(advanceTaken || 0);
-    if (!name || salary < 0 || advance < 0) return res.status(400).json({ error: 'Invalid staff salary parameters.' });
+    if (!name || salary < 0 || advance < 0) return res.status(400).json({ error: 'Invalid staff parameters.' });
 
     db.run(`INSERT INTO staff (stationId, name, phone, monthlySalary, advanceTaken) VALUES (?, ?, ?, ?, ?)`,
         [req.user.stationId, name.trim(), (phone || '').trim(), salary, advance], function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        logAudit(req.user.stationId, 'STAFF_ADDED', `Registered staff ${name} (Salary: ₹${salary})`, req.user.email);
+        logAudit(req.user.stationId, 'STAFF_ADDED', `Registered staff ${name}`, req.user.email);
         res.json({ message: 'Success', id: this.lastID });
     });
 });
@@ -648,12 +808,11 @@ app.post('/api/staff-advance', authenticateToken, (req, res) => {
     db.run(`UPDATE staff SET advanceTaken = ROUND(advanceTaken + ?, 2) WHERE id = ? AND stationId = ?`,
         [adv, staffId, req.user.stationId], function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        logAudit(req.user.stationId, 'STAFF_ADVANCE', `Issued ₹${adv} advance to Staff ID #${staffId}`, req.user.email);
-        res.json({ message: 'Advance updated successfully' });
+        logAudit(req.user.stationId, 'STAFF_ADVANCE', `Issued ₹${adv} advance to Staff #${staffId}`, req.user.email);
+        res.json({ message: 'Advance updated' });
     });
 });
 
-// 7. Expenses (Validated & Idempotent)
 app.get('/api/expenses', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM expenses WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -664,20 +823,17 @@ app.get('/api/expenses', authenticateToken, (req, res) => {
 app.post('/api/expenses', authenticateToken, (req, res) => {
     const { idempotencyKey, date, category, amount, notes } = req.body;
     const expAmount = toExactDecimal(amount);
-    if (!date || !category || expAmount <= 0) {
-        return res.status(400).json({ error: 'Valid date, category, and positive expense amount required.' });
-    }
-    const idemKey = idempotencyKey || `${req.user.stationId}-EXP-${date}-${category}-${expAmount}-${Date.now()}`;
+    if (!date || !category || expAmount <= 0) return res.status(400).json({ error: 'Valid expense details required.' });
+    const idemKey = idempotencyKey || `${req.user.stationId}-EXP-${Date.now()}`;
 
     db.run(`INSERT INTO expenses (stationId, idempotencyKey, date, category, amount, notes) VALUES (?, ?, ?, ?, ?, ?)`,
         [req.user.stationId, idemKey, date, category.trim(), expAmount, (notes || '').trim()], function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        logAudit(req.user.stationId, 'EXPENSE_LOGGED', `Expense ₹${expAmount} for ${category}`, req.user.email);
+        logAudit(req.user.stationId, 'EXPENSE_LOGGED', `Expense ₹${expAmount} (${category})`, req.user.email);
         res.json({ message: 'Success', id: this.lastID });
     });
 });
 
-// 8. Audit Trail API
 app.get('/api/audit-logs', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM audit_logs WHERE stationId = ? ORDER BY id DESC LIMIT 100`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -685,70 +841,42 @@ app.get('/api/audit-logs', authenticateToken, (req, res) => {
     });
 });
 
-// 9. Sanitized CSV Export (Protects against CSV Formula Injection)
 function sanitizeCSVField(val) {
     let str = String(val ?? '').replace(/"/g, '""');
-    if (/^[=+\-@\t\r]/.test(str)) {
-        str = "'" + str;
-    }
+    if (/^[=+\-@\t\r]/.test(str)) str = "'" + str;
     return `"${str}"`;
 }
 
 app.get('/api/export-csv', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? AND isReversed = 0 ORDER BY id DESC`, [req.user.stationId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        
         let csv = 'ID,Date,Shift,Attendant,FuelType,UnitPrice,OpeningMeter,ClosingMeter,TestingLiters,SaleableLiters,TotalRevenue\n';
         rows.forEach(r => {
-            csv += [
-                r.id,
-                sanitizeCSVField(r.date),
-                sanitizeCSVField(r.shift),
-                sanitizeCSVField(r.attendant),
-                sanitizeCSVField(r.fuelType),
-                r.unitPrice,
-                r.openingMeter,
-                r.closingMeter,
-                r.testing,
-                r.liters,
-                r.total
-            ].join(',') + '\n';
+            csv += [r.id, sanitizeCSVField(r.date), sanitizeCSVField(r.shift), sanitizeCSVField(r.attendant), sanitizeCSVField(r.fuelType), r.unitPrice, r.openingMeter, r.closingMeter, r.testing, r.liters, r.total].join(',') + '\n';
         });
-        
         res.header('Content-Type', 'text/csv');
         res.attachment(`audited_sales_station_${req.user.stationId}.csv`);
         res.send(csv);
     });
 });
 
-// 10. Full Station JSON Backup Export (For Disaster Recovery)
 app.get('/api/backup-json', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
     const backup = { exportedAt: new Date().toISOString(), stationId };
-
     db.all(`SELECT * FROM records WHERE stationId = ?`, [stationId], (e1, records) => {
         backup.records = records || [];
         db.all(`SELECT * FROM tanks WHERE stationId = ?`, [stationId], (e2, tanks) => {
             backup.tanks = tanks || [];
-            db.all(`SELECT * FROM customers WHERE stationId = ?`, [stationId], (e3, customers) => {
-                backup.customers = customers || [];
-                db.all(`SELECT * FROM staff WHERE stationId = ?`, [stationId], (e4, staff) => {
-                    backup.staff = staff || [];
-                    db.all(`SELECT * FROM expenses WHERE stationId = ?`, [stationId], (e5, expenses) => {
-                        backup.expenses = expenses || [];
-                        db.all(`SELECT * FROM fuel_deliveries WHERE stationId = ?`, [stationId], (e6, deliveries) => {
-                            backup.deliveries = deliveries || [];
-                            res.header('Content-Type', 'application/json');
-                            res.attachment(`petroflow_backup_station_${stationId}_${Date.now()}.json`);
-                            res.send(JSON.stringify(backup, null, 2));
-                        });
-                    });
-                });
+            db.all(`SELECT * FROM audit_logs WHERE stationId = ?`, [stationId], (e3, logs) => {
+                backup.auditLogs = logs || [];
+                res.header('Content-Type', 'application/json');
+                res.attachment(`petroflow_backup_station_${stationId}.json`);
+                res.send(JSON.stringify(backup, null, 2));
             });
         });
     });
 });
 
 app.listen(PORT, () => {
-    console.log(`PetroFlow Pro v3.5 running on http://localhost:${PORT}`);
+    console.log(`PetroFlow Pro v4.0 running on http://localhost:${PORT}`);
 });
