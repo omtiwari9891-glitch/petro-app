@@ -26,13 +26,13 @@
                         </div>
                     </div>
                     <div>
-                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">Audit-Ready Accuracy</span>
-                        <h3 class="text-2xl font-bold mt-3">Reliable Pump Accounting & Dip Reconciliation</h3>
-                        <p class="text-xs text-blue-100 mt-2">Accurate meter subtraction, automated physical dip vs book variance, and auto-derived cash tally.</p>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">ACID Transaction Safe</span>
+                        <h3 class="text-2xl font-bold mt-3">Authoritative Server Math & Tenant Isolation</h3>
+                        <p class="text-xs text-blue-100 mt-2">Every shift closing, tank deduction, and dip calibration runs inside atomic SQLite WAL transactions.</p>
                     </div>
                 </div>
                 <div class="text-[11px] text-blue-200/70 border-t border-white/10 pt-4">
-                    <span>Multi-Tenant Data Isolated • Offline Queue Protected</span>
+                    <span>Server-Verified Tenant Isolation • v3.5 Enterprise</span>
                 </div>
             </div>
 
@@ -50,8 +50,11 @@
                         <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Password (Min. 6 chars)</label>
-                        <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1 flex justify-between">
+                            <span>Password</span>
+                            <span class="text-[10px] text-blue-600 font-semibold">Min. 8 characters required</span>
+                        </label>
+                        <input type="password" id="loginPassword" minlength="8" placeholder="••••••••" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
                     <button type="submit" id="loginSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/25">Access Station Dashboard</button>
                 </form>
@@ -84,34 +87,33 @@
             </div>
         </header>
 
-        <!-- Mobile-friendly Scrolling Tabs -->
+        <!-- Navigation Tabs -->
         <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm sticky top-[57px] z-30">
             <div class="container mx-auto px-4 flex space-x-1 overflow-x-auto no-scrollbar py-1">
-                <button onclick="switchTab('dashboard')" class="tab-btn py-2 px-3.5 font-bold text-blue-600 border-b-2 border-blue-600 text-xs md:text-sm whitespace-nowrap">📊 Owner Summary</button>
-                <button onclick="switchTab('shifts')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">⛽ Shift Closing</button>
-                <button onclick="switchTab('tally')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🧮 Cash Reconciliation</button>
-                <button onclick="switchTab('tanks')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🛢️ Tank Stock & Dip</button>
-                <button onclick="switchTab('customers')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👥 Udhar Ledger</button>
-                <button onclick="switchTab('staff')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👨‍💼 Staff Payroll</button>
-                <button onclick="switchTab('expenses')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">💸 Expenses</button>
-                <button onclick="switchTab('audit')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🛡️ Audit Logs</button>
-                <button onclick="switchTab('account')" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👤 Profile</button>
+                <button onclick="switchTab('dashboard', this)" class="tab-btn py-2 px-3.5 font-bold text-blue-600 border-b-2 border-blue-600 text-xs md:text-sm whitespace-nowrap">📊 Owner Summary</button>
+                <button onclick="switchTab('shifts', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">⛽ Shift Closing</button>
+                <button onclick="switchTab('tally', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🧮 Cash Reconciliation</button>
+                <button onclick="switchTab('tanks', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🛢️ Tank Stock & Dip</button>
+                <button onclick="switchTab('customers', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👥 Udhar Ledger</button>
+                <button onclick="switchTab('staff', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👨‍💼 Staff Payroll</button>
+                <button onclick="switchTab('expenses', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">💸 Expenses</button>
+                <button onclick="switchTab('audit', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">🛡️ Audit Logs</button>
+                <button onclick="switchTab('account', this)" class="tab-btn py-2 px-3.5 font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-xs md:text-sm whitespace-nowrap">👤 Profile & Backup</button>
             </div>
         </nav>
 
         <main class="container mx-auto px-4 py-6 flex-grow space-y-6">
             
-            <!-- 1. Owner Summary Dashboard -->
+            <!-- 1. Owner Summary Dashboard (Driven by Authoritative /api/summary) -->
             <div id="tab-dashboard" class="tab-content space-y-6">
-                <!-- Status Notice Banner -->
                 <div id="shortageAlertBanner" class="hidden p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-bold flex justify-between items-center">
                     <span>⚠️ ALERT: Cash Reconciliation detected an unapproved shortage in shift collections!</span>
-                    <button onclick="switchTab('tally')" class="underline">View Tally</button>
+                    <button onclick="switchTab('tally')" class="underline">Inspect Tally</button>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <p class="text-[10px] font-bold uppercase text-slate-400">Total System Revenue</p>
+                        <p class="text-[10px] font-bold uppercase text-slate-400">Authoritative Revenue</p>
                         <h3 id="dashTotalRevenue" class="text-xl md:text-2xl font-black text-slate-800 dark:text-white mt-1">₹0.00</h3>
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -128,12 +130,15 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-wrap gap-3 justify-between items-center">
                     <div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-white">📥 Audited Sales Report</h3>
-                        <p class="text-xs text-slate-500">Download immutable station shift rows in CSV format.</p>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white">📥 Audited Exports & Disaster Recovery</h3>
+                        <p class="text-xs text-slate-500">Download formula-sanitized CSV or full station JSON snapshot.</p>
                     </div>
-                    <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">Export CSV</button>
+                    <div class="flex gap-2">
+                        <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">Export CSV</button>
+                        <button onclick="downloadJSONBackup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">Full JSON Backup</button>
+                    </div>
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -144,10 +149,10 @@
                 </div>
             </div>
 
-            <!-- 2. Shift Sales (Mobile Keypad & Validated Deductions) -->
+            <!-- 2. Shift Sales -->
             <div id="tab-shifts" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Nozzle Meter Shift Closing</h3>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Nozzle Meter Shift Closing (Atomic Deduction)</h3>
                     <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Shift Date</label>
@@ -184,12 +189,12 @@
                             <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Testing Fuel (Litres)</label>
                             <input type="number" step="0.01" inputmode="decimal" id="sTesting" placeholder="0.00" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                         </div>
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg md:col-span-4 transition shadow-md text-sm">Save Shift & Calculate Saleable Liters</button>
+                        <button type="submit" id="shiftSubmitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg md:col-span-4 transition shadow-md text-sm">Save Shift & Deduct Saleable Stock</button>
                     </form>
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Shift Log</h3>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Active Shift Log</h3>
                     <table class="w-full text-left border-collapse text-xs md:text-sm">
                         <thead>
                             <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
@@ -198,7 +203,7 @@
                                 <th class="p-2.5 border-b dark:border-slate-600">Product</th>
                                 <th class="p-2.5 border-b dark:border-slate-600">Saleable L</th>
                                 <th class="p-2.5 border-b dark:border-slate-600">Total (₹)</th>
-                                <th class="p-2.5 border-b dark:border-slate-600">Action</th>
+                                <th class="p-2.5 border-b dark:border-slate-600">Audit Action</th>
                             </tr>
                         </thead>
                         <tbody id="recordsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
@@ -209,12 +214,12 @@
             <!-- 3. Cash Reconciliation Tally -->
             <div id="tab-tally" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 max-w-lg mx-auto">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🧮 Automatic Cash Tally</h3>
-                    <p class="text-xs text-slate-500 mb-5">System calculates expected shift revenue. Enter physical collections to balance.</p>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🧮 Server-Derived Cash Reconciliation</h3>
+                    <p class="text-xs text-slate-500 mb-5">Expected sales revenue is locked and derived directly from backend SQL shift totals.</p>
                     
                     <div class="space-y-4">
                         <div class="p-3 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-700 flex justify-between items-center">
-                            <span class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase">Calculated Sales Target:</span>
+                            <span class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase">Authoritative Shift Revenue:</span>
                             <span id="tallyDisplayTarget" class="text-lg font-black text-blue-600">₹0.00</span>
                         </div>
                         <input type="hidden" id="tallyTotalSales" value="0">
@@ -224,18 +229,18 @@
                                 <input type="number" step="0.01" inputmode="decimal" id="tallyCash" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">UPI / Cards Received (₹)</label>
+                                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">UPI / Cards Settled (₹)</label>
                                 <input type="number" step="0.01" inputmode="decimal" id="tallyUPI" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">New Udhar / Credit Issued (₹)</label>
+                            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">New Udhar / Credit Sales (₹)</label>
                             <input type="number" step="0.01" inputmode="decimal" id="tallyUdhar" placeholder="0.00" oninput="calculateTally()" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
                         </div>
                         
                         <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 mt-4">
                             <div class="flex justify-between items-center text-sm font-bold">
-                                <span>Reconciliation Status:</span>
+                                <span>Variance Status:</span>
                                 <span id="tallyResultText" class="text-slate-700 dark:text-slate-300">Exact Match</span>
                             </div>
                         </div>
@@ -243,19 +248,24 @@
                 </div>
             </div>
 
-            <!-- 4. Real Stock & Dip Reconciliation -->
+            <!-- 4. Real Stock & Dip Reconciliation (With Error & Retry Controls) -->
             <div id="tab-tanks" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-white mb-1">Persistent Underground Tanks (UST)</h3>
-                    <p class="text-xs text-slate-500 mb-6">Persistent in database. Deducted automatically upon shift recording.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-white">Persistent Underground Tanks (UST)</h3>
+                            <p class="text-xs text-slate-500" id="tankStatusSubtitle">Synced with atomic shift & delivery ledger.</p>
+                        </div>
+                        <button onclick="loadTanks()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition">🔄 Sync Stock</button>
+                    </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-xl bg-blue-50/40 dark:bg-slate-900 space-y-3">
                             <div class="flex justify-between items-center">
                                 <h4 class="font-black text-blue-900 dark:text-blue-400">MS (Petrol) Book Stock</h4>
-                                <span id="petrolVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">No Variance</span>
+                                <span id="petrolVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">Verified</span>
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="petrolStockText">15,000 / 20,000 L (75%)</p>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="petrolStockText">15,000 / 20,000 L (75.0%)</p>
                             <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
                                 <div id="petrolProgressBar" class="bg-blue-600 h-full rounded-full" style="width: 75%;"></div>
                             </div>
@@ -263,9 +273,9 @@
                         <div class="border border-slate-200 dark:border-slate-700 p-5 rounded-xl bg-emerald-50/40 dark:bg-slate-900 space-y-3">
                             <div class="flex justify-between items-center">
                                 <h4 class="font-black text-emerald-900 dark:text-emerald-400">HSD (Diesel) Book Stock</h4>
-                                <span id="dieselVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">No Variance</span>
+                                <span id="dieselVarianceTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">Verified</span>
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="dieselStockText">20,000 / 25,000 L (80%)</p>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300" id="dieselStockText">20,000 / 25,000 L (80.0%)</p>
                             <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
                                 <div id="dieselProgressBar" class="bg-emerald-600 h-full rounded-full" style="width: 80%;"></div>
                             </div>
@@ -273,7 +283,6 @@
                     </div>
                 </div>
 
-                <!-- Dip Audit Form -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">📏 Physical Dip Entry (Daily Calibration)</h3>
@@ -288,7 +297,6 @@
                         </form>
                     </div>
 
-                    <!-- Inflow Delivery -->
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">🚚 Record Inflow Tanker Delivery</h3>
                         <form id="deliveryForm" class="space-y-3">
@@ -301,7 +309,7 @@
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <input type="number" step="0.01" inputmode="decimal" id="delLiters" placeholder="Invoice Litres" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="text" id="delChallan" placeholder="Challan / Invoice No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="delChallan" placeholder="Unique Challan / Invoice No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                             </div>
                             <input type="number" step="0.001" inputmode="decimal" id="delDensity" placeholder="Observed Density (kg/m³)" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition">Confirm Delivery into UST</button>
@@ -342,7 +350,7 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Active Balances</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Active Credit Balances</h3>
                     <table class="w-full text-left border-collapse text-xs md:text-sm">
                         <thead>
                             <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
@@ -434,7 +442,7 @@
                     <div class="flex justify-between items-center mb-4">
                         <div>
                             <h3 class="text-base font-bold text-slate-800 dark:text-white">🛡️ Immutable Audit Logs</h3>
-                            <p class="text-xs text-slate-500">Every shift save, deletion, dip entry, and delivery is permanently tracked.</p>
+                            <p class="text-xs text-slate-500">Every shift save, reversal, dip entry, and delivery is permanently tracked.</p>
                         </div>
                         <button onclick="loadAuditLogs()" class="bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-200">Refresh</button>
                     </div>
@@ -454,7 +462,7 @@
                 </div>
             </div>
 
-            <!-- 9. Station Profile -->
+            <!-- 9. Station Profile & Backup -->
             <div id="tab-account" class="tab-content hidden space-y-6">
                 <div class="max-w-xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
                     <div class="flex items-center gap-4 pb-4 border-b border-slate-200 dark:border-slate-700">
@@ -491,9 +499,7 @@
 
     <script>
         let mySalesChart = null;
-        let latestRecordsData = [];
 
-        // Network Status Watcher
         window.addEventListener('online', () => {
             document.getElementById('networkSyncBadge').innerText = '🟢 Online';
             document.getElementById('networkSyncBadge').className = 'text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold';
@@ -505,23 +511,27 @@
             document.getElementById('networkSyncBadge').className = 'text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold';
         });
 
+        // Fetch wrapper with 8s timeout & JWT header
         async function authFetch(url, options = {}) {
             const user = JSON.parse(localStorage.getItem('petroUser') || '{}');
             const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
             if (user && user.token) headers['Authorization'] = `Bearer ${user.token}`;
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+
             try {
-                const res = await fetch(url, { ...options, headers });
+                const res = await fetch(url, { ...options, headers, signal: controller.signal });
+                clearTimeout(timeoutId);
                 if (res.status === 401 || res.status === 403) {
-                    alert('Session expired. Please log in again.');
+                    alert('Session expired or unauthorized. Please log in again.');
                     logout();
                     throw new Error('Unauthorized');
                 }
                 return res;
             } catch (err) {
-                if (!navigator.onLine) {
-                    throw new Error('OFFLINE_MODE');
-                }
+                clearTimeout(timeoutId);
+                if (!navigator.onLine) throw new Error('OFFLINE_MODE');
                 throw err;
             }
         }
@@ -605,20 +615,22 @@
             document.documentElement.classList.toggle('dark');
         }
 
-        function switchTab(tabId) {
+        function switchTab(tabId, btnEl) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
                 el.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
                 el.classList.add('text-slate-600');
             });
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            event.currentTarget.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
-            event.currentTarget.classList.remove('text-slate-600');
-
+            if (btnEl) {
+                btnEl.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+                btnEl.classList.remove('text-slate-600');
+            }
             if (tabId === 'audit') loadAuditLogs();
         }
 
         function loadAllData() {
+            loadAuthoritativeSummary();
             loadRecords();
             loadCustomers();
             loadStaff();
@@ -626,46 +638,54 @@
             loadTanks();
         }
 
+        // Pulls Single Authoritative Summary from Server SQL
+        async function loadAuthoritativeSummary() {
+            try {
+                const res = await authFetch('/api/summary');
+                const data = await res.json();
+
+                document.getElementById('dashTotalRevenue').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                document.getElementById('dashPetrolSold').innerText = Number(data.petrolLiters).toFixed(2) + ' L';
+                document.getElementById('dashDieselSold').innerText = Number(data.dieselLiters).toFixed(2) + ' L';
+                document.getElementById('dashTotalUdhar').innerText = '₹' + Number(data.totalUdhar).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+                document.getElementById('tallyDisplayTarget').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                document.getElementById('tallyTotalSales').value = data.totalRevenue;
+                calculateTally();
+            } catch (e) {}
+        }
+
         async function loadRecords() {
             try {
                 const res = await authFetch('/api/records');
                 const data = await res.json();
-                latestRecordsData = data.records;
                 const tbody = document.getElementById('recordsTableBody');
                 tbody.innerHTML = '';
                 
-                let totalRev = 0, petrolL = 0, dieselL = 0;
                 data.records.forEach(r => {
-                    totalRev += r.total;
-                    if(r.fuelType === 'Petrol') petrolL += r.liters;
-                    if(r.fuelType === 'Diesel') dieselL += r.liters;
-
                     tbody.innerHTML += `<tr>
                         <td class="p-2.5 border-b dark:border-slate-700">${r.date} (${r.shift})</td>
                         <td class="p-2.5 border-b dark:border-slate-700">${r.attendant}</td>
                         <td class="p-2.5 border-b dark:border-slate-700">${r.fuelType}</td>
                         <td class="p-2.5 border-b dark:border-slate-700 font-semibold">${r.liters} L</td>
-                        <td class="p-2.5 border-b dark:border-slate-700 font-black">₹${r.total.toLocaleString()}</td>
+                        <td class="p-2.5 border-b dark:border-slate-700 font-black">₹${Number(r.total).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                         <td class="p-2.5 border-b dark:border-slate-700">
-                            <button onclick="deleteRecord(${r.id})" class="text-red-500 font-bold hover:underline">Delete</button>
+                            <button onclick="reverseRecord(${r.id})" class="text-red-500 font-bold hover:underline">Reverse</button>
                         </td>
                     </tr>`;
                 });
 
-                document.getElementById('dashTotalRevenue').innerText = '₹' + totalRev.toLocaleString();
-                document.getElementById('dashPetrolSold').innerText = petrolL.toFixed(2) + ' L';
-                document.getElementById('dashDieselSold').innerText = dieselL.toFixed(2) + ' L';
-                
-                document.getElementById('tallyDisplayTarget').innerText = '₹' + totalRev.toLocaleString();
-                document.getElementById('tallyTotalSales').value = totalRev;
-                calculateTally();
                 renderSalesGraph(data.records);
             } catch(e) {}
         }
 
         document.getElementById('shiftForm').onsubmit = async function(e) {
             e.preventDefault();
-            const payload = { 
+            const submitBtn = document.getElementById('shiftSubmitBtn');
+            submitBtn.disabled = true;
+
+            const payload = {
+                idempotencyKey: `SHIFT-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
                 date: document.getElementById('sDate').value, 
                 shift: document.getElementById('sShift').value, 
                 attendant: document.getElementById('sAttendant').value, 
@@ -681,19 +701,23 @@
                 const data = await res.json();
                 if(res.ok) {
                     this.reset();
-                    loadRecords();
-                    loadTanks();
-                    alert('Shift recorded! Saleable fuel deducted from UST.');
+                    loadAllData();
+                    alert(`Shift saved! Saleable: ${data.liters} L | Revenue: ₹${data.total}`);
                 } else {
-                    alert('Error: ' + data.error);
+                    alert('Validation Error: ' + data.error);
                 }
             } catch(err) {
-                // Offline Local-first Queue Fallback
-                const queue = JSON.parse(localStorage.getItem('petroOfflineQueue') || '[]');
-                queue.push({ url: '/api/records', payload });
-                localStorage.setItem('petroOfflineQueue', JSON.stringify(queue));
-                this.reset();
-                alert('⚠️ Internet unavailable: Shift entry safely saved in Offline Queue! Will auto-sync when online.');
+                if (err.message === 'OFFLINE_MODE') {
+                    const queue = JSON.parse(localStorage.getItem('petroOfflineQueue') || '[]');
+                    queue.push({ url: '/api/records', payload });
+                    localStorage.setItem('petroOfflineQueue', JSON.stringify(queue));
+                    this.reset();
+                    alert('⚠️ Offline: Shift saved with unique idempotency key! Will sync automatically when online.');
+                } else {
+                    alert('Request failed. Please check network and retry.');
+                }
+            } finally {
+                submitBtn.disabled = false;
             }
         };
 
@@ -710,38 +734,34 @@
                 }
             }
             localStorage.setItem('petroOfflineQueue', JSON.stringify(remaining));
-            if (remaining.length === 0) {
-                loadAllData();
-            }
+            if (remaining.length === 0) loadAllData();
         }
 
-        async function deleteRecord(id) {
-            if (!confirm('Are you sure you want to delete this shift? Audit log will record this action.')) return;
-            await authFetch('/api/records/' + id, { method: 'DELETE' });
-            loadRecords();
-            loadTanks();
+        async function reverseRecord(id) {
+            if (!confirm('Reverse this shift entry? This will restore fuel to the tank and log an audit reversal.')) return;
+            const res = await authFetch('/api/records/' + id, { method: 'DELETE' });
+            if (res.ok) loadAllData();
         }
 
-        // Live Persistent Tank Stock (With Fallback, prevents infinite loading)
         async function loadTanks() {
+            const sub = document.getElementById('tankStatusSubtitle');
             try {
                 const res = await authFetch('/api/tanks');
                 const data = await res.json();
 
                 const pPct = Math.min(100, Math.max(0, ((data.petrolStock / data.petrolCapacity) * 100))).toFixed(1);
-                document.getElementById('petrolStockText').innerText = `${data.petrolStock.toLocaleString()} / ${data.petrolCapacity.toLocaleString()} L (${pPct}%)`;
+                document.getElementById('petrolStockText').innerText = `${Number(data.petrolStock).toLocaleString('en-IN')} / ${Number(data.petrolCapacity).toLocaleString('en-IN')} L (${pPct}%)`;
                 document.getElementById('petrolProgressBar').style.width = pPct + '%';
 
                 const dPct = Math.min(100, Math.max(0, ((data.dieselStock / data.dieselCapacity) * 100))).toFixed(1);
-                document.getElementById('dieselStockText').innerText = `${data.dieselStock.toLocaleString()} / ${data.dieselCapacity.toLocaleString()} L (${dPct}%)`;
+                document.getElementById('dieselStockText').innerText = `${Number(data.dieselStock).toLocaleString('en-IN')} / ${Number(data.dieselCapacity).toLocaleString('en-IN')} L (${dPct}%)`;
                 document.getElementById('dieselProgressBar').style.width = dPct + '%';
+                sub.innerText = `Last verified from SQLite WAL ledger.`;
             } catch(e) {
-                document.getElementById('petrolStockText').innerText = '15,000 / 20,000 L (75.0%)';
-                document.getElementById('dieselStockText').innerText = '20,000 / 25,000 L (80.0%)';
+                sub.innerText = `⚠️ Could not sync live tank stock. Click 'Sync Stock' to retry.`;
             }
         }
 
-        // Dip Audit Submission
         document.getElementById('dipForm').onsubmit = async function(e) {
             e.preventDefault();
             const payload = {
@@ -762,7 +782,6 @@
             }
         };
 
-        // Inflow Delivery Submission
         document.getElementById('deliveryForm').onsubmit = async function(e) {
             e.preventDefault();
             const payload = {
@@ -785,27 +804,28 @@
         };
 
         function calculateTally() {
-            const totalSales = parseFloat(document.getElementById('tallyTotalSales').value) || 0;
-            const cash = parseFloat(document.getElementById('tallyCash').value) || 0;
-            const upi = parseFloat(document.getElementById('tallyUPI').value) || 0;
-            const udhar = parseFloat(document.getElementById('tallyUdhar').value) || 0;
+            const totalSales = Math.round((parseFloat(document.getElementById('tallyTotalSales').value) || 0) * 100);
+            const cash = Math.round((parseFloat(document.getElementById('tallyCash').value) || 0) * 100);
+            const upi = Math.round((parseFloat(document.getElementById('tallyUPI').value) || 0) * 100);
+            const udhar = Math.round((parseFloat(document.getElementById('tallyUdhar').value) || 0) * 100);
 
             const accounted = cash + upi + udhar;
-            const diff = accounted - totalSales;
+            const diffPaise = accounted - totalSales;
+            const diffRupees = (diffPaise / 100).toFixed(2);
 
             const resText = document.getElementById('tallyResultText');
             const alertBanner = document.getElementById('shortageAlertBanner');
 
-            if (diff === 0) {
+            if (diffPaise === 0) {
                 resText.innerText = "✅ Exact Match (Tally Balanced)";
                 resText.className = "text-emerald-600 font-bold";
                 alertBanner.classList.add('hidden');
-            } else if (diff > 0) {
-                resText.innerText = `⚠️ Surplus / Excess Cash: +₹${diff.toFixed(2)}`;
+            } else if (diffPaise > 0) {
+                resText.innerText = `⚠️ Surplus / Excess: +₹${diffRupees}`;
                 resText.className = "text-amber-600 font-bold";
                 alertBanner.classList.add('hidden');
             } else {
-                resText.innerText = `❌ Shortage Alert: -₹${Math.abs(diff).toFixed(2)}`;
+                resText.innerText = `❌ Shortage Alert: -₹${Math.abs(diffRupees).toFixed(2)}`;
                 resText.className = "text-red-600 font-bold";
                 alertBanner.classList.remove('hidden');
             }
@@ -819,13 +839,10 @@
                 const select = document.getElementById('pCustomerId');
                 tbody.innerHTML = '';
                 select.innerHTML = '<option value="">Select Account</option>';
-                let totalUdhar = 0;
                 data.customers.forEach(c => {
-                    totalUdhar += c.udharAmount;
-                    tbody.innerHTML += `<tr><td class="p-2.5 border-b dark:border-slate-700">${c.name}</td><td class="p-2.5 border-b dark:border-slate-700">${c.phone}</td><td class="p-2.5 border-b dark:border-slate-700">${c.vehicleNo}</td><td class="p-2.5 border-b dark:border-slate-700 text-red-600 font-bold">₹${c.udharAmount.toLocaleString()}</td></tr>`;
+                    tbody.innerHTML += `<tr><td class="p-2.5 border-b dark:border-slate-700">${c.name}</td><td class="p-2.5 border-b dark:border-slate-700">${c.phone}</td><td class="p-2.5 border-b dark:border-slate-700">${c.vehicleNo}</td><td class="p-2.5 border-b dark:border-slate-700 text-red-600 font-bold">₹${Number(c.udharAmount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td></tr>`;
                     select.innerHTML += `<option value="${c.id}">${c.name} (${c.vehicleNo}) - ₹${c.udharAmount}</option>`;
                 });
-                document.getElementById('dashTotalUdhar').innerText = '₹' + totalUdhar.toLocaleString();
             } catch(e) {}
         }
 
@@ -841,23 +858,26 @@
                 }) 
             });
             this.reset();
-            loadCustomers();
+            loadAllData();
         };
 
         document.getElementById('paymentForm').onsubmit = async function(e) {
             e.preventDefault();
-            await authFetch('/api/customer-payment', { 
+            const res = await authFetch('/api/customer-payment', { 
                 method: 'POST', 
                 body: JSON.stringify({
+                    idempotencyKey: `PAY-${Date.now()}`,
                     customerId: document.getElementById('pCustomerId').value, 
                     date: document.getElementById('pDate').value, 
                     amountPaid: parseFloat(document.getElementById('pAmountPaid').value), 
                     paymentMode: document.getElementById('pMode').value
                 }) 
             });
-            this.reset();
-            loadCustomers();
-            alert('Payment recorded!');
+            if (res.ok) {
+                this.reset();
+                loadAllData();
+                alert('Payment recorded!');
+            }
         };
 
         async function loadStaff() {
@@ -870,13 +890,13 @@
                 select.innerHTML = '<option value="">Select Attendant</option>';
 
                 data.staff.forEach(st => {
-                    const netPayable = st.monthlySalary - st.advanceTaken;
+                    const netPayable = (st.monthlySalary - st.advanceTaken).toFixed(2);
                     tbody.innerHTML += `<tr>
                         <td class="p-2.5 border-b dark:border-slate-700 font-medium">${st.name}</td>
                         <td class="p-2.5 border-b dark:border-slate-700">${st.phone}</td>
-                        <td class="p-2.5 border-b dark:border-slate-700">₹${st.monthlySalary.toLocaleString()}</td>
-                        <td class="p-2.5 border-b dark:border-slate-700 text-orange-600 font-bold">₹${st.advanceTaken.toLocaleString()}</td>
-                        <td class="p-2.5 border-b dark:border-slate-700 text-emerald-600 font-black">₹${netPayable.toLocaleString()}</td>
+                        <td class="p-2.5 border-b dark:border-slate-700">₹${Number(st.monthlySalary).toLocaleString('en-IN')}</td>
+                        <td class="p-2.5 border-b dark:border-slate-700 text-orange-600 font-bold">₹${Number(st.advanceTaken).toLocaleString('en-IN')}</td>
+                        <td class="p-2.5 border-b dark:border-slate-700 text-emerald-600 font-black">₹${Number(netPayable).toLocaleString('en-IN')}</td>
                     </tr>`;
                     select.innerHTML += `<option value="${st.id}">${st.name}</option>`;
                 });
@@ -919,7 +939,7 @@
                 const tbody = document.getElementById('expensesTableBody');
                 tbody.innerHTML = '';
                 data.expenses.forEach(e => {
-                    tbody.innerHTML += `<tr><td class="p-2.5 border-b dark:border-slate-700">${e.date}</td><td class="p-2.5 border-b dark:border-slate-700">${e.category}</td><td class="p-2.5 border-b dark:border-slate-700 text-amber-600 font-bold">₹${e.amount.toLocaleString()}</td><td class="p-2.5 border-b dark:border-slate-700">${e.notes || '-'}</td></tr>`;
+                    tbody.innerHTML += `<tr><td class="p-2.5 border-b dark:border-slate-700">${e.date}</td><td class="p-2.5 border-b dark:border-slate-700">${e.category}</td><td class="p-2.5 border-b dark:border-slate-700 text-amber-600 font-bold">₹${Number(e.amount).toLocaleString('en-IN')}</td><td class="p-2.5 border-b dark:border-slate-700">${e.notes || '-'}</td></tr>`;
                 });
             } catch(e) {}
         }
@@ -936,7 +956,7 @@
                 }) 
             });
             this.reset();
-            loadExpenses();
+            loadAllData();
         };
 
         async function loadAuditLogs() {
@@ -963,6 +983,18 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = `audited_sales_${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+
+        async function downloadJSONBackup() {
+            const res = await authFetch('/api/backup-json');
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `station_full_backup_${Date.now()}.json`;
             document.body.appendChild(a);
             a.click();
             a.remove();

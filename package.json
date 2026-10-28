@@ -1,7 +1,7 @@
 {
   "name": "petroflow-pro",
-  "version": "1.0.0",
-  "description": "Enterprise Petrol Pump Management ERP",
+  "version": "3.5.0",
+  "description": "Enterprise Petrol Pump Management ERP with Atomic Transactions & Tenant Isolation",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
