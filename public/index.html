@@ -47,11 +47,15 @@
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                             5-Day Full-Access Free Trial
                         </span>
-                        <h3 class="text-2xl font-bold mt-3 leading-snug">Secure Fuel Station Control & Cloud Ledger.</h3>
-                        <p class="text-xs text-blue-100/80 mt-2 leading-relaxed">Password-protected access, account personalization, and seamless shift reconciliation.</p>
+                        <h3 class="text-2xl font-bold mt-3 leading-snug">Secure Multi-Tenant Fuel Station Control.</h3>
+                        <p class="text-xs text-blue-100/80 mt-2 leading-relaxed">JWT authorization, complete station data isolation, and audit-grade financial tracking.</p>
                     </div>
 
                     <div class="space-y-2.5 pt-2">
+                        <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
+                            <span class="text-emerald-400 text-sm">✔</span>
+                            <span>Isolated Station Data & Encrypted Passwords</span>
+                        </div>
                         <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
                             <span class="text-emerald-400 text-sm">✔</span>
                             <span>Direct Shift Closing & Instant Cash Memo</span>
@@ -60,16 +64,12 @@
                             <span class="text-emerald-400 text-sm">✔</span>
                             <span>PetroAI Assistant with Troubleshooting</span>
                         </div>
-                        <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
-                            <span class="text-emerald-400 text-sm">✔</span>
-                            <span>Staff Salary Advance & Tank Gauges</span>
-                        </div>
                     </div>
                 </div>
 
                 <div class="relative z-10 pt-6 text-[11px] text-blue-200/70 border-t border-white/10 flex justify-between items-center">
                     <span>100% Encrypted & Local Database</span>
-                    <span>v2.5 Enterprise</span>
+                    <span>v2.7 Enterprise</span>
                 </div>
             </div>
 
@@ -78,9 +78,9 @@
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <h3 class="text-2xl font-black text-slate-800 dark:text-white">Account Login</h3>
-                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-2.5 py-1 rounded-md">Secure Portal</span>
+                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-2.5 py-1 rounded-md">JWT Protected</span>
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Apne email aur password se sign in karein ya Google use karein.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Apne email aur password se secure login karein.</p>
                 </div>
 
                 <!-- One Click Social Sign-In Buttons -->
@@ -145,11 +145,9 @@
                     </div>
                 </div>
                 
-                <!-- Header Actions & Account Avatar -->
                 <div class="flex items-center gap-3">
                     <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">🌙 Theme</button>
                     
-                    <!-- User Avatar & Profile Quick Button -->
                     <button onclick="switchTab('account')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700 transition">
                         <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs" id="navAvatarLetter">U</div>
                         <span id="navOwnerName">Account</span>
@@ -171,7 +169,7 @@
                 <button onclick="switchTab('expenses')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💸 Expenses</button>
                 <button onclick="switchTab('tanks')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">🛢️ Tank Stock</button>
                 <button onclick="switchTab('account')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">👤 My Account</button>
-                <button onclick="switchTab('pricing')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Subscription</button>
+                <button onclick="switchTab('pricing')" class="tab-btn py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 text-sm whitespace-nowrap flex items-center gap-2">💎 Plans (from ₹16/d)</button>
             </div>
         </nav>
 
@@ -204,7 +202,7 @@
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">📥 Audit & Spreadsheet Exports</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Download formatted sales records in CSV format.</p>
                     </div>
-                    <a href="/api/export-csv" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition shadow flex items-center gap-2">📊 Download Excel / CSV</a>
+                    <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition shadow flex items-center gap-2">📊 Download Excel / CSV</button>
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -475,57 +473,112 @@
                 </div>
             </div>
 
-            <!-- 9. Subscription Plans Tab -->
-            <div id="tab-pricing" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center max-w-4xl mx-auto">
-                    <span class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Flexible SaaS Pricing</span>
-                    <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-2">Upgrade Your Petrol Pump Subscription</h2>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Choose the ideal plan to keep your pump management running seamlessly.</p>
+            <!-- 9. Modern Affordable Subscription Plans (from ₹16/Day) -->
+            <div id="tab-pricing" class="tab-content hidden space-y-8">
+                <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 text-white text-center shadow-lg relative overflow-hidden">
+                    <div class="relative z-10 max-w-2xl mx-auto space-y-2">
+                        <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase">⚡ India's Most Affordable Pump ERP</span>
+                        <h2 class="text-3xl font-black">Apne Pump Ka Poora Hisab Sambhalein Sirf ₹16/Din Mein</h2>
+                        <p class="text-blue-100 text-xs">Chai ke kharche se bhi kam mein complete digital control. No hidden charges. Cancel anytime.</p>
+                    </div>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 text-left">
-                        <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-slate-50 dark:bg-slate-900 flex flex-col justify-between">
-                            <div>
-                                <h3 class="font-bold text-slate-800 dark:text-white text-lg">Starter Plan</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">For single nozzle small pumps</p>
-                                <div class="my-4"><span class="text-3xl font-black text-slate-900 dark:text-white">₹999</span><span class="text-xs text-slate-500"> / month</span></div>
-                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
-                                    <li>✔ Shift & Sales Entry</li>
-                                    <li>✔ Basic Tank Stock</li>
-                                    <li>✔ Expense Manager</li>
-                                </ul>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto text-left">
+                    <!-- 1. Micro / Single-Nozzle Plan -->
+                    <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-2xl bg-white dark:bg-slate-800 flex flex-col justify-between shadow-sm hover:shadow-md transition">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-slate-800 dark:text-white text-lg">Micro / Kisan Seva</h3>
+                                <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 rounded-full text-slate-600 dark:text-slate-300">₹16/Day</span>
                             </div>
-                            <button onclick="buyPlan('Starter Plan', 999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Starter</button>
-                        </div>
-
-                        <div class="border-2 border-blue-600 p-6 rounded-xl bg-white dark:bg-slate-900 shadow-lg flex flex-col justify-between relative">
-                            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase">Most Popular</span>
-                            <div>
-                                <h3 class="font-bold text-blue-900 dark:text-blue-400 text-lg">Professional</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">For standard active petrol pumps</p>
-                                <div class="my-4"><span class="text-3xl font-black text-slate-900 dark:text-white">₹2,499</span><span class="text-xs text-slate-500"> / month</span></div>
-                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
-                                    <li>✔ Everything in Starter</li>
-                                    <li>✔ Credit & Udhar Ledger</li>
-                                    <li>✔ Staff Salary & Advance Mgmt</li>
-                                    <li>✔ PDF Bill / Invoice Printing</li>
-                                </ul>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Single nozzle ya chote gramin petrol pump ke liye.</p>
+                            <div class="my-5">
+                                <span class="text-3xl font-black text-slate-900 dark:text-white">₹499</span>
+                                <span class="text-xs text-slate-500"> / month</span>
+                                <p class="text-[11px] text-emerald-600 font-semibold mt-1">Or ₹4,799/year (Save 20%)</p>
                             </div>
-                            <button onclick="buyPlan('Professional Plan', 2499)" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Choose Pro</button>
+                            <ul class="text-xs space-y-2.5 text-slate-600 dark:text-slate-300">
+                                <li class="flex items-center gap-2"><span>✔</span> Daily Shift & Meter Entry</li>
+                                <li class="flex items-center gap-2"><span>✔</span> Cash & UPI Tally Matching</li>
+                                <li class="flex items-center gap-2"><span>✔</span> Daily Expense Tracker</li>
+                                <li class="flex items-center gap-2"><span>✔</span> PetroAI Usage Guide</li>
+                            </ul>
                         </div>
+                        <button onclick="buyPlan('Micro Plan', 499)" class="mt-6 w-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
+                            <span>Get Started @ ₹16/d</span>
+                        </button>
+                    </div>
 
-                        <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-xl bg-slate-50 dark:bg-slate-900 flex flex-col justify-between">
-                            <div>
+                    <!-- 2. Smart Pro Plan (Most Popular) -->
+                    <div class="border-2 border-blue-600 p-6 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex flex-col justify-between relative transform md:-translate-y-2">
+                        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black tracking-wider px-3 py-1 rounded-full uppercase shadow">Most Popular Choice</span>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-blue-900 dark:text-blue-400 text-lg">Smart Pro</h3>
+                                <span class="text-[10px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 px-2.5 py-0.5 rounded-full">₹33/Day</span>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Standard 2-4 nozzle petrol pumps ke liye best.</p>
+                            <div class="my-5">
+                                <span class="text-3xl font-black text-slate-900 dark:text-white">₹999</span>
+                                <span class="text-xs text-slate-500"> / month</span>
+                                <p class="text-[11px] text-emerald-600 font-semibold mt-1">Or ₹9,499/year (2 Mahine Free)</p>
+                            </div>
+                            <ul class="text-xs space-y-2.5 text-slate-600 dark:text-slate-300 font-medium">
+                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> Everything in Micro Plan</li>
+                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> <b>Credit & Udhar Ledger (Wasooli)</b></li>
+                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> <b>Staff Salary & Advance Mgmt</b></li>
+                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> <b>Thermal Bill / Invoice Printing</b></li>
+                                <li class="flex items-center gap-2"><span class="text-blue-600">✔</span> Technical Issue Resolver AI</li>
+                            </ul>
+                        </div>
+                        <button onclick="buyPlan('Smart Pro Plan', 999)" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1.5">
+                            <span>Upgrade to Pro @ ₹33/d</span>
+                        </button>
+                    </div>
+
+                    <!-- 3. Enterprise Plan -->
+                    <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-2xl bg-white dark:bg-slate-800 flex flex-col justify-between shadow-sm hover:shadow-md transition">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
                                 <h3 class="font-bold text-slate-800 dark:text-white text-lg">Enterprise</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">For multi-pump station owners</p>
-                                <div class="my-4"><span class="text-3xl font-black text-slate-900 dark:text-white">₹4,999</span><span class="text-xs text-slate-500"> / month</span></div>
-                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
-                                    <li>✔ Everything in Pro</li>
-                                    <li>✔ Advanced Analytics Graphs</li>
-                                    <li>✔ Priority Support</li>
-                                    <li>✔ Multi-User Access</li>
-                                </ul>
+                                <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 rounded-full text-slate-600 dark:text-slate-300">₹83/Day</span>
                             </div>
-                            <button onclick="buyPlan('Enterprise Plan', 4999)" class="mt-6 w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-lg text-xs transition">Choose Enterprise</button>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Highway multi-dispenser & multi-pump chain ke liye.</p>
+                            <div class="my-5">
+                                <span class="text-3xl font-black text-slate-900 dark:text-white">₹2,499</span>
+                                <span class="text-xs text-slate-500"> / month</span>
+                                <p class="text-[11px] text-emerald-600 font-semibold mt-1">Or ₹23,999/year (Priority VIP)</p>
+                            </div>
+                            <ul class="text-xs space-y-2.5 text-slate-600 dark:text-slate-300">
+                                <li class="flex items-center gap-2"><span>✔</span> Everything in Smart Pro</li>
+                                <li class="flex items-center gap-2"><span>✔</span> <b>Excel / CSV One-Click Export</b></li>
+                                <li class="flex items-center gap-2"><span>✔</span> Advanced Revenue Chart Trends</li>
+                                <li class="flex items-center gap-2"><span>✔</span> Dedicated WhatsApp & Phone Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="buyPlan('Enterprise Plan', 2499)" class="mt-6 w-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
+                            <span>Choose Enterprise</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UPI Payment Simulator Modal -->
+                <div id="paymentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl max-w-sm w-full text-center space-y-4 border border-slate-200 dark:border-slate-700 shadow-2xl">
+                        <h3 class="text-lg font-black" id="payModalTitle">Plan Upgrade</h3>
+                        <p class="text-xs text-slate-500" id="payModalSub">Direct UPI / QR Code Payment</p>
+                        
+                        <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-slate-700">
+                            <div class="w-32 h-32 bg-slate-200 dark:bg-slate-800 flex items-center justify-center rounded-lg text-4xl shadow-inner">
+                                📱
+                            </div>
+                            <p class="text-xs font-mono font-bold mt-2 text-blue-600">BHIM / PhonePe / GPay UPI</p>
+                            <span class="text-lg font-black mt-1" id="payModalAmount">₹0.00</span>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="confirmSimulatedPayment()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition">I Have Paid (Activate)</button>
+                            <button onclick="closePaymentModal()" class="px-4 bg-slate-200 dark:bg-slate-700 text-xs font-bold py-2.5 rounded-xl">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -546,7 +599,7 @@
                     </div>
                 </div>
                 <div class="p-2.5 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex gap-2">
-                    <input type="text" id="aiInput" placeholder="Ask AI: 'shift entry kaise karein?'..." class="flex-grow border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="aiInput" placeholder="Ask: 'bill print nahi ho raha' ya 'shift kaise karein'..." class="flex-grow border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button onclick="sendAIMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">Send</button>
                 </div>
             </div>
@@ -562,6 +615,27 @@
         let mySalesChart = null;
         let currentUserPump = "PetroFlow Pro";
         let latestRecordsData = [];
+        let pendingPlanName = "";
+
+        // Helper for Authenticated API Requests with JWT Token
+        async function authFetch(url, options = {}) {
+            const user = JSON.parse(localStorage.getItem('petroUser') || '{}');
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(options.headers || {})
+            };
+            if (user && user.token) {
+                headers['Authorization'] = `Bearer ${user.token}`;
+            }
+
+            const res = await fetch(url, { ...options, headers });
+            if (res.status === 401 || res.status === 403) {
+                alert('Session expired or unauthorized. Please log in again.');
+                logout();
+                throw new Error('Unauthorized');
+            }
+            return res;
+        }
 
         const blockedEmailDomains = [
             'tempmail.com', '10minutemail.com', 'mailinator.com', 'throwawaymail.com',
@@ -590,13 +664,11 @@
             document.getElementById('appContainer').classList.remove('hidden');
             document.getElementById('navPumpTitle').innerText = userData.pumpName;
             
-            // Header Avatar info
             const nameInitial = (userData.ownerName || userData.pumpName || 'U').charAt(0).toUpperCase();
             document.getElementById('navAvatarLetter').innerText = nameInitial;
             document.getElementById('profileBigAvatar').innerText = nameInitial;
             document.getElementById('navOwnerName').innerText = userData.ownerName || userData.pumpName;
 
-            // Account Tab inputs
             document.getElementById('accEmail').value = userData.email;
             document.getElementById('accPumpName').value = userData.pumpName || '';
             document.getElementById('accOwnerName').value = userData.ownerName || '';
@@ -613,7 +685,7 @@
             }
         }
 
-        // Login with Email & Password
+        // Login Form Submission
         document.getElementById('loginForm').onsubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('loginSubmitBtn');
@@ -657,55 +729,27 @@
             }
         };
 
-        // Google One-Click Sign-In
-        async function loginWithGoogle() {
-            const simulatedGoogleEmail = prompt("Google Sign-In Simulator:\nEnter your Gmail address:", "owner@gmail.com");
-            if (!simulatedGoogleEmail) return;
-
-            const res = await fetch('/api/google-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: simulatedGoogleEmail,
-                    name: "Google Fuel Owner",
-                    pumpName: "Green Fuel Station"
-                })
-            });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem('petroUser', JSON.stringify(data));
-                applyUserData(data);
-                loadAllData();
-            } else {
-                alert(data.error || "Google Sign-in failed");
-            }
-        }
-
-        function loginWithMicrosoft() {
-            alert("Microsoft Azure OAuth integration is ready! You can link your Azure Client ID.");
-        }
-
-        // Save Profile Edits (Email cannot be altered)
+        // Profile Form Update (JWT authFetch)
         document.getElementById('profileForm').onsubmit = async function(e) {
             e.preventDefault();
-            const email = document.getElementById('accEmail').value;
             const pumpName = document.getElementById('accPumpName').value;
             const ownerName = document.getElementById('accOwnerName').value;
             const phone = document.getElementById('accPhone').value;
 
-            const res = await fetch('/api/update-profile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, pumpName, ownerName, phone })
-            });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem('petroUser', JSON.stringify(data));
-                applyUserData(data);
-                alert("Profile changes saved successfully!");
-            } else {
-                alert(data.error || "Failed to update profile");
-            }
+            try {
+                const res = await authFetch('/api/update-profile', {
+                    method: 'POST',
+                    body: JSON.stringify({ pumpName, ownerName, phone })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('petroUser', JSON.stringify(data));
+                    applyUserData(data);
+                    alert("Profile changes saved successfully!");
+                } else {
+                    alert(data.error || "Failed to update profile");
+                }
+            } catch(e) {}
         };
 
         function logout() {
@@ -742,15 +786,43 @@
             loadExpenses();
         }
 
+        async function downloadCSVReport() {
+            try {
+                const res = await authFetch('/api/export-csv');
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sales_report_${Date.now()}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } catch (err) {
+                alert('Export failed. Check your connection or session.');
+            }
+        }
+
         function buyPlan(planName, price) {
-            alert(`Redirecting to Secure Payment Gateway for ${planName} (₹${price})...\n(Integration ready for Razorpay/UPI)`);
+            pendingPlanName = planName;
+            document.getElementById('payModalTitle').innerText = planName;
+            document.getElementById('payModalAmount').innerText = '₹' + price + ' (Inc. GST)';
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        function confirmSimulatedPayment() {
+            closePaymentModal();
+            alert(`🎉 Payment of ${pendingPlanName} confirmed successfully via UPI! Your subscription is now active.`);
         }
 
         function toggleAIChat() {
             document.getElementById('aiChatBox').classList.toggle('hidden');
         }
 
-        // Upgraded Smart PetroAI Support Assistant
+        // Smart PetroAI Support Assistant
         function sendAIMessage() {
             const input = document.getElementById('aiInput');
             const msg = input.value.trim();
@@ -765,19 +837,17 @@
                 let reply = "Main samajh nahi paya. Aap mujhse pooch sakte hain:<br>• 'Shift entry kaise karein?'<br>• 'Bill print nahi ho raha'<br>• 'Sales ya stock report'<br>• 'Data load issue fix'";
                 const lower = msg.toLowerCase();
 
-                // 1. Technical Troubleshooting Logic
                 if (lower.includes('issue') || lower.includes('problem') || lower.includes('error') || lower.includes('theek') || lower.includes('fix') || lower.includes('kharab') || lower.includes('nahi ho raha')) {
                     if (lower.includes('print') || lower.includes('bill') || lower.includes('invoice')) {
-                        reply = "🛠️ <b>Bill Print Issue Fix:</b><br>1. Browser ke URL bar ke right corner par dekhein, pop-up block toh nahi hai.<br>2. Pop-up setting ko <b>'Always allow'</b> par set karein.<br>3. Check karein thermal/desktop printer connected aur online hai.";
+                        reply = "🛠️ <b>Bill Print Issue Fix:</b><br>1. Browser ke URL bar ke right corner par dekhein, pop-up block toh nahi hai.<br>2. Pop-up setting ko <b>'Always allow'</b> par set karein.<br>3. Check karein printer connected aur online hai.";
                     } else if (lower.includes('load') || lower.includes('connection') || lower.includes('server') || lower.includes('data')) {
-                        reply = "🛠️ <b>Data / Connection Fix:</b><br>1. Terminal mein check karein server run ho raha hai (`node server.js`).<br>2. Page ko hard reload karein: <b>Ctrl + Shift + R</b>.<br>3. Agar Render.com par host hai toh check karein instance active hai ya sleep mode mein gaya hai.";
+                        reply = "🛠️ <b>Data / Connection Fix:</b><br>1. Terminal mein check karein server run ho raha hai (`node server.js`).<br>2. Page ko hard reload karein: <b>Ctrl + Shift + R</b>.<br>3. Check karein JWT token valid hai ya dobara login karein.";
                     } else if (lower.includes('meter') || lower.includes('calc') || lower.includes('hisab')) {
                         reply = "🛠️ <b>Meter Reading Fix:</b><br>Formula: <code>(Closing Meter - Opening Meter) - Testing Liters</code>.<br>Hamesha Closing Meter ko Opening Meter se bada enter karein.";
                     } else {
                         reply = "🛠️ <b>General Troubleshooting:</b><br>1. Browser cache clear karein.<br>2. F12 daba kar 'Console' tab mein red line error check karein.<br>3. Server terminal mein <code>Ctrl + C</code> daba kar dobara <code>node server.js</code> chalayein.";
                     }
                 }
-                // 2. User Guide (Website Kaise Chalein)
                 else if (lower.includes('kaise') || lower.includes('guide') || lower.includes('help') || lower.includes('chalae') || lower.includes('use') || lower.includes('sikhao')) {
                     if (lower.includes('shift') || lower.includes('sale') || lower.includes('entry')) {
                         reply = "📖 <b>Shift Sales Kaise Karein:</b><br>1. <b>'Shift & Sales'</b> tab par jayein.<br>2. Date, attendant, fuel type (Petrol/Diesel), rate, aur meter reading bharein.<br>3. 'Save Shift Entry' dabayein; underground tank stock aur total revenue apne aap adjust ho jayega.";
@@ -791,7 +861,6 @@
                         reply = "📖 <b>PetroFlow Pro Navigation:</b><br>• <b>Dashboard:</b> Total revenue, chart aur stock summary.<br>• <b>Shift & Sales:</b> Daily nozzle meter entries.<br>• <b>Tank Stock:</b> Fuel dip volume aur tanker entry (+2,000L).<br>• <b>My Account:</b> Station aur owner details update karne ke liye.";
                     }
                 }
-                // 3. Operational Data Queries
                 else if (lower.includes('sales') || lower.includes('revenue') || lower.includes('bikri')) {
                     let totalRev = latestRecordsData.reduce((sum, r) => sum + r.total, 0);
                     reply = `📊 Aapki recorded sales revenue total <b>₹${totalRev.toLocaleString()}</b> hai.`;
@@ -807,38 +876,40 @@
         }
 
         async function loadRecords() {
-            const res = await fetch('/api/records');
-            const data = await res.json();
-            latestRecordsData = data.records;
-            const tbody = document.getElementById('recordsTableBody');
-            tbody.innerHTML = '';
-            
-            let totalRev = 0, petrolL = 0, dieselL = 0;
+            try {
+                const res = await authFetch('/api/records');
+                const data = await res.json();
+                latestRecordsData = data.records;
+                const tbody = document.getElementById('recordsTableBody');
+                tbody.innerHTML = '';
+                
+                let totalRev = 0, petrolL = 0, dieselL = 0;
 
-            data.records.forEach(r => {
-                totalRev += r.total;
-                if(r.fuelType === 'Petrol') petrolL += r.liters;
-                if(r.fuelType === 'Diesel') dieselL += r.liters;
+                data.records.forEach(r => {
+                    totalRev += r.total;
+                    if(r.fuelType === 'Petrol') petrolL += r.liters;
+                    if(r.fuelType === 'Diesel') dieselL += r.liters;
 
-                tbody.innerHTML += `<tr>
-                    <td class="p-3 border-b dark:border-slate-700">${r.date} (${r.shift})</td>
-                    <td class="p-3 border-b dark:border-slate-700">${r.attendant}</td>
-                    <td class="p-3 border-b dark:border-slate-700">${r.fuelType}</td>
-                    <td class="p-3 border-b dark:border-slate-700 font-semibold">${r.liters} L</td>
-                    <td class="p-3 border-b dark:border-slate-700 font-black">₹${r.total.toLocaleString()}</td>
-                    <td class="p-3 border-b dark:border-slate-700 flex gap-2">
-                        <button onclick='printInvoice(${JSON.stringify(r)})' class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-xs font-bold">🖨️ Bill</button>
-                        <button onclick="deleteRecord(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Delete</button>
-                    </td>
-                </tr>`;
-            });
+                    tbody.innerHTML += `<tr>
+                        <td class="p-3 border-b dark:border-slate-700">${r.date} (${r.shift})</td>
+                        <td class="p-3 border-b dark:border-slate-700">${r.attendant}</td>
+                        <td class="p-3 border-b dark:border-slate-700">${r.fuelType}</td>
+                        <td class="p-3 border-b dark:border-slate-700 font-semibold">${r.liters} L</td>
+                        <td class="p-3 border-b dark:border-slate-700 font-black">₹${r.total.toLocaleString()}</td>
+                        <td class="p-3 border-b dark:border-slate-700 flex gap-2">
+                            <button onclick='printInvoice(${JSON.stringify(r)})' class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-xs font-bold">🖨️ Bill</button>
+                            <button onclick="deleteRecord(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Delete</button>
+                        </td>
+                    </tr>`;
+                });
 
-            document.getElementById('dashTotalRevenue').innerText = '₹' + totalRev.toLocaleString();
-            document.getElementById('dashPetrolSold').innerText = petrolL.toFixed(2) + ' L';
-            document.getElementById('dashDieselSold').innerText = dieselL.toFixed(2) + ' L';
-            document.getElementById('tallyTotalSales').value = totalRev;
-            calculateTally();
-            renderSalesGraph(data.records);
+                document.getElementById('dashTotalRevenue').innerText = '₹' + totalRev.toLocaleString();
+                document.getElementById('dashPetrolSold').innerText = petrolL.toFixed(2) + ' L';
+                document.getElementById('dashDieselSold').innerText = dieselL.toFixed(2) + ' L';
+                document.getElementById('tallyTotalSales').value = totalRev;
+                calculateTally();
+                renderSalesGraph(data.records);
+            } catch(e) {}
         }
 
         function calculateTally() {
@@ -899,112 +970,187 @@
             const unitPrice = parseFloat(document.getElementById('sUnitPrice').value);
             const fuelType = document.getElementById('sFuelType').value;
             const liters = (closing - opening) - testing;
-            const total = liters * unitPrice;
 
             if(fuelType === 'Petrol') { globalPetrolStock = Math.max(0, globalPetrolStock - liters); }
             else { globalDieselStock = Math.max(0, globalDieselStock - liters); }
             updateTankUI();
 
-            const payload = { date: document.getElementById('sDate').value, shift: document.getElementById('sShift').value, attendant: document.getElementById('sAttendant').value, fuelType, unitPrice, openingMeter: opening, closingMeter: closing, testing, liters, total };
-            await fetch('/api/records', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            this.reset();
-            loadRecords();
-            alert('Shift recorded successfully!');
+            const payload = { 
+                date: document.getElementById('sDate').value, 
+                shift: document.getElementById('sShift').value, 
+                attendant: document.getElementById('sAttendant').value, 
+                fuelType, 
+                unitPrice, 
+                openingMeter: opening, 
+                closingMeter: closing, 
+                testing 
+            };
+            
+            try {
+                const res = await authFetch('/api/records', { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                const data = await res.json();
+                if(res.ok) {
+                    this.reset();
+                    loadRecords();
+                    alert('Shift recorded successfully!');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch(e) {}
         };
 
         async function deleteRecord(id) {
-            await fetch('/api/records/' + id, { method: 'DELETE' });
-            loadRecords();
+            try {
+                await authFetch('/api/records/' + id, { method: 'DELETE' });
+                loadRecords();
+            } catch(e) {}
         }
 
         async function loadCustomers() {
-            const res = await fetch('/api/customers');
-            const data = await res.json();
-            const tbody = document.getElementById('customersTableBody');
-            const select = document.getElementById('pCustomerId');
-            tbody.innerHTML = '';
-            select.innerHTML = '<option value="">Select Customer</option>';
-            let totalUdhar = 0;
-            data.customers.forEach(c => {
-                totalUdhar += c.udharAmount;
-                tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${c.name}</td><td class="p-3 border-b dark:border-slate-700">${c.phone}</td><td class="p-3 border-b dark:border-slate-700">${c.vehicleNo}</td><td class="p-3 border-b dark:border-slate-700 text-red-600 font-bold">₹${c.udharAmount.toLocaleString()}</td></tr>`;
-                select.innerHTML += `<option value="${c.id}">${c.name} (${c.vehicleNo}) - Due: ₹${c.udharAmount}</option>`;
-            });
-            document.getElementById('dashTotalUdhar').innerText = '₹' + totalUdhar.toLocaleString();
+            try {
+                const res = await authFetch('/api/customers');
+                const data = await res.json();
+                const tbody = document.getElementById('customersTableBody');
+                const select = document.getElementById('pCustomerId');
+                tbody.innerHTML = '';
+                select.innerHTML = '<option value="">Select Customer</option>';
+                let totalUdhar = 0;
+                data.customers.forEach(c => {
+                    totalUdhar += c.udharAmount;
+                    tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${c.name}</td><td class="p-3 border-b dark:border-slate-700">${c.phone}</td><td class="p-3 border-b dark:border-slate-700">${c.vehicleNo}</td><td class="p-3 border-b dark:border-slate-700 text-red-600 font-bold">₹${c.udharAmount.toLocaleString()}</td></tr>`;
+                    select.innerHTML += `<option value="${c.id}">${c.name} (${c.vehicleNo}) - Due: ₹${c.udharAmount}</option>`;
+                });
+                document.getElementById('dashTotalUdhar').innerText = '₹' + totalUdhar.toLocaleString();
+            } catch(e) {}
         }
 
         document.getElementById('customerForm').onsubmit = async function(e) {
             e.preventDefault();
-            const payload = { name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value, vehicleNo: document.getElementById('cVehicle').value, udharAmount: parseFloat(document.getElementById('cAmount').value) };
-            await fetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            this.reset();
-            loadCustomers();
+            const payload = { 
+                name: document.getElementById('cName').value, 
+                phone: document.getElementById('cPhone').value, 
+                vehicleNo: document.getElementById('cVehicle').value, 
+                udharAmount: parseFloat(document.getElementById('cAmount').value) 
+            };
+            try {
+                await authFetch('/api/customers', { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                this.reset();
+                loadCustomers();
+            } catch(e) {}
         };
 
         document.getElementById('paymentForm').onsubmit = async function(e) {
             e.preventDefault();
-            const payload = { customerId: document.getElementById('pCustomerId').value, date: document.getElementById('pDate').value, amountPaid: parseFloat(document.getElementById('pAmountPaid').value), paymentMode: document.getElementById('pMode').value };
-            await fetch('/api/customer-payment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            this.reset();
-            loadCustomers();
-            alert('Payment received!');
+            const payload = { 
+                customerId: document.getElementById('pCustomerId').value, 
+                date: document.getElementById('pDate').value, 
+                amountPaid: parseFloat(document.getElementById('pAmountPaid').value), 
+                paymentMode: document.getElementById('pMode').value 
+            };
+            try {
+                await authFetch('/api/customer-payment', { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                this.reset();
+                loadCustomers();
+                alert('Payment received!');
+            } catch(e) {}
         };
 
         async function loadStaff() {
-            const res = await fetch('/api/staff');
-            const data = await res.json();
-            const tbody = document.getElementById('staffTableBody');
-            const select = document.getElementById('advStaffId');
-            tbody.innerHTML = '';
-            select.innerHTML = '<option value="">Select Staff Member</option>';
+            try {
+                const res = await authFetch('/api/staff');
+                const data = await res.json();
+                const tbody = document.getElementById('staffTableBody');
+                const select = document.getElementById('advStaffId');
+                tbody.innerHTML = '';
+                select.innerHTML = '<option value="">Select Staff Member</option>';
 
-            data.staff.forEach(st => {
-                const netPayable = st.monthlySalary - st.advanceTaken;
-                tbody.innerHTML += `<tr>
-                    <td class="p-3 border-b dark:border-slate-700 font-medium">${st.name}</td>
-                    <td class="p-3 border-b dark:border-slate-700">${st.phone}</td>
-                    <td class="p-3 border-b dark:border-slate-700">₹${st.monthlySalary.toLocaleString()}</td>
-                    <td class="p-3 border-b dark:border-slate-700 text-orange-600 font-bold">₹${st.advanceTaken.toLocaleString()}</td>
-                    <td class="p-3 border-b dark:border-slate-700 text-emerald-600 font-black">₹${netPayable.toLocaleString()}</td>
-                </tr>`;
-                select.innerHTML += `<option value="${st.id}">${st.name} (Salary: ₹${st.monthlySalary}, Advance: ₹${st.advanceTaken})</option>`;
-            });
+                data.staff.forEach(st => {
+                    const netPayable = st.monthlySalary - st.advanceTaken;
+                    tbody.innerHTML += `<tr>
+                        <td class="p-3 border-b dark:border-slate-700 font-medium">${st.name}</td>
+                        <td class="p-3 border-b dark:border-slate-700">${st.phone}</td>
+                        <td class="p-3 border-b dark:border-slate-700">₹${st.monthlySalary.toLocaleString()}</td>
+                        <td class="p-3 border-b dark:border-slate-700 text-orange-600 font-bold">₹${st.advanceTaken.toLocaleString()}</td>
+                        <td class="p-3 border-b dark:border-slate-700 text-emerald-600 font-black">₹${netPayable.toLocaleString()}</td>
+                    </tr>`;
+                    select.innerHTML += `<option value="${st.id}">${st.name} (Salary: ₹${st.monthlySalary}, Advance: ₹${st.advanceTaken})</option>`;
+                });
+            } catch(e) {}
         }
 
         document.getElementById('staffForm').onsubmit = async function(e) {
             e.preventDefault();
-            const payload = { name: document.getElementById('stName').value, phone: document.getElementById('stPhone').value, monthlySalary: parseFloat(document.getElementById('stSalary').value), advanceTaken: parseFloat(document.getElementById('stAdvance').value) || 0 };
-            await fetch('/api/staff', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            this.reset();
-            loadStaff();
-            alert('Staff registered successfully!');
+            const payload = { 
+                name: document.getElementById('stName').value, 
+                phone: document.getElementById('stPhone').value, 
+                monthlySalary: parseFloat(document.getElementById('stSalary').value), 
+                advanceTaken: parseFloat(document.getElementById('stAdvance').value) || 0 
+            };
+            try {
+                await authFetch('/api/staff', { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                this.reset();
+                loadStaff();
+                alert('Staff registered successfully!');
+            } catch(e) {}
         };
 
         document.getElementById('advanceForm').onsubmit = async function(e) {
             e.preventDefault();
-            const payload = { staffId: document.getElementById('advStaffId').value, advanceAmount: parseFloat(document.getElementById('advAmount').value) };
-            await fetch('/api/staff-advance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            this.reset();
-            loadStaff();
-            alert('Advance money recorded successfully!');
+            const payload = { 
+                staffId: document.getElementById('advStaffId').value, 
+                advanceAmount: parseFloat(document.getElementById('advAmount').value) 
+            };
+            try {
+                await authFetch('/api/staff-advance', { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                this.reset();
+                loadStaff();
+                alert('Advance money recorded successfully!');
+            } catch(e) {}
         };
 
         async function loadExpenses() {
-            const res = await fetch('/api/expenses');
-            const data = await res.json();
-            const tbody = document.getElementById('expensesTableBody');
-            tbody.innerHTML = '';
-            data.expenses.forEach(e => {
-                tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${e.date}</td><td class="p-3 border-b dark:border-slate-700">${e.category}</td><td class="p-3 border-b dark:border-slate-700 text-amber-600 font-bold">₹${e.amount.toLocaleString()}</td><td class="p-3 border-b dark:border-slate-700">${e.notes || '-'}</td></tr>`;
-            });
+            try {
+                const res = await authFetch('/api/expenses');
+                const data = await res.json();
+                const tbody = document.getElementById('expensesTableBody');
+                tbody.innerHTML = '';
+                data.expenses.forEach(e => {
+                    tbody.innerHTML += `<tr><td class="p-3 border-b dark:border-slate-700">${e.date}</td><td class="p-3 border-b dark:border-slate-700">${e.category}</td><td class="p-3 border-b dark:border-slate-700 text-amber-600 font-bold">₹${e.amount.toLocaleString()}</td><td class="p-3 border-b dark:border-slate-700">${e.notes || '-'}</td></tr>`;
+                });
+            } catch(e) {}
         }
 
         document.getElementById('expenseForm').onsubmit = async function(e) {
             e.preventDefault();
-            const payload = { date: document.getElementById('eDate').value, category: document.getElementById('eCategory').value, amount: parseFloat(document.getElementById('eAmount').value), notes: document.getElementById('eNotes').value };
-            await fetch('/api/expenses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            this.reset();
-            loadExpenses();
+            const payload = { 
+                date: document.getElementById('eDate').value, 
+                category: document.getElementById('eCategory').value, 
+                amount: parseFloat(document.getElementById('eAmount').value), 
+                notes: document.getElementById('eNotes').value 
+            };
+            try {
+                await authFetch('/api/expenses', { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                this.reset();
+                loadExpenses();
+            } catch(e) {}
         };
 
         function refillTank(type, liters) {
