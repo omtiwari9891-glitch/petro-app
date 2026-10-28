@@ -58,11 +58,11 @@
                         </div>
                         <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
                             <span class="text-emerald-400 text-sm">✔</span>
-                            <span>Password Protected & Real-Time Sync</span>
+                            <span>PetroAI Assistant with Troubleshooting</span>
                         </div>
                         <div class="flex items-center gap-3 text-xs text-blue-100 bg-white/5 p-2 rounded-lg border border-white/10">
                             <span class="text-emerald-400 text-sm">✔</span>
-                            <span>Staff Salary Advance & Dip Trackers</span>
+                            <span>Staff Salary Advance & Tank Gauges</span>
                         </div>
                     </div>
                 </div>
@@ -155,7 +155,7 @@
                         <span id="navOwnerName">Account</span>
                     </button>
 
-                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
+                    <button onclick="logout()" class="bg-slate-800 hover:bg-red-600 text-slate-200 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-slate-700">Logout</button>
                 </div>
             </div>
         </header>
@@ -542,11 +542,11 @@
                 </div>
                 <div id="aiChatMessages" class="p-3.5 h-64 overflow-y-auto text-xs space-y-2 bg-slate-50 dark:bg-slate-900 flex flex-col">
                     <div class="bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-300 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100 dark:border-slate-700">
-                        Hello! Main aapka AI assistant hoon. Aap mujhse pump ki sales, stock ya udhar ke baare mein pooch sakte hain.
+                        Hello! Main aapka <b>PetroAI Support Assistant</b> hoon. Website chalane ki jankari chahiye ya koi technical problem theek karni hai, mujhse pooch sakte hain!
                     </div>
                 </div>
                 <div class="p-2.5 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex gap-2">
-                    <input type="text" id="aiInput" placeholder="Ask AI anything..." class="flex-grow border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="aiInput" placeholder="Ask AI: 'shift entry kaise karein?'..." class="flex-grow border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button onclick="sendAIMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">Send</button>
                 </div>
             </div>
@@ -750,29 +750,60 @@
             document.getElementById('aiChatBox').classList.toggle('hidden');
         }
 
+        // Upgraded Smart PetroAI Support Assistant
         function sendAIMessage() {
             const input = document.getElementById('aiInput');
             const msg = input.value.trim();
-            if(!msg) return;
+            if (!msg) return;
 
             const chatMessages = document.getElementById('aiChatMessages');
             chatMessages.innerHTML += `<div class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white p-2.5 rounded-xl self-end max-w-[85%]">${msg}</div>`;
             input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
             setTimeout(() => {
-                let reply = "Main samajh nahi paya. Aap 'sales', 'stock', ya 'udhar' ke baare mein pooch sakte hain.";
+                let reply = "Main samajh nahi paya. Aap mujhse pooch sakte hain:<br>• 'Shift entry kaise karein?'<br>• 'Bill print nahi ho raha'<br>• 'Sales ya stock report'<br>• 'Data load issue fix'";
                 const lower = msg.toLowerCase();
-                if(lower.includes('sales') || lower.includes('revenue') || lower.includes('bikri')) {
-                    let totalRev = latestRecordsData.reduce((sum, r) => sum + r.total, 0);
-                    reply = `Aapki total recorded sales revenue abhi tak ₹${totalRev.toLocaleString()} ki hai.`;
-                } else if(lower.includes('stock') || lower.includes('tank')) {
-                    reply = `Current Tank Stock: Petrol -> ${globalPetrolStock} Liters, Diesel -> ${globalDieselStock} Liters.`;
-                } else if(lower.includes('udhar') || lower.includes('credit')) {
-                    reply = `Aapke customer ledger mein pending udhar ka data Dashboard par available hai.`;
+
+                // 1. Technical Troubleshooting Logic
+                if (lower.includes('issue') || lower.includes('problem') || lower.includes('error') || lower.includes('theek') || lower.includes('fix') || lower.includes('kharab') || lower.includes('nahi ho raha')) {
+                    if (lower.includes('print') || lower.includes('bill') || lower.includes('invoice')) {
+                        reply = "🛠️ <b>Bill Print Issue Fix:</b><br>1. Browser ke URL bar ke right corner par dekhein, pop-up block toh nahi hai.<br>2. Pop-up setting ko <b>'Always allow'</b> par set karein.<br>3. Check karein thermal/desktop printer connected aur online hai.";
+                    } else if (lower.includes('load') || lower.includes('connection') || lower.includes('server') || lower.includes('data')) {
+                        reply = "🛠️ <b>Data / Connection Fix:</b><br>1. Terminal mein check karein server run ho raha hai (`node server.js`).<br>2. Page ko hard reload karein: <b>Ctrl + Shift + R</b>.<br>3. Agar Render.com par host hai toh check karein instance active hai ya sleep mode mein gaya hai.";
+                    } else if (lower.includes('meter') || lower.includes('calc') || lower.includes('hisab')) {
+                        reply = "🛠️ <b>Meter Reading Fix:</b><br>Formula: <code>(Closing Meter - Opening Meter) - Testing Liters</code>.<br>Hamesha Closing Meter ko Opening Meter se bada enter karein.";
+                    } else {
+                        reply = "🛠️ <b>General Troubleshooting:</b><br>1. Browser cache clear karein.<br>2. F12 daba kar 'Console' tab mein red line error check karein.<br>3. Server terminal mein <code>Ctrl + C</code> daba kar dobara <code>node server.js</code> chalayein.";
+                    }
                 }
-                chatMessages.innerHTML += `<div class="bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-300 p-2.5 rounded-xl self-start max-w-[85%] border border-blue-100 dark:border-slate-700">${reply}</div>`;
+                // 2. User Guide (Website Kaise Chalein)
+                else if (lower.includes('kaise') || lower.includes('guide') || lower.includes('help') || lower.includes('chalae') || lower.includes('use') || lower.includes('sikhao')) {
+                    if (lower.includes('shift') || lower.includes('sale') || lower.includes('entry')) {
+                        reply = "📖 <b>Shift Sales Kaise Karein:</b><br>1. <b>'Shift & Sales'</b> tab par jayein.<br>2. Date, attendant, fuel type (Petrol/Diesel), rate, aur meter reading bharein.<br>3. 'Save Shift Entry' dabayein; underground tank stock aur total revenue apne aap adjust ho jayega.";
+                    } else if (lower.includes('udhar') || lower.includes('customer') || lower.includes('wasooli') || lower.includes('credit')) {
+                        reply = "📖 <b>Udhar & Wasooli Guide:</b><br>1. <b>'Credit & Udhar'</b> tab mein 'Add Credit Customer' se customer aur vehicle number register karein.<br>2. Jab customer paise de, toh 'Receive Payment' form se cash/UPI wasooli note karein.";
+                    } else if (lower.includes('salary') || lower.includes('advance') || lower.includes('staff')) {
+                        reply = "📖 <b>Staff Salary & Advance:</b><br>1. <b>'Staff Salary'</b> tab par jayein.<br>2. Staff ka naam aur monthly salary add karein.<br>3. Advance lene par 'Issue Advance' form bharein, system net salary automatic subtract kar dega.";
+                    } else if (lower.includes('tally') || lower.includes('cash') || lower.includes('galla')) {
+                        reply = "📖 <b>Cash Tally (Reconciliation):</b><br>1. <b>'Cash Tally'</b> tab kholein.<br>2. Shift khatam hone par drawer ka physical cash aur UPI balance enter karein.<br>3. System match karke batayega ki koi shortage ya excess toh nahi hai.";
+                    } else {
+                        reply = "📖 <b>PetroFlow Pro Navigation:</b><br>• <b>Dashboard:</b> Total revenue, chart aur stock summary.<br>• <b>Shift & Sales:</b> Daily nozzle meter entries.<br>• <b>Tank Stock:</b> Fuel dip volume aur tanker entry (+2,000L).<br>• <b>My Account:</b> Station aur owner details update karne ke liye.";
+                    }
+                }
+                // 3. Operational Data Queries
+                else if (lower.includes('sales') || lower.includes('revenue') || lower.includes('bikri')) {
+                    let totalRev = latestRecordsData.reduce((sum, r) => sum + r.total, 0);
+                    reply = `📊 Aapki recorded sales revenue total <b>₹${totalRev.toLocaleString()}</b> hai.`;
+                } else if (lower.includes('stock') || lower.includes('tank') || lower.includes('diesel') || lower.includes('petrol')) {
+                    reply = `🛢️ <b>Current Stock:</b><br>Petrol Tank: ${globalPetrolStock.toLocaleString()} L<br>Diesel Tank: ${globalDieselStock.toLocaleString()} L`;
+                } else if (lower.includes('hi') || lower.includes('hello') || lower.includes('namaste')) {
+                    reply = "Namaste! Main aapka <b>PetroAI Assistant</b> hoon. Website chalane ki jankari chahiye ya koi technical error theek karna hai, mujhse pooch sakte hain.";
+                }
+
+                chatMessages.innerHTML += `<div class="bg-blue-50 dark:bg-slate-800 text-blue-950 dark:text-blue-200 p-3 rounded-xl self-start max-w-[90%] border border-blue-100 dark:border-slate-700 leading-relaxed text-[11px] shadow-sm">${reply}</div>`;
                 chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 500);
+            }, 350);
         }
 
         async function loadRecords() {
