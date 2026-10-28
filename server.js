@@ -214,9 +214,7 @@ app.post('/api/staff-advance', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});// Add this API route in your server.js
+// CSV Export API (Corrected Position)
 app.get('/api/export-csv', (req, res) => {
     db.all(`SELECT * FROM records ORDER BY id DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -230,4 +228,9 @@ app.get('/api/export-csv', (req, res) => {
         res.attachment('petroflow_sales_report.csv');
         res.send(csv);
     });
+});
+
+// Server Listen (Should always be at the end)
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });
