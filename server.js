@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'petrobyte_exact_demo_secret_9192';
+const JWT_SECRET = process.env.JWT_SECRET || 'petrobyte_ultimate_secret_9192';
 const ADMIN_EMAIL = 'omtiwari9192@gmail.com';
 
 app.use(express.json());
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database error:', err.message);
-    else console.log('Connected to SQLite with PetroByte Demo Layout.');
+    else console.log('Connected to SQLite with Complete PetroByte A-Z Enterprise Suite.');
 });
 
 db.serialize(() => {
@@ -71,6 +71,31 @@ db.serialize(() => {
         petrolCapacity REAL DEFAULT 20000,
         dieselCapacity REAL DEFAULT 30000,
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        name TEXT,
+        phone TEXT,
+        vehicleNo TEXT,
+        udharAmount REAL DEFAULT 0
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS staff (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        name TEXT,
+        phone TEXT,
+        monthlySalary REAL
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        date TEXT,
+        category TEXT,
+        amount REAL
     )`);
 });
 
@@ -134,6 +159,24 @@ app.get('/api/dashboard-stats', authenticateToken, (req, res) => {
                 dieselCapacity: tank ? tank.dieselCapacity : 30000,
                 petrolCapacity: tank ? tank.petrolCapacity : 20000,
                 unsettledShiftsCount: 4
+            });
+        });
+    });
+});
+
+app.post('/api/records', authenticateToken, (req, res) => {
+    const stationId = req.user.stationId;
+    const { date, shift, attendant, fuelType, nozzleName, unitPrice, openingMeter, closingMeter, testing } = req.body;
+    const saleable = toExactDecimal((closingMeter - openingMeter) - (testing || 0));
+    const total = toExactDecimal(saleable * unitPrice);
+    const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+
+    db.serialize(() => {
+        db.run(`BEGIN IMMEDIATE TRANSACTION`);
+        db.run(`INSERT INTO records (stationId, date, shift, attendant, fuelType, nozzleName, unitPrice, openingMeter, closingMeter, testing, liters, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [stationId, date, shift, attendant, fuelType, nozzleName || 'Nozzle 1', unitPrice, openingMeter, closingMeter, testing || 0, saleable, total], () => {
+            db.run(`UPDATE tanks SET ${col} = MAX(0, ROUND(${col} - ?, 2)) WHERE stationId = ?`, [saleable, stationId], () => {
+                db.run(`COMMIT`, () => { res.json({ success: true, liters: saleable, total }); });
             });
         });
     });
