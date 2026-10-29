@@ -1,7 +1,7 @@
 {
   "name": "petroflow-pro",
   "version": "5.0.0",
-  "description": "Enterprise Petrol Pump Management ERP with RBAC, Profit Analytics & Tally XML",
+  "description": "Industrial Petrol Pump ERP with AI Upgrader & Tally XML",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
