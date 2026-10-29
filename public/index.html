@@ -44,12 +44,18 @@
             </div>
             <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto text-xs font-semibold">
                 <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-blue-400 bg-blue-600/10">📊 Smart Dashboard</button>
-                <button onclick="switchTab('forecast', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">📦 Stock Forecasting & Alerts</button>
+                <button onclick="switchTab('forecast', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">📦 Stock Forecasting</button>
                 <button onclick="switchTab('nozzles', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">⛽ Nozzle-Wise Tracking</button>
                 <button onclick="switchTab('suppliers', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🚚 Supplier & Purchases</button>
                 <button onclick="switchTab('whatsapp', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">💬 WhatsApp Notifications</button>
                 <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">📋 Shift Operations</button>
-                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👤 System Backup</button>
+                <button onclick="switchTab('tally', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🧮 Cash Reconciliation</button>
+                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🛢️ Tank Stock & Dip</button>
+                <button onclick="switchTab('customers', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-2xl text-slate-300 hover:bg-slate-800">👥 Credit Ledger (Udhar)</button>
+                <button onclick="switchTab('staff', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-2xl text-slate-300 hover:bg-slate-800">👨‍💼 Staff Payroll</button>
+                <button onclick="switchTab('expenses', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">💸 Operating Expenses</button>
+                <button onclick="switchTab('audit', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🛡️ Immutable Audit Logs</button>
+                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👤 Profile & Backups</button>
             </nav>
             <div class="p-4 border-t border-slate-800 flex justify-between text-xs">
                 <button onclick="toggleDarkMode()" class="bg-slate-800 px-3 py-2 rounded-xl">🌙 Theme</button>
@@ -65,7 +71,7 @@
 
             <main class="p-6 md:p-8 flex-grow space-y-6 overflow-y-auto">
                 
-                <!-- 01. Smart Owner Dashboard -->
+                <!-- Dashboard -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
                     <div class="bg-gradient-to-r from-indigo-900 to-blue-900 p-6 rounded-3xl text-white shadow-xl flex justify-between items-center">
                         <div>
@@ -95,7 +101,7 @@
                     </div>
                 </div>
 
-                <!-- 02. Stock Forecasting & Reorder Alerts -->
+                <!-- Stock Forecasting -->
                 <div id="tab-forecast" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-2xl">
                         <h3 class="text-base font-bold mb-4">Stock Forecasting & Reorder Thresholds</h3>
@@ -112,12 +118,12 @@
                     </div>
                 </div>
 
-                <!-- 03. Nozzle-Wise Tracking -->
+                <!-- Nozzle Tracking -->
                 <div id="tab-nozzles" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
                         <h3 class="text-base font-bold mb-4">Configure Dispenser Nozzles</h3>
                         <form id="nozzleForm" class="space-y-3">
-                            <input type="text" id="nozName" placeholder="Nozzle Name (e.g. Dispenser 1 - MS)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="nozName" placeholder="Nozzle Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                             <select id="nozFuel" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                                 <option value="Petrol">Petrol</option>
                                 <option value="Diesel">Diesel</option>
@@ -127,12 +133,12 @@
                     </div>
                 </div>
 
-                <!-- 04. Supplier & Purchase Management -->
+                <!-- Supplier Management -->
                 <div id="tab-suppliers" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
-                        <h3 class="text-base font-bold mb-4">Add Fuel Supplier / OMC</h3>
+                        <h3 class="text-base font-bold mb-4">Add Fuel Supplier</h3>
                         <form id="supplierForm" class="space-y-3">
-                            <input type="text" id="supName" placeholder="Supplier Name (e.g. IOCL Depot)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="supName" placeholder="Supplier Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                             <input type="tel" id="supPhone" placeholder="Contact Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                             <input type="number" step="0.01" id="supBalance" placeholder="Initial Balance Due (₹)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                             <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl text-sm">Save Supplier</button>
@@ -140,17 +146,17 @@
                     </div>
                 </div>
 
-                <!-- 05. WhatsApp Notifications -->
+                <!-- WhatsApp Notifications -->
                 <div id="tab-whatsapp" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg space-y-4">
                         <h3 class="text-base font-bold">Dispatch Exception Alert via WhatsApp</h3>
                         <textarea id="waMessage" placeholder="Type exception alert message..." class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm h-24"></textarea>
-                        <button onclick="sendWhatsAppAlert()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 rounded-2xl text-sm shadow">Send WhatsApp Notification</button>
+                        <button onclick="sendWhatsAppAlert()" class="w-full bg-emerald-500 text-slate-950 font-black py-3 rounded-2xl text-sm shadow">Send WhatsApp Notification</button>
                         <p id="waStatus" class="text-xs text-emerald-500 font-bold"></p>
                     </div>
                 </div>
 
-                <!-- Shift Operations Tab -->
+                <!-- Shift Operations -->
                 <div id="tab-shifts" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
                         <h3 class="text-base font-bold mb-4">Record Shift Sales</h3>
@@ -168,7 +174,79 @@
                     </div>
                 </div>
 
-                <!-- Account Tab -->
+                <!-- Cash Tally -->
+                <div id="tab-tally" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Cash Reconciliation</h3>
+                        <form id="tallyForm" class="space-y-3">
+                            <input type="number" step="0.01" id="tallyCash" placeholder="Drawer Cash" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="tallyUPI" placeholder="UPI Settled" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="tallyUdhar" placeholder="Credit Issued" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-sm">Save Tally</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tank Stock -->
+                <div id="tab-tanks" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                        <h3 class="text-base font-bold mb-4">Underground Tank Inventory</h3>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">Petrol Stock: <span id="tankPetrol">0</span> L</div>
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">Diesel Stock: <span id="tankDiesel">0</span> L</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credit Customers -->
+                <div id="tab-customers" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Credit Customer Ledger</h3>
+                        <form id="customerForm" class="space-y-3">
+                            <input type="text" id="cName" placeholder="Customer Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="cPhone" placeholder="Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="cVehicle" placeholder="Vehicle No" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="cAmount" placeholder="Opening Credit" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl text-sm">Save Customer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Staff Payroll -->
+                <div id="tab-staff" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Staff Payroll</h3>
+                        <form id="staffForm" class="space-y-3">
+                            <input type="text" id="stName" placeholder="Staff Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="stPhone" placeholder="Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="stSalary" placeholder="Monthly Salary" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-purple-600 text-white font-bold py-3 rounded-2xl text-sm">Save Staff</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Expenses -->
+                <div id="tab-expenses" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Operating Expenses</h3>
+                        <form id="expenseForm" class="space-y-3">
+                            <input type="date" id="eDate" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="eCategory" placeholder="Category" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="eAmount" placeholder="Amount" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-amber-600 text-white font-bold py-3 rounded-2xl text-sm">Save Expense</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Audit Logs -->
+                <div id="tab-audit" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                        <h3 class="text-base font-bold mb-4">Immutable Audit History</h3>
+                        <div id="auditList" class="space-y-2 text-xs font-mono"></div>
+                    </div>
+                </div>
+
+                <!-- Account / Backup -->
                 <div id="tab-account" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-md">
                         <h3 class="text-base font-bold mb-3">Data Backup</h3>
@@ -224,8 +302,11 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('text-blue-400', 'bg-blue-600/10'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            btn.classList.add('text-blue-400', 'bg-blue-600/10');
-            document.getElementById('currentHeaderTitle').innerText = btn.innerText.replace(/^[📊📦⛽🚚💬📋👤]\s*/, '');
+            if (btn) {
+                btn.classList.add('text-blue-400', 'bg-blue-600/10');
+                document.getElementById('currentHeaderTitle').innerText = btn.innerText.replace(/^[📊📦🚚💬📋🧮🛢️👥👨‍💼💸🛡️👤]\s*/, '');
+            }
+            if (tabId === 'audit') loadAuditLogs();
         }
 
         async function loadAllData() {
@@ -240,6 +321,8 @@
             const tankData = await tankRes.json();
             document.getElementById('forecastPetrol').innerText = `${tankData.petrolStock} Liters`;
             document.getElementById('forecastDiesel').innerText = `${tankData.dieselStock} Liters`;
+            document.getElementById('tankPetrol').innerText = tankData.petrolStock;
+            document.getElementById('tankDiesel').innerText = tankData.dieselStock;
         }
 
         async function runAIUpgrader() {
@@ -258,16 +341,44 @@
             if (res.ok) { this.reset(); loadAllData(); alert('Shift saved successfully!'); }
         };
 
+        document.getElementById('tallyForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const res = await authFetch('/api/reconcile-tally', {
+                method: 'POST',
+                body: JSON.stringify({ cashDrawer: parseFloat(document.getElementById('tallyCash').value) || 0, upiSettled: parseFloat(document.getElementById('tallyUPI').value) || 0, creditIssued: parseFloat(document.getElementById('tallyUdhar').value) || 0 })
+            });
+            const data = await res.json();
+            if (res.ok) { loadAllData(); alert(`Tally Saved: ${data.status}`); }
+        };
+
+        document.getElementById('customerForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/customers', { method: 'POST', body: JSON.stringify({ name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value, vehicleNo: document.getElementById('cVehicle').value, udharAmount: parseFloat(document.getElementById('cAmount').value) }) });
+            this.reset(); alert('Customer saved!');
+        };
+
+        document.getElementById('staffForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/staff', { method: 'POST', body: JSON.stringify({ name: document.getElementById('stName').value, phone: document.getElementById('stPhone').value, monthlySalary: parseFloat(document.getElementById('stSalary').value) }) });
+            this.reset(); alert('Staff saved!');
+        };
+
+        document.getElementById('expenseForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/expenses', { method: 'POST', body: JSON.stringify({ date: document.getElementById('eDate').value, category: document.getElementById('eCategory').value, amount: parseFloat(document.getElementById('eAmount').value) }) });
+            this.reset(); alert('Expense saved!');
+        };
+
         document.getElementById('nozzleForm').onsubmit = async function(e) {
             e.preventDefault();
             await authFetch('/api/nozzles', { method: 'POST', body: JSON.stringify({ nozzleName: document.getElementById('nozName').value, fuelType: document.getElementById('nozFuel').value }) });
-            this.reset(); alert('Nozzle mapping saved!');
+            this.reset(); alert('Nozzle saved!');
         };
 
         document.getElementById('supplierForm').onsubmit = async function(e) {
             e.preventDefault();
             await authFetch('/api/suppliers', { method: 'POST', body: JSON.stringify({ supplierName: document.getElementById('supName').value, phone: document.getElementById('supPhone').value, balanceDue: parseFloat(document.getElementById('supBalance').value) }) });
-            this.reset(); alert('Supplier saved successfully!');
+            this.reset(); alert('Supplier saved!');
         };
 
         async function sendWhatsAppAlert() {
@@ -275,6 +386,16 @@
             const res = await authFetch('/api/whatsapp/notify', { method: 'POST', body: JSON.stringify({ message }) });
             const data = await res.json();
             document.getElementById('waStatus').innerText = data.status;
+        }
+
+        async function loadAuditLogs() {
+            const res = await authFetch('/api/audit-logs');
+            const data = await res.json();
+            const list = document.getElementById('auditList');
+            list.innerHTML = '';
+            (data.logs || []).forEach(l => {
+                list.innerHTML += `<div class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl"><b>${l.createdAt}</b> - [${l.action}]: ${l.details}</div>`;
+            });
         }
 
         function logout() { localStorage.removeItem('petroUser'); location.reload(); }

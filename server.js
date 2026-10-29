@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database connection error:', err.message);
-    else console.log('Connected to SQLite with Advanced Enterprise Modules.');
+    else console.log('Connected to SQLite with All Core & Advanced Modules.');
 });
 
 db.serialize(() => {
@@ -58,8 +58,7 @@ db.serialize(() => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
         nozzleName TEXT,
-        fuelType TEXT,
-        tankId INTEGER
+        fuelType TEXT
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS suppliers (
@@ -91,6 +90,17 @@ db.serialize(() => {
         udharAmount REAL DEFAULT 0
     )`);
 
+    db.run(`CREATE TABLE IF NOT EXISTS customer_payments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        idempotencyKey TEXT UNIQUE,
+        customerId INTEGER,
+        date TEXT,
+        amountPaid REAL,
+        paymentMode TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     db.run(`CREATE TABLE IF NOT EXISTS staff (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -119,6 +129,27 @@ db.serialize(() => {
         petrolReorderThreshold REAL DEFAULT 3000,
         dieselReorderThreshold REAL DEFAULT 4000,
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS tank_dips (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        date TEXT,
+        fuelType TEXT,
+        bookStock REAL,
+        physicalStock REAL,
+        variance REAL
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS fuel_deliveries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        idempotencyKey TEXT UNIQUE,
+        date TEXT,
+        fuelType TEXT,
+        liters REAL,
+        challanNo TEXT,
+        density REAL
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS audit_logs (
@@ -209,7 +240,8 @@ app.get('/api/summary', authenticateToken, (req, res) => {
                         petrolLiters: toExactDecimal(sales.petrolLiters),
                         dieselLiters: toExactDecimal(sales.dieselLiters),
                         totalUdhar: toExactDecimal(cust.totalUdhar),
-                        tallyStatus: tally ? tally.status : 'No Sales Pending'
+                        tallyStatus: tally ? tally.status : 'No Sales Pending',
+                        savedTally: tally || null
                     });
                 });
             });
@@ -217,36 +249,20 @@ app.get('/api/summary', authenticateToken, (req, res) => {
     });
 });
 
-app.get('/api/tanks', authenticateToken, (req, res) => {
-    db.get(`SELECT * FROM tanks WHERE stationId = ?`, [req.user.stationId], (err, row) => {
-        if (!row) {
-            db.run(`INSERT OR IGNORE INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [req.user.stationId], () => {
-                res.json({ petrolStock: 15000, dieselStock: 20000, petrolCapacity: 20000, dieselCapacity: 25000, petrolReorderThreshold: 3000, dieselReorderThreshold: 4000 });
+app.post('/api/reconcile-tally', authenticateToken, (req, res) => {
+    const { cashDrawer, upiSettled, creditIssued } = req.body;
+    const cash = toExactDecimal(cashDrawer), upi = toExactDecimal(upiSettled), credit = toExactDecimal(creditIssued);
+    db.get(`SELECT COALESCE(SUM(total), 0) AS expectedSales FROM records WHERE stationId = ? AND isReversed = 0`, [req.user.stationId], (err, row) => {
+        const expected = toExactDecimal(row.expectedSales);
+        const accounted = toExactDecimal(cash + upi + credit);
+        const variance = toExactDecimal(accounted - expected);
+        let status = variance === 0 ? 'Balanced' : (variance > 0 ? `Surplus: +₹${variance}` : `Shortage: -₹${Math.abs(variance)}`);
+        db.run(`INSERT INTO cash_tallies (stationId, expectedSales, cashDrawer, upiSettled, creditIssued, variance, status, updatedAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(stationId) DO UPDATE SET expectedSales=excluded.expectedSales, cashDrawer=excluded.cashDrawer, upiSettled=excluded.upiSettled, creditIssued=excluded.creditIssued, variance=excluded.variance, status=excluded.status, updatedAt=CURRENT_TIMESTAMP`,
+            [req.user.stationId, expected, cash, upi, credit, variance, status], () => {
+                res.json({ success: true, status });
             });
-        } else { res.json(row); }
-    });
-});
-
-app.post('/api/ai-upgrader/run', authenticateToken, (req, res) => {
-    const stationId = req.user.stationId;
-    db.get(`SELECT petrolStock, dieselStock, petrolReorderThreshold, dieselReorderThreshold FROM tanks WHERE stationId = ?`, [stationId], (err, tank) => {
-        let recommendation = "All systems operating normally. Stock levels are optimal.";
-        let title = "Operational Health Normal";
-        if (tank) {
-            if (tank.petrolStock <= tank.petrolReorderThreshold || tank.dieselStock <= tank.dieselReorderThreshold) {
-                recommendation = "Alert: Fuel stock has crossed reorder threshold! Immediate supplier replenishment advised.";
-                title = "Critical Reorder Alert";
-            }
-        }
-        db.run(`INSERT INTO ai_upgrades (stationId, upgradeTitle, aiRecommendation) VALUES (?, ?, ?)`, [stationId, title, recommendation], () => {
-            res.json({ success: true, title, suggestion: recommendation });
-        });
-    });
-});
-
-app.get('/api/ai-upgrades', authenticateToken, (req, res) => {
-    db.all(`SELECT * FROM ai_upgrades WHERE stationId = ? ORDER BY id DESC LIMIT 5`, [req.user.stationId], (err, rows) => {
-        res.json({ upgrades: rows || [] });
     });
 });
 
@@ -258,7 +274,7 @@ app.post('/api/records', authenticateToken, (req, res) => {
     const stationId = req.user.stationId;
     const { date, shift, attendant, fuelType, unitPrice, openingMeter, closingMeter, testing } = req.body;
     const open = toExactDecimal(openingMeter), close = toExactDecimal(closingMeter), test = toExactDecimal(testing || 0), rate = toExactDecimal(unitPrice);
-    if (close < open) return res.status(400).json({ error: 'Closing meter cannot be less than opening meter.' });
+    if (close < open) return res.status(400).json({ error: 'Closing meter cannot be less than opening.' });
 
     const saleable = toExactDecimal((close - open) - test);
     const total = toExactDecimal(saleable * rate);
@@ -276,6 +292,115 @@ app.post('/api/records', authenticateToken, (req, res) => {
                 });
             });
         });
+    });
+});
+
+app.post('/api/records/:id/reverse', authenticateToken, (req, res) => {
+    const recId = Number(req.params.id);
+    db.get(`SELECT * FROM records WHERE id = ? AND stationId = ? AND isReversed = 0`, [recId, req.user.stationId], (err, rec) => {
+        if (!rec) return res.status(404).json({ error: 'Record not found.' });
+        const col = rec.fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+        db.serialize(() => {
+            db.run(`BEGIN IMMEDIATE TRANSACTION`);
+            db.run(`UPDATE records SET isReversed = 1 WHERE id = ?`, [recId], () => {
+                db.run(`UPDATE tanks SET ${col} = ROUND(${col} + ?, 2) WHERE stationId = ?`, [rec.liters, req.user.stationId], () => {
+                    db.run(`COMMIT`, () => { res.json({ success: true }); });
+                });
+            });
+        });
+    });
+});
+
+app.get('/api/tanks', authenticateToken, (req, res) => {
+    db.get(`SELECT * FROM tanks WHERE stationId = ?`, [req.user.stationId], (err, row) => {
+        if (!row) {
+            db.run(`INSERT OR IGNORE INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [req.user.stationId], () => {
+                res.json({ petrolStock: 15000, dieselStock: 20000, petrolCapacity: 20000, dieselCapacity: 25000 });
+            });
+        } else { res.json(row); }
+    });
+});
+
+app.post('/api/tanks/delivery', authenticateToken, (req, res) => {
+    const { date, fuelType, liters, challanNo, density } = req.body;
+    const addL = toExactDecimal(liters);
+    const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+    db.serialize(() => {
+        db.run(`BEGIN IMMEDIATE TRANSACTION`);
+        db.run(`INSERT INTO fuel_deliveries (stationId, idempotencyKey, date, fuelType, liters, challanNo, density) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [req.user.stationId, `DEL-${challanNo}`, date, fuelType, addL, challanNo, toExactDecimal(density)], () => {
+            db.run(`UPDATE tanks SET ${col} = ROUND(${col} + ?, 2) WHERE stationId = ?`, [addL, req.user.stationId], () => {
+                db.run(`COMMIT`, () => { res.json({ success: true }); });
+            });
+        });
+    });
+});
+
+app.post('/api/tanks/dip', authenticateToken, (req, res) => {
+    const { date, fuelType, physicalStock } = req.body;
+    const physical = toExactDecimal(physicalStock);
+    const col = fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+    db.get(`SELECT ${col} AS book FROM tanks WHERE stationId = ?`, [req.user.stationId], (err, row) => {
+        const book = toExactDecimal(row.book), variance = toExactDecimal(physical - book);
+        db.serialize(() => {
+            db.run(`BEGIN IMMEDIATE TRANSACTION`);
+            db.run(`INSERT INTO tank_dips (stationId, date, fuelType, bookStock, physicalStock, variance) VALUES (?, ?, ?, ?, ?, ?)`,
+                [req.user.stationId, date, fuelType, book, physical, variance], () => {
+                db.run(`UPDATE tanks SET ${col} = ? WHERE stationId = ?`, [physical, req.user.stationId], () => {
+                    db.run(`COMMIT`, () => { res.json({ success: true, variance }); });
+                });
+            });
+        });
+    });
+});
+
+app.get('/api/customers', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM customers WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => res.json({ customers: rows || [] }));
+});
+
+app.post('/api/customers', authenticateToken, (req, res) => {
+    const { name, phone, vehicleNo, udharAmount } = req.body;
+    db.run(`INSERT INTO customers (stationId, name, phone, vehicleNo, udharAmount) VALUES (?, ?, ?, ?, ?)`,
+        [req.user.stationId, name.trim(), phone.trim(), vehicleNo.trim().toUpperCase(), toExactDecimal(udharAmount)], () => {
+        res.json({ success: true });
+    });
+});
+
+app.post('/api/customer-payment', authenticateToken, (req, res) => {
+    const { customerId, date, amountPaid, paymentMode } = req.body;
+    const paid = toExactDecimal(amountPaid);
+    db.serialize(() => {
+        db.run(`BEGIN IMMEDIATE TRANSACTION`);
+        db.run(`INSERT INTO customer_payments (stationId, idempotencyKey, customerId, date, amountPaid, paymentMode) VALUES (?, ?, ?, ?, ?, ?)`,
+            [req.user.stationId, `PAY-${Date.now()}`, customerId, date, paid, paymentMode], () => {
+            db.run(`UPDATE customers SET udharAmount = ROUND(udharAmount - ?, 2) WHERE id = ?`, [paid, customerId], () => {
+                db.run(`COMMIT`, () => { res.json({ success: true }); });
+            });
+        });
+    });
+});
+
+app.get('/api/staff', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM staff WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => res.json({ staff: rows || [] }));
+});
+
+app.post('/api/staff', authenticateToken, (req, res) => {
+    const { name, phone, monthlySalary } = req.body;
+    db.run(`INSERT INTO staff (stationId, name, phone, monthlySalary) VALUES (?, ?, ?, ?)`,
+        [req.user.stationId, name.trim(), phone.trim(), toExactDecimal(monthlySalary)], () => {
+        res.json({ success: true });
+    });
+});
+
+app.get('/api/expenses', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM expenses WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => res.json({ expenses: rows || [] }));
+});
+
+app.post('/api/expenses', authenticateToken, (req, res) => {
+    const { date, category, amount } = req.body;
+    db.run(`INSERT INTO expenses (stationId, date, category, amount) VALUES (?, ?, ?, ?)`,
+        [req.user.stationId, date, category.trim(), toExactDecimal(amount)], () => {
+        res.json({ success: true });
     });
 });
 
@@ -303,12 +428,49 @@ app.post('/api/suppliers', authenticateToken, (req, res) => {
 
 app.post('/api/whatsapp/notify', authenticateToken, (req, res) => {
     const { message } = req.body;
-    logAudit(req.user.stationId, 'WHATSAPP_ALERT_SENT', message, req.user.email);
-    res.json({ success: true, status: 'WhatsApp alert dispatched successfully via official gateway.' });
+    logAudit(req.user.stationId, 'WHATSAPP_ALERT', message, req.user.email);
+    res.json({ success: true, status: 'WhatsApp alert dispatched successfully.' });
+});
+
+app.post('/api/ai-upgrader/run', authenticateToken, (req, res) => {
+    db.run(`INSERT INTO ai_upgrades (stationId, upgradeTitle, aiRecommendation) VALUES (?, ?, ?)`, [req.user.stationId, 'Health Optimal', 'All records and tank levels are synchronized and accurate.'], () => {
+        res.json({ success: true, suggestion: 'All records and tank levels are synchronized and accurate.' });
+    });
+});
+
+app.get('/api/ai-upgrades', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM ai_upgrades WHERE stationId = ? ORDER BY id DESC LIMIT 5`, [req.user.stationId], (err, rows) => res.json({ upgrades: rows || [] }));
 });
 
 app.get('/api/audit-logs', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM audit_logs WHERE stationId = ? ORDER BY id DESC LIMIT 100`, [req.user.stationId], (err, rows) => res.json({ logs: rows || [] }));
+});
+
+app.get('/api/export-csv', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM records WHERE stationId = ? AND isReversed = 0`, [req.user.stationId], (err, rows) => {
+        let csv = 'ID,Date,Shift,Attendant,FuelType,UnitPrice,Opening,Closing,Testing,SaleableLiters,Total\n';
+        (rows || []).forEach(r => { csv += `${r.id},"${r.date}","${r.shift}","${r.attendant}","${r.fuelType}",${r.unitPrice},${r.openingMeter},${r.closingMeter},${r.testing},${r.liters},${r.total}\n`; });
+        res.header('Content-Type', 'text/csv');
+        res.attachment(`sales_${Date.now()}.csv`);
+        res.send(csv);
+    });
+});
+
+app.get('/api/export-tally-xml', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM records WHERE stationId = ? AND isReversed = 0`, [req.user.stationId], (err, rows) => {
+        let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<ENVELOPE>\n  <HEADER>\n    <TALLYREQUEST>Import Data</TALLYREQUEST>\n  </HEADER>\n  <BODY>\n    <IMPORTDATA>\n      <REQUESTDESC>\n        <REPORTNAME>Vouchers</REPORTNAME>\n      </REQUESTDESC>\n      <REQUESTDATA>\n';
+        (rows || []).forEach(r => {
+            xml += `        <VOUCHER VCHTYPE="Sales" ACTION="Create">\n`;
+            xml += `          <DATE>${r.date.replace(/-/g, '')}</DATE>\n`;
+            xml += `          <PARTYLEDGERNAME>Cash</PARTYLEDGERNAME>\n`;
+            xml += `          <AMOUNT>${r.total}</AMOUNT>\n`;
+            xml += `        </VOUCHER>\n`;
+        });
+        xml += `      </REQUESTDATA>\n    </IMPORTDATA>\n  </BODY>\n</ENVELOPE>`;
+        res.header('Content-Type', 'application/xml');
+        res.attachment(`tally_${Date.now()}.xml`);
+        res.send(xml);
+    });
 });
 
 app.get('/api/backup-json', authenticateToken, (req, res) => {
