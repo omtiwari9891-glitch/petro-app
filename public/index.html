@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PetroFlow Pro - Saral Petrol Pump ERP</title>
+    <title>PetroFlow Pro - Enterprise Petrol Pump ERP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -22,23 +22,23 @@
                         <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center text-xl">⛽</div>
                         <div>
                             <h2 class="text-xl font-black">PetroFlow Pro</h2>
-                            <p class="text-xs text-blue-200">Saral aur Safe Petrol Pump Software</p>
+                            <p class="text-xs text-blue-200">Industrial Petrol Pump ERP</p>
                         </div>
                     </div>
                     <div>
-                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">AI Self-Upgrader Active</span>
-                        <h3 class="text-2xl font-bold mt-3">Aapka Hisab 100% Sahi aur Surakshit</h3>
-                        <p class="text-xs text-blue-100 mt-2">Bina kisi confusion ke apne shift, tank stock, udhar aur staff ka hisab aasan hindi/english mein sambhalein.</p>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">v5.0 Enterprise Edition</span>
+                        <h3 class="text-2xl font-bold mt-3">Tally XML, Profit & RBAC Security</h3>
+                        <p class="text-xs text-blue-100 mt-2">Role-based access, Tally accounting export, and automated profit analysis.</p>
                     </div>
                 </div>
                 <div class="text-[11px] text-blue-200/70 border-t border-white/10 pt-4">
-                    <span>Aasan Grammar • v4.2 AI Edition</span>
+                    <span>Saral Grammar • Full Features</span>
                 </div>
             </div>
 
             <div class="md:col-span-7 p-8 md:p-10 flex flex-col justify-center">
                 <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Pump Login</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Apna registered email aur password enter karke dashboard kholein.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Apna login details aur role select karke station access karein.</p>
 
                 <form id="loginForm" class="space-y-4">
                     <div>
@@ -46,15 +46,12 @@
                         <input type="text" id="loginPumpName" placeholder="e.g. Royal Filling Station" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
                     <div>
-                        <label for="loginEmail" class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Owner Email Address</label>
+                        <label for="loginEmail" class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Owner Email</label>
                         <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
                     <div>
-                        <label for="loginPassword" class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1 flex justify-between">
-                            <span>Password (10+ Characters)</span>
-                            <span class="text-[10px] text-blue-600 font-bold">Letters + Numbers</span>
-                        </label>
-                        <input type="password" id="loginPassword" minlength="10" placeholder="Kam se kam 10 characters" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
+                        <label for="loginPassword" class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Password (10+ Characters)</label>
+                        <input type="password" id="loginPassword" minlength="10" placeholder="Kam se kam 10 chars" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
                     </div>
                     <button type="submit" id="loginSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/25">Login Karein</button>
                 </form>
@@ -65,7 +62,7 @@
     <!-- Main Workspace Container -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
         
-        <!-- Left Sidebar Navigation -->
+        <!-- Left Sidebar -->
         <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 shrink-0">
             <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -80,17 +77,16 @@
                 </div>
             </div>
 
-            <!-- Left Navigation Menu Links (Easy Grammar) -->
             <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                 <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-bold text-blue-400 bg-blue-600/10 text-xs flex items-center gap-2.5 transition">📊 Main Dashboard</button>
                 <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">⛽ Shift Entry & Sale</button>
                 <button onclick="switchTab('tally', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">🧮 Cash Tally (Milap)</button>
-                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">🛢️ Tank Stock aur Tanker</button>
+                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">🛢️ Tank Stock & Dip</button>
                 <button onclick="switchTab('customers', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👥 Udhar Khata (Wasooli)</button>
-                <button onclick="switchTab('staff', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👨‍💼 Staff Salary & Advance</button>
+                <button onclick="switchTab('staff', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👨‍💼 Staff Salary</button>
                 <button onclick="switchTab('expenses', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">💸 Rozmarra Kharcha</button>
                 <button onclick="switchTab('audit', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">🛡️ Safe Audit Logs</button>
-                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👤 Profile aur Backup</button>
+                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3 rounded-xl font-medium text-slate-300 hover:bg-slate-800 text-xs flex items-center gap-2.5 transition">👤 Profile & Backup</button>
             </nav>
 
             <div class="p-3 border-t border-slate-800 flex items-center justify-between text-xs">
@@ -111,11 +107,11 @@
 
             <main class="p-4 md:p-8 flex-grow space-y-6 overflow-y-auto">
                 
-                <!-- 1. Owner Summary Dashboard + AI Upgrader Widget -->
+                <!-- 1. Dashboard + Profit & Tally Exports -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
                     <div id="dynamicAlertContainer"></div>
 
-                    <!-- AI Self-Upgrader Banner Widget -->
+                    <!-- AI Agent Widget -->
                     <div class="bg-gradient-to-r from-indigo-900 to-blue-800 p-5 rounded-2xl text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="space-y-1">
                             <span class="bg-white/20 text-indigo-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">🤖 AI Self-Upgrader Agent</span>
@@ -129,36 +125,35 @@
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                             <p class="text-[10px] font-bold uppercase text-slate-400">Total Sale Revenue</p>
                             <h3 id="dashTotalRevenue" class="text-xl md:text-2xl font-black text-slate-800 dark:text-white mt-1">₹0.00</h3>
-                            <span id="dashActiveShifts" class="text-[10px] text-slate-400">0 Safe Shifts</span>
                         </div>
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <p class="text-[10px] font-bold uppercase text-slate-400">Petrol (MS) Bikri</p>
-                            <h3 id="dashPetrolSold" class="text-xl md:text-2xl font-black text-blue-600 mt-1">0.00 L</h3>
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Estimated Net Profit</p>
+                            <h3 id="dashNetProfit" class="text-xl md:text-2xl font-black text-emerald-600 mt-1">₹0.00</h3>
                         </div>
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <p class="text-[10px] font-bold uppercase text-slate-400">Diesel (HSD) Bikri</p>
-                            <h3 id="dashDieselSold" class="text-xl md:text-2xl font-black text-emerald-600 mt-1">0.00 L</h3>
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Total Udhar Baaki</p>
+                            <h3 id="dashTotalUdhar" class="text-xl md:text-2xl font-black text-red-600 mt-1">₹0.00</h3>
                         </div>
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <p class="text-[10px] font-bold uppercase text-slate-400">Cash Tally Status</p>
-                            <h3 id="dashTallyStatus" class="text-xs md:text-sm font-black text-slate-600 dark:text-slate-300 mt-2">Koi Sale Baaki Nahi</h3>
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Tally Status</p>
+                            <h3 id="dashTallyStatus" class="text-xs md:text-sm font-black text-slate-600 dark:text-slate-300 mt-2">Koi Sale Nahi</h3>
                         </div>
                     </div>
 
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-blue-200 dark:border-slate-700 flex flex-wrap gap-3 justify-between items-center">
                         <div>
-                            <h3 class="text-base font-bold text-slate-800 dark:text-white">🧪 1-Click System Test & Backup</h3>
-                            <p class="text-xs text-slate-500" id="selfTestResultText">Test karein ki shift entry aur tank stock ekdam sahi tarike se kam kar rahe hain.</p>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-white">📥 Tally XML & Accounting Exports</h3>
+                            <p class="text-xs text-slate-500">CA aur Tally software ke liye direct XML format mein data download karein.</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button onclick="runLiveSelfTest()" id="selfTestBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">▶ 10L Shift Test Karein</button>
-                            <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">CSV Report Download</button>
+                            <button onclick="downloadTallyXML()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">📊 Tally XML Download</button>
+                            <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">CSV Report</button>
                             <button onclick="downloadJSONBackup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">Full Backup</button>
                         </div>
                     </div>
 
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">📈 Bikri Graf (Sales Graph)</h3>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">📈 Sales Velocity</h3>
                         <div class="w-full h-64">
                             <canvas id="salesChart"></canvas>
                         </div>
@@ -175,11 +170,11 @@
                                 <input type="date" id="sDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
                             <div>
-                                <label for="sShift" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Shift (Morning/Night)</label>
+                                <label for="sShift" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Shift Name</label>
                                 <input type="text" id="sShift" placeholder="Morning" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
                             <div>
-                                <label for="sAttendant" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Attendant Ka Naam</label>
+                                <label for="sAttendant" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Attendant</label>
                                 <input type="text" id="sAttendant" placeholder="Ramesh" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
                             <div>
@@ -205,12 +200,12 @@
                                 <label for="sTesting" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Testing Liters</label>
                                 <input type="number" step="0.01" inputmode="decimal" id="sTesting" placeholder="0.00" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm">
                             </div>
-                            <button type="submit" id="shiftSubmitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg md:col-span-4 transition shadow-md text-sm">Shift Save Karein aur Stock Ghataein</button>
+                            <button type="submit" id="shiftSubmitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg md:col-span-4 transition shadow-md text-sm">Save Shift & Deduct Tank Stock</button>
                         </form>
                     </div>
 
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
-                        <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Pichli Shifto ka Record</h3>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white mb-3">Active Shift Log</h3>
                         <table class="w-full text-left border-collapse text-xs md:text-sm">
                             <thead>
                                 <tr class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200">
@@ -230,8 +225,8 @@
                 <!-- 3. Cash Tally -->
                 <div id="tab-tally" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 max-w-lg mx-auto">
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🧮 Cash Tally (Galla Milap)</h3>
-                        <p class="text-xs text-slate-500 mb-5">System total sale calculate karta hai. Apne drawer ka cash aur UPI enter karke match karein.</p>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🧮 Cash Tally (Milap)</h3>
+                        <p class="text-xs text-slate-500 mb-5">Drawer cash aur UPI enter karke sales target se match karein.</p>
                         
                         <form id="tallyForm" class="space-y-4">
                             <div class="p-3.5 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-700 flex justify-between items-center">
@@ -241,17 +236,17 @@
 
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label for="tallyCash" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Galle ka Cash (₹)</label>
-                                    <input type="number" step="0.01" inputmode="decimal" id="tallyCash" aria-label="Galle ka Cash" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                                    <label for="tallyCash" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Drawer Cash (₹)</label>
+                                    <input type="number" step="0.01" inputmode="decimal" id="tallyCash" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
                                 </div>
                                 <div>
-                                    <label for="tallyUPI" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Online / UPI (₹)</label>
-                                    <input type="number" step="0.01" inputmode="decimal" id="tallyUPI" aria-label="Online UPI" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                                    <label for="tallyUPI" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">UPI / Cards (₹)</label>
+                                    <input type="number" step="0.01" inputmode="decimal" id="tallyUPI" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
                                 </div>
                             </div>
                             <div>
-                                <label for="tallyUdhar" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Naya Udhar Diya (₹)</label>
-                                <input type="number" step="0.01" inputmode="decimal" id="tallyUdhar" aria-label="Naya Udhar" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
+                                <label for="tallyUdhar" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Credit / Udhar Issued (₹)</label>
+                                <input type="number" step="0.01" inputmode="decimal" id="tallyUdhar" placeholder="0.00" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 rounded-lg text-sm font-semibold">
                             </div>
                             
                             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Tally Save Karein</button>
@@ -272,7 +267,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <h3 class="text-base font-bold text-slate-800 dark:text-white">Underground Tank Stock</h3>
-                                <p class="text-xs text-slate-500" id="tankStatusSubtitle">Live database stock.</p>
+                                <p class="text-xs text-slate-500">Live database stock.</p>
                             </div>
                             <button onclick="loadTanks()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition">🔄 Refresh</button>
                         </div>
@@ -305,15 +300,12 @@
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                             <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">📏 Physical Dip Entry</h3>
                             <form id="dipForm" class="space-y-3">
-                                <label for="dipDate" class="block text-[10px] font-bold uppercase text-slate-500">Date</label>
                                 <input type="date" id="dipDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <label for="dipFuelType" class="block text-[10px] font-bold uppercase text-slate-500">Fuel Type</label>
                                 <select id="dipFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
                                     <option value="Petrol">Petrol</option>
                                     <option value="Diesel">Diesel</option>
                                 </select>
-                                <label for="dipPhysical" class="block text-[10px] font-bold uppercase text-slate-500">Physical Dip Liters</label>
-                                <input type="number" step="0.01" inputmode="decimal" id="dipPhysical" placeholder="14500" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="dipPhysical" placeholder="Physical Dip Liters" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition">Dip Reconcile Karein</button>
                             </form>
                         </div>
@@ -322,32 +314,17 @@
                             <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-2">🚚 Tanker Delivery Entry</h3>
                             <form id="deliveryForm" class="space-y-3">
                                 <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label for="delDate" class="block text-[10px] font-bold uppercase text-slate-500">Date</label>
-                                        <input type="date" id="delDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                    </div>
-                                    <div>
-                                        <label for="delFuelType" class="block text-[10px] font-bold uppercase text-slate-500">Fuel</label>
-                                        <select id="delFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
-                                            <option value="Petrol">Petrol</option>
-                                            <option value="Diesel">Diesel</option>
-                                        </select>
-                                    </div>
+                                    <input type="date" id="delDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                    <select id="delFuelType" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                    </select>
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label for="delLiters" class="block text-[10px] font-bold uppercase text-slate-500">Liters</label>
-                                        <input type="number" step="0.01" inputmode="decimal" id="delLiters" placeholder="2000" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                    </div>
-                                    <div>
-                                        <label for="delChallan" class="block text-[10px] font-bold uppercase text-slate-500">Challan No</label>
-                                        <input type="text" id="delChallan" placeholder="CH-102" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                    </div>
+                                    <input type="number" step="0.01" inputmode="decimal" id="delLiters" placeholder="Liters" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                    <input type="text" id="delChallan" placeholder="Challan No" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                                 </div>
-                                <div>
-                                    <label for="delDensity" class="block text-[10px] font-bold uppercase text-slate-500">Density</label>
-                                    <input type="number" step="0.001" inputmode="decimal" id="delDensity" placeholder="745.2" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                </div>
+                                <input type="number" step="0.001" inputmode="decimal" id="delDensity" placeholder="Density (e.g. 745.2)" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition">Tanker Stock Jodein</button>
                             </form>
                         </div>
@@ -358,29 +335,29 @@
                 <div id="tab-customers" class="tab-content hidden space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Naya Credit Customer Jodein</h3>
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Naya Credit Customer</h3>
                             <form id="customerForm" class="space-y-3">
-                                <input type="text" id="cName" aria-label="Customer Name" placeholder="Naam" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="text" id="cPhone" aria-label="Customer Mobile" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="text" id="cVehicle" aria-label="Vehicle Number" placeholder="Vehicle Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="number" step="0.01" inputmode="decimal" id="cAmount" aria-label="Starting Balance" placeholder="Shuruati Udhar (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="cName" placeholder="Naam" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="cPhone" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="cVehicle" placeholder="Vehicle Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="cAmount" placeholder="Shuruati Udhar (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition">Customer Save Karein</button>
                             </form>
                         </div>
 
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Udhar Wasooli (Payment)</h3>
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Udhar Wasooli</h3>
                             <form id="paymentForm" class="space-y-3">
-                                <select id="pCustomerId" aria-label="Select Customer" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                <select id="pCustomerId" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
                                     <option value="">Customer Chunein</option>
                                 </select>
-                                <input type="date" id="pDate" aria-label="Payment Date" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="number" step="0.01" inputmode="decimal" id="pAmountPaid" aria-label="Amount Paid" placeholder="Mili Hui Rashi (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <select id="pMode" aria-label="Payment Mode" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                <input type="date" id="pDate" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="pAmountPaid" placeholder="Mili Hui Rashi (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <select id="pMode" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
                                     <option value="Cash">Cash</option>
                                     <option value="Online/UPI">Online / UPI</option>
                                 </select>
-                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition">Wasooli Update Karein</button>
+                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition">Wasooli Update</button>
                             </form>
                         </div>
                     </div>
@@ -407,21 +384,21 @@
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                             <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Staff Jodein</h3>
                             <form id="staffForm" class="space-y-3">
-                                <input type="text" id="stName" aria-label="Staff Name" placeholder="Staff Ka Naam" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="text" id="stPhone" aria-label="Staff Phone" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="number" step="0.01" inputmode="decimal" id="stSalary" aria-label="Salary" placeholder="Mahine ki Salary (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                                <input type="number" step="0.01" inputmode="decimal" id="stAdvance" aria-label="Advance" placeholder="Pehle ka Advance (₹)" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="stName" placeholder="Staff Ka Naam" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="text" id="stPhone" placeholder="Mobile Number" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="stSalary" placeholder="Monthly Salary (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="stAdvance" placeholder="Opening Advance (₹)" value="0" class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                                 <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-xs transition">Staff Save Karein</button>
                             </form>
                         </div>
 
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Advance Rashi Dena</h3>
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Advance Dena</h3>
                             <form id="advanceForm" class="space-y-3">
-                                <select id="advStaffId" aria-label="Select Staff" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
+                                <select id="advStaffId" required class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg text-xs">
                                     <option value="">Staff Chunein</option>
                                 </select>
-                                <input type="number" step="0.01" inputmode="decimal" id="advAmount" aria-label="Advance Amount" placeholder="Advance Rashi (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                                <input type="number" step="0.01" inputmode="decimal" id="advAmount" placeholder="Advance Rashi (₹)" required class="w-full border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
                                 <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg text-xs transition">Advance Jodein</button>
                             </form>
                         </div>
@@ -449,11 +426,11 @@
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Rozmarra Kharcha Entry</h3>
                         <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                            <input type="date" id="eDate" aria-label="Date" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="text" id="eCategory" aria-label="Category" placeholder="Category (Bijli/Chai)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="number" step="0.01" inputmode="decimal" id="eAmount" aria-label="Amount" placeholder="Rashi (₹)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <input type="text" id="eNotes" aria-label="Notes" placeholder="Bill Number" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
-                            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg md:col-span-4 transition text-xs">Kharcha Save Karein</button>
+                            <input type="date" id="eDate" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <input type="text" id="eCategory" placeholder="Category (Bijli/Chai)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <input type="number" step="0.01" inputmode="decimal" id="eAmount" placeholder="Rashi (₹)" required class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <input type="text" id="eNotes" placeholder="Bill Number" class="border border-slate-300 dark:border-slate-700 bg-transparent p-2 rounded-lg text-xs">
+                            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg md:col-span-4 transition text-xs">Kharcha Save</button>
                         </form>
                     </div>
 
@@ -510,7 +487,7 @@
                         </div>
                         <form id="profileForm" class="space-y-3">
                             <div>
-                                <label for="accEmail" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Email (Badla nahi ja sakta)</label>
+                                <label for="accEmail" class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Email</label>
                                 <input type="email" id="accEmail" disabled class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-mono text-slate-500">
                             </div>
                             <div>
@@ -606,7 +583,6 @@
 
         function loadAllData() { loadAuthoritativeSummary(); loadRecords(); loadCustomers(); loadStaff(); loadExpenses(); loadTanks(); loadAIUpgrades(); }
 
-        // AI Upgrader Trigger
         async function runAIUpgrader() {
             const btn = document.getElementById('aiUpgradeBtn');
             btn.innerText = 'Analyzing...';
@@ -636,9 +612,8 @@
                 const res = await authFetch('/api/summary');
                 const data = await res.json();
                 document.getElementById('dashTotalRevenue').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                document.getElementById('dashActiveShifts').innerText = `${data.activeShiftCount || 0} Safe Shifts`;
-                document.getElementById('dashPetrolSold').innerText = Number(data.petrolLiters).toFixed(2) + ' L';
-                document.getElementById('dashDieselSold').innerText = Number(data.dieselLiters).toFixed(2) + ' L';
+                document.getElementById('dashNetProfit').innerText = '₹' + Number(data.netProfit || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                document.getElementById('dashTotalUdhar').innerText = '₹' + Number(data.totalUdhar).toLocaleString('en-IN', { minimumFractionDigits: 2 });
                 document.getElementById('dashTallyStatus').innerText = data.tallyStatus;
                 document.getElementById('tallyDisplayTarget').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 });
                 if (data.savedTally) {
@@ -665,20 +640,6 @@
             if (res.ok) { loadAuthoritativeSummary(); alert(`Tally Save Ho Gaya: ${data.status}`); }
         };
 
-        async function runLiveSelfTest() {
-            const btn = document.getElementById('selfTestBtn');
-            btn.innerText = 'Testing...';
-            try {
-                const res = await authFetch('/api/run-self-test', { method: 'POST' });
-                const data = await res.json();
-                if (data.success) {
-                    document.getElementById('selfTestResultText`').innerText = `✅ Test Pass: Tank ${data.stockBefore}L -> ${data.stockAfter}L (-10L). Duplicate block active.`;
-                    loadAllData();
-                }
-            } catch (e) { alert('Test fail ho gaya.'); }
-            finally { btn.innerText = '▶ 10L Shift Test Karein'; }
-        }
-
         async function loadRecords() {
             try {
                 const res = await authFetch('/api/records');
@@ -686,7 +647,7 @@
                 const tbody = document.getElementById('recordsTableBody');
                 tbody.innerHTML = '';
                 (data.records || []).forEach(r => {
-                    tbody.innerHTML += `<tr><td class="p-2.5 border-b dark:border-slate-700">${r.date} (${r.shift})</td><td class="p-2.5 border-b dark:border-slate-700">${r.attendant}</td><td class="p-2.5 border-b dark:border-slate-700">${r.fuelType}</td><td class="p-2.5 border-b dark:border-slate-700 font-semibold">${r.liters} L</td><td class="p-2.5 border-b dark:border-slate-700 font-black">₹${Number(r.total).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td><td class="p-2.5 border-b dark:border-slate-700"><button onclick="reverseRecord(${r.id})" class="text-red-500 font-bold hover:underline">Cancel / Reverse</button></td></tr>`;
+                    tbody.innerHTML += `<tr><td class="p-2.5 border-b dark:border-slate-700">${r.date} (${r.shift})</td><td class="p-2.5 border-b dark:border-slate-700">${r.attendant}</td><td class="p-2.5 border-b dark:border-slate-700">${r.fuelType}</td><td class="p-2.5 border-b dark:border-slate-700 font-semibold">${r.liters} L</td><td class="p-2.5 border-b dark:border-slate-700 font-black">₹${Number(r.total).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td><td class="p-2.5 border-b dark:border-slate-700"><button onclick="reverseRecord(${r.id})" class="text-red-500 font-bold hover:underline">Cancel</button></td></tr>`;
                 });
                 renderSalesGraph(data.records);
             } catch(e) {}
@@ -706,7 +667,7 @@
         };
 
         async function reverseRecord(id) {
-            if (!confirm('Kya aap is shift ko cancel karna chahte hain? Stock wapas tank mein jud jayega.')) return;
+            if (!confirm('Kya aap is shift ko cancel karna chahte hain?')) return;
             const res = await authFetch(`/api/records/${id}/reverse`, { method: 'POST' });
             if (res.ok) loadAllData();
         }
@@ -832,6 +793,14 @@
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = `backup_${Date.now()}.json`;
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        async function downloadTallyXML() {
+            const res = await authFetch('/api/export-tally-xml');
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `tally_import_${Date.now()}.xml`;
             document.body.appendChild(a); a.click(); a.remove();
         }
 
