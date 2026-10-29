@@ -17,7 +17,7 @@
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h2 id="modalTitle" class="text-2xl font-black text-slate-900 dark:text-white">Register for Trial</h2>
-                    <p class="text-xs text-rose-500 font-bold tracking-wide mt-0.5">15 Days Free Trial (Trial + Support)</p>
+                    <p class="text-xs text-rose-500 font-bold tracking-wide mt-0.5">15 Days Free Trial (Trial + Support)[cite: 14, 15]</p>
                 </div>
                 <button onclick="toggleAuthMode()" id="switchAuthBtn" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Already registered? Login</button>
             </div>
@@ -127,8 +127,16 @@
 
             <main class="p-6 md:p-8 flex-grow space-y-6 overflow-y-auto">
                 
-                <!-- Dashboard -->
+                <!-- Dashboard with Charts & AI -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
+                    <div class="bg-gradient-to-r from-indigo-900 to-blue-900 p-6 rounded-3xl text-white shadow-xl flex justify-between items-center">
+                        <div>
+                            <span class="bg-white/10 text-indigo-200 text-[10px] font-bold px-3 py-1 rounded-full uppercase">AI Assistant</span>
+                            <h3 id="aiRecommendationText" class="text-base font-bold mt-2">System operating efficiently.</h3>
+                        </div>
+                        <button onclick="runAIUpgrader()" class="bg-emerald-400 text-slate-950 font-black py-2.5 px-4 rounded-2xl text-xs shadow">Run Health Check</button>
+                    </div>
+
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
                             <p class="text-[10px] font-bold uppercase text-slate-400">Total Revenue</p>
@@ -147,19 +155,26 @@
                             <h3 id="dashTallyStatus" class="text-xs font-black mt-2">Balanced</h3>
                         </div>
                     </div>
+
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                        <h3 class="text-base font-bold mb-4">📈 Sales Velocity & Growth Chart</h3>
+                        <div class="w-full h-72">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Stock Forecasting -->
                 <div id="tab-forecast" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-2xl">
-                        <h3 class="text-base font-bold mb-4">Stock Forecasting & Reorder Thresholds</h3>
+                        <h3 class="text-base font-bold mb-4">Stock Forecasting & Reorder Thresholds[cite: 5, 6]</h3>
                         <div class="space-y-4 text-sm">
                             <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-between items-center">
-                                <div><strong>Petrol Tank Stock:</strong> <span id="forecastPetrol">Loading...</span></div>
+                                <div><strong>Petrol Stock:</strong> <span id="forecastPetrol">Loading...</span></div>
                                 <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Safe Level</span>
                             </div>
                             <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-between items-center">
-                                <div><strong>Diesel Tank Stock:</strong> <span id="forecastDiesel">Loading...</span></div>
+                                <div><strong>Diesel Stock:</strong> <span id="forecastDiesel">Loading...</span></div>
                                 <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Safe Level</span>
                             </div>
                         </div>
@@ -169,7 +184,7 @@
                 <!-- Nozzle Mapping -->
                 <div id="tab-nozzles" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
-                        <h3 class="text-base font-bold mb-4">Configure Dispenser Nozzles</h3>
+                        <h3 class="text-base font-bold mb-4">Configure Dispenser Nozzles[cite: 5, 6]</h3>
                         <form id="nozzleForm" class="space-y-3">
                             <input type="text" id="nozName" placeholder="Nozzle Name (e.g. Pump 1 - MS)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                             <select id="nozFuel" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
@@ -184,7 +199,7 @@
                 <!-- Supplier Management -->
                 <div id="tab-suppliers" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
-                        <h3 class="text-base font-bold mb-4">Supplier & Purchases</h3>
+                        <h3 class="text-base font-bold mb-4">Supplier & Purchases[cite: 5, 6]</h3>
                         <form id="supplierForm" class="space-y-3">
                             <input type="text" id="supName" placeholder="Supplier Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                             <input type="tel" id="supPhone" placeholder="Contact Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
@@ -197,7 +212,7 @@
                 <!-- WhatsApp Notifications -->
                 <div id="tab-whatsapp" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg space-y-4">
-                        <h3 class="text-base font-bold">WhatsApp Exception Alerts</h3>
+                        <h3 class="text-base font-bold">WhatsApp Exception Alerts[cite: 5, 6]</h3>
                         <textarea id="waMessage" placeholder="Type exception notification..." class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm h-24"></textarea>
                         <button onclick="sendWhatsAppAlert()" class="w-full bg-emerald-500 text-slate-950 font-black py-3 rounded-2xl text-sm shadow">Dispatch WhatsApp Alert</button>
                         <p id="waStatus" class="text-xs text-emerald-500 font-bold"></p>
@@ -213,7 +228,7 @@
                             <input type="text" id="sShift" placeholder="Shift Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
                             <input type="text" id="sAttendant" placeholder="Attendant Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
                             <select id="sFuelType" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl"><option value="Petrol">Petrol</option><option value="Diesel">Diesel</option></select>
-                            <input type="text" id="sNozzle" placeholder="Nozzle ID (e.g. Nozzle 1)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="text" id="sNozzle" placeholder="Nozzle ID" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
                             <input type="number" step="0.01" id="sUnitPrice" placeholder="Rate (₹/L)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
                             <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
                             <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
@@ -311,6 +326,7 @@
     <script>
         let currentWizardStep = 1;
         const totalWizardSteps = 4;
+        let mySalesChart = null;
 
         function nextWizardStep() {
             if (currentWizardStep < totalWizardSteps) {
@@ -336,7 +352,7 @@
             const pct = (currentWizardStep / totalWizardSteps) * 100;
             document.getElementById('wizardProgressBar').style.width = pct + '%';
             document.getElementById('stepPercentText').innerText = Math.round(pct) + '%';
-            document.getElementById('stepTitleText').innerText = `Step ${currentWizardStep} of ${totalWizardSteps}`;
+            document.getElementById('stepTitleText').innerText = `Step ${currentWizardStep} of ${totalWizardSteps}[cite: 14, 15]`;
             const backBtn = document.getElementById('wizardBackBtn');
             const nextBtn = document.getElementById('wizardNextBtn');
             if (currentWizardStep > 1) backBtn.classList.remove('hidden'); else backBtn.classList.add('hidden');
@@ -412,6 +428,17 @@
             document.getElementById('dashNetProfit').innerText = '₹' + Number(data.netProfit || 0).toLocaleString('en-IN');
             document.getElementById('dashTotalUdhar').innerText = '₹' + Number(data.totalUdhar || 0).toLocaleString('en-IN');
             document.getElementById('dashTallyStatus').innerText = data.tallyStatus;
+
+            const tankRes = await authFetch('/api/tanks');
+            const tankData = await tankRes.json();
+            document.getElementById('forecastPetrol').innerText = `${tankData.petrolStock} Liters`;
+            document.getElementById('forecastDiesel').innerText = `${tankData.dieselStock} Liters`;
+            document.getElementById('tankPetrol').innerText = tankData.petrolStock;
+            document.getElementById('tankDiesel').innerText = tankData.dieselStock;
+
+            const recRes = await authFetch('/api/records');
+            const recData = await recRes.json();
+            renderSalesGraph(recData.records || []);
         }
 
         document.getElementById('shiftForm').onsubmit = async function(e) {
@@ -467,6 +494,12 @@
             this.reset(); alert('Supplier saved!');
         };
 
+        async function runAIUpgrader() {
+            const res = await authFetch('/api/ai-upgrader/run', { method: 'POST' });
+            const data = await res.json();
+            document.getElementById('aiRecommendationText').innerText = data.suggestion;
+        }
+
         async function sendWhatsAppAlert() {
             const message = document.getElementById('waMessage').value;
             const res = await authFetch('/api/whatsapp/notify', { method: 'POST', body: JSON.stringify({ message }) });
@@ -481,6 +514,20 @@
             list.innerHTML = '';
             (data.logs || []).forEach(l => {
                 list.innerHTML += `<div class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl"><b>${l.createdAt}</b> - [${l.action}]: ${l.details}</div>`;
+            });
+        }
+
+        function renderSalesGraph(records) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const dateMap = {};
+            (records || []).forEach(r => { dateMap[r.date] = (dateMap[r.date] || 0) + r.total; });
+            const labels = Object.keys(dateMap).sort();
+            const dataValues = labels.map(date => dateMap[date]);
+            if (mySalesChart) mySalesChart.destroy();
+            mySalesChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: labels, datasets: [{ label: 'Daily Sales Revenue (₹)', data: dataValues, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.08)', borderWidth: 2.5, fill: true, tension: 0.3 }] },
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
