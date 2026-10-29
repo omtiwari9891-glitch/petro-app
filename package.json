@@ -1,14 +1,15 @@
 {
   "name": "petroflow-pro",
-  "version": "5.0.0",
-  "description": "Industrial Petrol Pump ERP with AI Upgrader & Tally XML",
+  "version": "6.0.0",
+  "description": "Petrol station management ERP with sales analytics and inventory tracking",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "express": "^4.19.2",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "sqlite3": "^5.1.7"
   },

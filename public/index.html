@@ -1,272 +1,398 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petro App - Enterprise Petrol Station Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' }</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>PetroFlow Pro — Station Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' };</script>
+  <style>
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; }
+    .field { width:100%; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; border-radius:12px; padding:11px 13px; outline:none; }
+    .field:focus { border-color:#3b82f6; box-shadow:0 0 0 3px #3b82f622; }
+    .dark .field { background:#0f172a; color:#f8fafc; border-color:#334155; }
+    .nav-btn { display:flex; width:100%; gap:10px; align-items:center; padding:11px 12px; border-radius:12px; text-align:left; color:#64748b; font-size:13px; font-weight:700; }
+    .nav-btn.active { color:#2563eb; background:#eff6ff; }
+    .dark .nav-btn.active { color:#93c5fd; background:#1e3a5f; }
+    .panel { border:1px solid #e2e8f0; border-radius:18px; background:white; }
+    .dark .panel { background:#111827; border-color:#273449; }
+    .muted { color:#64748b; }
+    .dark .muted { color:#94a3b8; }
+    .stat-value { font-size:clamp(1.25rem,2vw,1.8rem); font-weight:900; letter-spacing:-.04em; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th { color:#64748b; font-weight:800; text-transform:uppercase; letter-spacing:.05em; font-size:10px; }
+    th,td { text-align:left; padding:13px 12px; border-bottom:1px solid #e2e8f0; white-space:nowrap; }
+    .dark th,.dark td { border-color:#273449; }
+    .toast { position:fixed; right:18px; bottom:18px; z-index:100; max-width:calc(100vw - 36px); }
+  </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased">
+  <div id="toast" class="toast hidden rounded-xl px-4 py-3 text-sm font-bold shadow-xl"></div>
 
-    <!-- Auth & Registration Modal -->
-    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-        <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border p-8 space-y-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 id="modalTitle" class="text-2xl font-black text-blue-600">Petro App Login</h2>
-                    <p class="text-xs text-slate-400">Cloud Petrol Pump Management System</p>
-                </div>
-                <button onclick="toggleAuthMode()" id="switchAuthBtn" class="text-xs font-bold text-blue-600 hover:underline">New user? Register</button>
-            </div>
-
-            <!-- Login Form -->
-            <form id="loginForm" class="space-y-4">
-                <input type="text" id="loginUser" placeholder="Username (e.g. OMFILLING)" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <input type="password" id="loginPass" placeholder="Password" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl text-sm shadow-lg">Login to Petro App</button>
-            </form>
-
-            <!-- Register Form -->
-            <form id="registerForm" class="hidden space-y-3">
-                <input type="text" id="regOwner" placeholder="Owner Name (e.g. Om Tiwari)" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <input type="email" id="regEmail" placeholder="Email Address" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <input type="text" id="regPump" placeholder="Petrol Pump Name" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <input type="password" id="regPass" placeholder="Secure Password" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl text-sm shadow-lg">Create Account</button>
-            </form>
-
-            <!-- Credentials Success Box (Matching your screenshot) -->
-            <div id="credentialsBox" class="hidden p-5 bg-slate-900 text-white rounded-2xl space-y-3 font-mono text-xs">
-                <h3 class="text-sm font-bold text-emerald-400">🔒 Username & Password have been created successfully. ✅</h3>
-                <p class="italic text-slate-400">Here is Login Credentials:</p>
-                <div>
-                    <span class="text-slate-500">Username:</span>
-                    <div id="credUser" class="text-emerald-300 font-bold text-sm tracking-wider"></div>
-                </div>
-                <div>
-                    <span class="text-slate-500">Password:</span>
-                    <div id="credPass" class="text-emerald-300 font-bold text-sm tracking-wider"></div>
-                </div>
-                <button onclick="proceedToLogin()" class="w-full mt-3 bg-blue-600 text-white font-sans font-bold py-2.5 rounded-xl text-xs">Proceed to Login →</button>
-            </div>
+  <!-- Authentication -->
+  <section id="authScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900">
+    <div class="w-full max-w-5xl grid md:grid-cols-2 overflow-hidden rounded-3xl shadow-2xl">
+      <div class="hidden md:flex flex-col justify-between p-10 text-white bg-blue-600">
+        <div>
+          <div class="flex items-center gap-3 mb-12"><div class="h-11 w-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl">⛽</div><span class="font-black text-xl">PetroFlow Pro</span></div>
+          <p class="text-xs uppercase tracking-[.25em] text-blue-100 font-bold">Station operations, simplified</p>
+          <h1 class="mt-4 text-4xl font-black leading-tight">Your station.<br>One clear picture.</h1>
+          <p class="mt-5 text-blue-100 leading-7">Manage shift sales, monitor fuel stock, and understand your recorded business performance from one workspace.</p>
         </div>
+        <p class="text-xs text-blue-100">Secure sign-in · Sales records · Inventory overview</p>
+      </div>
+      <div class="bg-white dark:bg-slate-900 p-7 sm:p-10">
+        <div class="md:hidden flex items-center gap-3 mb-8"><div class="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center">⛽</div><strong class="text-xl">PetroFlow Pro</strong></div>
+        <p class="text-xs uppercase tracking-widest text-blue-600 font-black">Welcome</p>
+        <h2 id="authTitle" class="text-2xl font-black mt-2">Sign in to your station</h2>
+        <p id="authSubtitle" class="text-sm muted mt-2 mb-7">Use your username or registered email.</p>
+        <form id="loginForm" class="space-y-4">
+          <label class="block text-xs font-bold">Username or email<input id="loginUser" class="field mt-2" autocomplete="username" required maxlength="160" placeholder="e.g. OMTIWARIFILLING"></label>
+          <label class="block text-xs font-bold">Password<input id="loginPass" type="password" class="field mt-2" autocomplete="current-password" required maxlength="128" placeholder="Your password"></label>
+          <button class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-3 font-black text-sm">Sign in →</button>
+        </form>
+        <form id="registerForm" class="hidden space-y-3">
+          <label class="block text-xs font-bold">Owner name<input id="regOwner" class="field mt-1.5" required maxlength="80" autocomplete="name" placeholder="Owner full name"></label>
+          <label class="block text-xs font-bold">Business email<input id="regEmail" type="email" class="field mt-1.5" required maxlength="160" autocomplete="email" placeholder="you@example.com"></label>
+          <label class="block text-xs font-bold">Petrol pump name<input id="regPump" class="field mt-1.5" required maxlength="100" placeholder="Your station name"></label>
+          <label class="block text-xs font-bold">Password<input id="regPass" type="password" class="field mt-1.5" required minlength="8" maxlength="128" autocomplete="new-password" placeholder="At least 8 characters"></label>
+          <button class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white py-3 font-black text-sm">Create station account</button>
+          <div id="newCredentials" class="hidden rounded-xl bg-emerald-50 dark:bg-emerald-950 p-3 text-sm"></div>
+        </form>
+        <p class="text-sm muted mt-6"><span id="authSwitchText">New to PetroFlow Pro?</span> <button id="authSwitch" class="text-blue-600 font-black hover:underline">Create account</button></p>
+        <p class="text-[11px] muted mt-6 leading-5">Keep your password private. For production use, configure a strong JWT secret and persistent database storage in your hosting provider.</p>
+      </div>
     </div>
+  </section>
 
-    <!-- Main Workspace -->
-    <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
-        <aside class="w-full md:w-60 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 text-xs font-semibold">
-            <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-                <div class="bg-blue-600 text-white p-1.5 rounded-lg font-bold">PA</div>
-                <span class="font-black text-sm text-blue-600">Petro App</span>
+  <!-- Main application -->
+  <div id="appScreen" class="hidden min-h-screen md:flex">
+    <aside class="w-full md:w-64 md:min-h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col md:sticky md:top-0 md:h-screen">
+      <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg">⛽</div>
+        <div><div class="font-black">PetroFlow Pro</div><div class="text-[10px] muted">STATION ERP</div></div>
+      </div>
+      <div class="px-4 pt-5 pb-2 text-[10px] font-black tracking-widest muted">WORKSPACE</div>
+      <nav class="px-3 space-y-1">
+        <button class="nav-btn active" data-tab="dashboard">▦ <span>Dashboard</span></button>
+        <button class="nav-btn" data-tab="shift">＋ <span>Record a shift</span></button>
+        <button class="nav-btn" data-tab="history">▤ <span>Sales history</span></button>
+        <button class="nav-btn" data-tab="inventory">◉ <span>Tank inventory</span></button>
+        <button class="nav-btn" data-tab="assistant">✦ <span>Business assistant</span></button>
+      </nav>
+      <div class="mt-auto p-4 border-t border-slate-100 dark:border-slate-800">
+        <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 mb-3"><div id="sidePump" class="font-black text-sm truncate">Your station</div><div id="sideOwner" class="muted text-xs mt-1 truncate">Signed in</div></div>
+        <button id="themeBtn" class="nav-btn">☾ <span>Toggle appearance</span></button>
+        <button id="logoutBtn" class="nav-btn text-rose-600">↪ <span>Sign out</span></button>
+      </div>
+    </aside>
+
+    <main class="flex-1 min-w-0">
+      <header class="sticky top-0 z-20 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-5 sm:px-8 py-4 flex items-center justify-between gap-4">
+        <div><p class="text-[10px] font-black tracking-widest text-blue-600 uppercase">Operations overview</p><h1 id="pageTitle" class="text-xl sm:text-2xl font-black mt-1">Dashboard</h1></div>
+        <button id="refreshBtn" class="rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800">↻ Refresh</button>
+      </header>
+      <div class="p-4 sm:p-8 max-w-7xl mx-auto">
+        <section id="page-dashboard" class="page space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2"><div><h2 class="text-lg font-black">Station performance</h2><p class="muted text-sm mt-1">A live summary of the records saved to this account.</p></div><span id="lastUpdated" class="text-xs muted"></span></div>
+          <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="panel p-5"><div class="flex justify-between gap-2"><p class="text-xs font-bold muted">Today's revenue</p><span class="text-blue-600">₹</span></div><p id="todayRevenue" class="stat-value mt-3">₹0.00</p><p class="text-xs muted mt-2">Recorded today</p></div>
+            <div class="panel p-5"><div class="flex justify-between gap-2"><p class="text-xs font-bold muted">Total revenue</p><span class="text-emerald-600">↗</span></div><p id="totalRevenue" class="stat-value mt-3">₹0.00</p><p class="text-xs muted mt-2">All saved shifts</p></div>
+            <div class="panel p-5"><div class="flex justify-between gap-2"><p class="text-xs font-bold muted">Petrol sold</p><span class="text-amber-500">⛽</span></div><p id="petrolSold" class="stat-value mt-3">0 L</p><p class="text-xs muted mt-2">Total recorded volume</p></div>
+            <div class="panel p-5"><div class="flex justify-between gap-2"><p class="text-xs font-bold muted">Diesel sold</p><span class="text-violet-500">⛽</span></div><p id="dieselSold" class="stat-value mt-3">0 L</p><p class="text-xs muted mt-2"><span id="shiftCount">0</span> shift entries recorded</p></div>
+          </div>
+          <div class="grid xl:grid-cols-5 gap-4">
+            <div class="panel p-5 xl:col-span-3"><div class="flex items-start justify-between gap-3"><div><h3 class="font-black">Fuel stock overview</h3><p class="muted text-xs mt-1">Based on the inventory values entered in this app.</p></div><button class="text-xs text-blue-600 font-black" data-goto="inventory">Manage stock →</button></div>
+              <div class="space-y-5 mt-6">
+                <div><div class="flex justify-between text-sm mb-2"><span class="font-bold">Petrol</span><strong id="dashPetrolStock">0 L</strong></div><div class="h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden"><div id="petrolBar" class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div><p id="petrolStatus" class="muted text-xs mt-2">Stock status not calculated</p></div>
+                <div><div class="flex justify-between text-sm mb-2"><span class="font-bold">Diesel</span><strong id="dashDieselStock">0 L</strong></div><div class="h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden"><div id="dieselBar" class="h-full bg-blue-600 rounded-full" style="width:0%"></div></div><p id="dieselStatus" class="muted text-xs mt-2">Stock status not calculated</p></div>
+              </div>
             </div>
-            
-            <nav class="flex-1 p-3 space-y-1 overflow-y-auto text-slate-600 dark:text-slate-300">
-                <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-bold">📊 Smart Dashboard</button>
-                <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">⛽ Shift Entry (Morning/Evening)</button>
-                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">🛢️ Tank Stock Monitor</button>
-                <button onclick="switchTab('ai', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-purple-600 font-bold">🤖 Advanced AI Assistant</button>
-            </nav>
+            <div class="panel p-5 xl:col-span-2"><h3 class="font-black">Quick actions</h3><p class="muted text-xs mt-1">Common station tasks</p><div class="space-y-3 mt-5">
+              <button data-goto="shift" class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white p-3 text-sm font-black text-left">＋ Record shift sales <span class="float-right">→</span></button>
+              <button data-goto="history" class="w-full rounded-xl bg-slate-100 dark:bg-slate-800 p-3 text-sm font-black text-left">▤ View sales history <span class="float-right">→</span></button>
+              <button data-goto="assistant" class="w-full rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 p-3 text-sm font-black text-left">✦ Ask business assistant <span class="float-right">→</span></button>
+            </div></div>
+          </div>
+          <div class="panel p-5"><div class="flex items-center justify-between gap-3 mb-4"><div><h3 class="font-black">Recent shift records</h3><p class="muted text-xs mt-1">Latest entries saved for your station.</p></div><button data-goto="history" class="text-xs text-blue-600 font-black">View all →</button></div><div id="recentTable" class="table-wrap"><p class="muted text-sm">Loading records…</p></div></div>
+        </section>
 
-            <div class="p-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex justify-between">
-                <span id="ownerNameDisplay">Petro App</span>
-                <button onclick="logout()" class="text-rose-500 font-bold">Logout</button>
+        <section id="page-shift" class="page hidden space-y-5">
+          <div><h2 class="text-lg font-black">Record shift sales</h2><p class="muted text-sm mt-1">Enter the nozzle meter readings and the app calculates saleable litres and revenue.</p></div>
+          <div class="panel p-5 sm:p-7 max-w-3xl">
+            <form id="shiftForm" class="grid sm:grid-cols-2 gap-4">
+              <label class="text-xs font-bold">Business date<input id="sDate" type="date" class="field mt-2" required></label>
+              <label class="text-xs font-bold">Shift<select id="sShift" class="field mt-2"><option>Morning Shift</option><option>Evening Shift</option></select></label>
+              <label class="text-xs font-bold">Attendant name<input id="sAttendant" class="field mt-2" required maxlength="80" placeholder="Name of attendant"></label>
+              <label class="text-xs font-bold">Fuel type<select id="sFuelType" class="field mt-2"><option>Petrol</option><option>Diesel</option></select></label>
+              <label class="text-xs font-bold">Nozzle ID<input id="sNozzle" class="field mt-2" required maxlength="50" placeholder="e.g. Nozzle 1"></label>
+              <label class="text-xs font-bold">Selling price (₹/L)<input id="sUnitPrice" type="number" min="0.01" step="0.01" class="field mt-2" required placeholder="e.g. 94.50"></label>
+              <label class="text-xs font-bold">Opening meter (L)<input id="sOpening" type="number" min="0" step="0.01" class="field mt-2" required placeholder="Opening reading"></label>
+              <label class="text-xs font-bold">Closing meter (L)<input id="sClosing" type="number" min="0" step="0.01" class="field mt-2" required placeholder="Closing reading"></label>
+              <label class="text-xs font-bold sm:col-span-2">Testing / non-sale litres<input id="sTesting" type="number" min="0" step="0.01" value="0" class="field mt-2" required><span class="muted font-normal block mt-1">Testing litres are subtracted from the meter difference.</span></label>
+              <div class="sm:col-span-2 rounded-xl bg-blue-50 dark:bg-blue-950 p-4"><p class="text-xs text-blue-700 dark:text-blue-300 font-bold">Estimated saleable volume</p><p id="salePreview" class="text-2xl font-black mt-1">0.00 L</p><p id="revenuePreview" class="text-sm mt-1 text-blue-700 dark:text-blue-300">Estimated revenue: ₹0.00</p></div>
+              <button id="saveShiftBtn" class="sm:col-span-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white py-3 font-black">Save shift & update inventory</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="page-history" class="page hidden space-y-5">
+          <div><h2 class="text-lg font-black">Sales history</h2><p class="muted text-sm mt-1">Review records associated with your station account.</p></div>
+          <div class="panel p-4"><form id="filterForm" class="grid sm:grid-cols-4 gap-3 items-end">
+            <label class="text-xs font-bold">From date<input id="filterFrom" type="date" class="field mt-2"></label>
+            <label class="text-xs font-bold">To date<input id="filterTo" type="date" class="field mt-2"></label>
+            <label class="text-xs font-bold">Fuel<select id="filterFuel" class="field mt-2"><option value="">All fuels</option><option>Petrol</option><option>Diesel</option></select></label>
+            <button class="rounded-xl bg-blue-600 text-white py-3 text-sm font-black">Apply filters</button>
+          </form></div>
+          <div class="panel p-5"><div id="historySummary" class="muted text-sm mb-4">Loading records…</div><div id="historyTable" class="table-wrap"></div></div>
+        </section>
+
+        <section id="page-inventory" class="page hidden space-y-5">
+          <div><h2 class="text-lg font-black">Tank inventory</h2><p class="muted text-sm mt-1">Update these values after checking actual tank measurements or delivery records.</p></div>
+          <div class="grid lg:grid-cols-2 gap-4">
+            <div class="panel p-6"><div class="text-3xl">⛽</div><h3 class="font-black mt-3">Petrol stock</h3><p class="muted text-xs mt-1">Current recorded stock in litres</p><p id="inventoryPetrol" class="text-3xl font-black mt-4">0 L</p><div class="h-2 rounded-full bg-slate-100 dark:bg-slate-800 mt-4 overflow-hidden"><div id="inventoryPetrolBar" class="h-full bg-amber-500" style="width:0%"></div></div></div>
+            <div class="panel p-6"><div class="text-3xl">🛢️</div><h3 class="font-black mt-3">Diesel stock</h3><p class="muted text-xs mt-1">Current recorded stock in litres</p><p id="inventoryDiesel" class="text-3xl font-black mt-4">0 L</p><div class="h-2 rounded-full bg-slate-100 dark:bg-slate-800 mt-4 overflow-hidden"><div id="inventoryDieselBar" class="h-full bg-blue-600" style="width:0%"></div></div></div>
+          </div>
+          <div class="panel p-5 sm:p-7 max-w-2xl"><h3 class="font-black">Update tank measurements</h3><p class="muted text-xs mt-1 mb-5">Saving replaces the current stock values. Use actual measured quantities.</p>
+            <form id="inventoryForm" class="space-y-4">
+              <label class="block text-xs font-bold">Petrol stock (litres)<input id="iPetrol" type="number" min="0" max="10000000" step="0.01" class="field mt-2" required></label>
+              <label class="block text-xs font-bold">Diesel stock (litres)<input id="iDiesel" type="number" min="0" max="10000000" step="0.01" class="field mt-2" required></label>
+              <button class="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 text-sm font-black">Save inventory</button>
+            </form>
+          </div>
+          <p class="muted text-xs leading-5">Inventory accuracy depends on entering deliveries, adjustments, and actual measurements. This version deducts recorded saleable litres when a shift is saved; it does not yet have a fuel-delivery ledger.</p>
+        </section>
+
+        <section id="page-assistant" class="page hidden space-y-5">
+          <div><h2 class="text-lg font-black">Business assistant</h2><p class="muted text-sm mt-1">Ask about this station's saved sales and inventory data.</p></div>
+          <div class="panel max-w-3xl p-4 sm:p-6">
+            <div id="chatMessages" class="h-80 overflow-y-auto space-y-3 pr-1">
+              <div class="max-w-[90%] rounded-2xl rounded-tl-sm bg-purple-50 dark:bg-purple-950 p-3 text-sm">Hello! I can summarise recorded revenue, sales volume, and stock. Try “What is today's revenue?”</div>
             </div>
-        </aside>
+            <div class="flex flex-wrap gap-2 my-4">
+              <button class="suggestion rounded-full border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-bold">What is today's revenue?</button>
+              <button class="suggestion rounded-full border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-bold">Show petrol stock</button>
+              <button class="suggestion rounded-full border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-bold">How much diesel have we sold?</button>
+            </div>
+            <form id="chatForm" class="flex gap-2"><input id="chatInput" class="field min-w-0" maxlength="500" required placeholder="Ask about revenue, stock, or litres sold…"><button id="chatSend" class="rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-5 font-black text-sm">Send</button></form>
+            <p class="muted text-[11px] mt-3">This is a rules-based business assistant, not a connected large language model. It reports saved data and does not estimate net profit.</p>
+          </div>
+        </section>
+        <footer class="muted text-xs mt-10 pb-4">PetroFlow Pro · Keep records accurate and verify inventory against physical measurements.</footer>
+      </div>
+    </main>
+  </div>
 
-        <div class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-950">
-            <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center shadow-xs">
-                <h2 class="text-xs font-black uppercase text-slate-900 dark:text-white" id="currentHeaderTitle">Smart Dashboard</h2>
-                <button onclick="toggleDarkMode()" class="text-xs font-bold bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl">🌙 Theme</button>
-            </header>
+<script>
+  const $ = id => document.getElementById(id);
+  let dashboardData = null;
+  let currentUser = null;
+  const tokenData = () => {
+    try { return JSON.parse(localStorage.getItem('petroAppUser') || 'null'); } catch { return null; }
+  };
+  const money = value => '₹' + Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const litres = value => Number(value || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }) + ' L';
+  const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let toastTimer;
+  function toast(message, type = 'success') {
+    const el = $('toast');
+    el.textContent = message;
+    el.className = 'toast rounded-xl px-4 py-3 text-sm font-bold shadow-xl ' +
+      (type === 'error' ? 'bg-rose-600 text-white' : 'bg-slate-900 text-white');
+    el.classList.remove('hidden');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.add('hidden'), 3800);
+  }
+  async function api(url, options = {}) {
+    const user = tokenData();
+    const headers = { ...(options.body ? {'Content-Type':'application/json'} : {}), ...(user?.token ? {'Authorization':'Bearer ' + user.token} : {}), ...(options.headers || {}) };
+    const response = await fetch(url, { ...options, headers });
+    let data = {};
+    try { data = await response.json(); } catch {}
+    if (response.status === 401 && user?.token) {
+      localStorage.removeItem('petroAppUser');
+      showAuth();
+      throw new Error(data.error || 'Session expired. Please sign in again.');
+    }
+    if (!response.ok || data.success === false) throw new Error(data.error || 'Request failed. Please try again.');
+    return data;
+  }
+  function showAuth() {
+    $('appScreen').classList.add('hidden');
+    $('appScreen').classList.remove('md:flex');
+    $('authScreen').classList.remove('hidden');
+  }
+  function showApp(user) {
+    currentUser = user;
+    $('authScreen').classList.add('hidden');
+    $('appScreen').classList.remove('hidden');
+    $('appScreen').classList.add('md:flex');
+    $('sidePump').textContent = user.pumpName || 'Your station';
+    $('sideOwner').textContent = user.ownerName || user.username || 'Signed in';
+    $('sDate').value = new Date().toLocaleDateString('en-CA');
+    refreshAll().catch(e => toast(e.message, 'error'));
+  }
+  function authMode(register) {
+    $('loginForm').classList.toggle('hidden', register);
+    $('registerForm').classList.toggle('hidden', !register);
+    $('authTitle').textContent = register ? 'Create your station account' : 'Sign in to your station';
+    $('authSubtitle').textContent = register ? 'Set up your owner and station details.' : 'Use your username or registered email.';
+    $('authSwitchText').textContent = register ? 'Already registered?' : 'New to PetroFlow Pro?';
+    $('authSwitch').textContent = register ? 'Sign in' : 'Create account';
+    $('newCredentials').classList.add('hidden');
+  }
+  $('authSwitch').addEventListener('click', () => authMode($('registerForm').classList.contains('hidden')));
+  $('registerForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const button = $('registerForm').querySelector('button[type="submit"]');
+    button.disabled = true; button.textContent = 'Creating account…';
+    try {
+      const data = await api('/api/register', { method:'POST', body:JSON.stringify({
+        ownerName:$('regOwner').value.trim(), email:$('regEmail').value.trim(),
+        pumpName:$('regPump').value.trim(), password:$('regPass').value
+      })});
+      $('newCredentials').innerHTML = '<strong>Account created successfully.</strong><p class="mt-1">Your username is <strong>' + escapeHTML(data.username) + '</strong>. Your password is not displayed or emailed. Sign in with the password you just created.</p>';
+      $('newCredentials').classList.remove('hidden');
+      $('loginUser').value = data.username;
+      toast('Account created. You can now sign in.');
+      authMode(false);
+      $('loginUser').value = data.username;
+    } catch (err) { toast(err.message, 'error'); }
+    finally { button.disabled = false; button.textContent = 'Create station account'; }
+  });
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const button = $('loginForm').querySelector('button[type="submit"]');
+    button.disabled = true; button.textContent = 'Signing in…';
+    try {
+      const data = await api('/api/login', { method:'POST', body:JSON.stringify({ username:$('loginUser').value.trim(), password:$('loginPass').value }) });
+      localStorage.setItem('petroAppUser', JSON.stringify(data));
+      showApp(data);
+      toast('Welcome to PetroFlow Pro.');
+    } catch (err) { toast(err.message, 'error'); }
+    finally { button.disabled = false; button.textContent = 'Sign in →'; }
+  });
+  function switchPage(page) {
+    document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
+    $('page-' + page)?.classList.remove('hidden');
+    document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === page));
+    const titles = { dashboard:'Dashboard', shift:'Record a shift', history:'Sales history', inventory:'Tank inventory', assistant:'Business assistant' };
+    $('pageTitle').textContent = titles[page] || 'Dashboard';
+    if (page === 'history') loadHistory().catch(e => toast(e.message, 'error'));
+    if (page === 'inventory' && dashboardData) fillInventory(dashboardData);
+  }
+  document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => btn.addEventListener('click', () => switchPage(btn.dataset.tab)));
+  document.querySelectorAll('[data-goto]').forEach(btn => btn.addEventListener('click', () => switchPage(btn.dataset.goto)));
+  $('logoutBtn').addEventListener('click', () => { localStorage.removeItem('petroAppUser'); showAuth(); toast('You have signed out.'); });
+  $('themeBtn').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+  $('refreshBtn').addEventListener('click', () => refreshAll().then(() => toast('Dashboard refreshed.')).catch(e => toast(e.message, 'error')));
 
-            <main class="p-6 flex-grow space-y-6 overflow-y-auto">
-                
-                <!-- Dashboard Tab -->
-                <div id="tab-dashboard" class="tab-content space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-xs">
-                            <p class="text-[11px] font-bold text-slate-400">Total Revenue</p>
-                            <h3 id="dashRevenue" class="text-xl font-black text-blue-600 mt-1">₹ 0.00</h3>
-                        </div>
-                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-xs">
-                            <p class="text-[11px] font-bold text-slate-400">Petrol Sold</p>
-                            <h3 id="dashPetrol" class="text-xl font-black text-slate-900 dark:text-white mt-1">0 L</h3>
-                        </div>
-                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-xs">
-                            <p class="text-[11px] font-bold text-slate-400">Diesel Sold</p>
-                            <h3 id="dashDiesel" class="text-xl font-black text-slate-900 dark:text-white mt-1">0 L</h3>
-                        </div>
-                    </div>
-                </div>
+  function stockStatus(value) {
+    if (value <= 1000) return 'Low stock — check replenishment';
+    if (value <= 3000) return 'Monitor stock levels';
+    return 'Recorded stock available';
+  }
+  function setStockBar(id, value) { $(id).style.width = Math.max(0, Math.min(100, Number(value) / 20000 * 100)) + '%'; }
+  function renderRows(rows, emptyText) {
+    if (!rows.length) return '<p class="muted text-sm py-4">' + escapeHTML(emptyText) + '</p>';
+    return `<table><thead><tr><th>Date</th><th>Shift</th><th>Fuel</th><th>Attendant</th><th>Litres</th><th>Revenue</th></tr></thead><tbody>` +
+      rows.map(r => `<tr><td>${escapeHTML(r.date)}</td><td>${escapeHTML(r.shift)}</td><td><span class="rounded-full px-2 py-1 text-[10px] font-black ${r.fuelType === 'Petrol' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">${escapeHTML(r.fuelType)}</span></td><td>${escapeHTML(r.attendant)}</td><td>${litres(r.liters)}</td><td class="font-black">${money(r.total)}</td></tr>`).join('') + '</tbody></table>';
+  }
+  async function refreshAll() {
+    const [data, records] = await Promise.all([api('/api/dashboard'), api('/api/records?limit=8')]);
+    dashboardData = data;
+    $('todayRevenue').textContent = money(data.todayRevenue);
+    $('totalRevenue').textContent = money(data.totalRevenue);
+    $('petrolSold').textContent = litres(data.petrolLiters);
+    $('dieselSold').textContent = litres(data.dieselLiters);
+    $('shiftCount').textContent = data.shifts;
+    $('dashPetrolStock').textContent = litres(data.petrolStock);
+    $('dashDieselStock').textContent = litres(data.dieselStock);
+    $('petrolStatus').textContent = stockStatus(data.petrolStock);
+    $('dieselStatus').textContent = stockStatus(data.dieselStock);
+    setStockBar('petrolBar', data.petrolStock); setStockBar('dieselBar', data.dieselStock);
+    $('recentTable').innerHTML = renderRows(records.records, 'No shift records yet. Record your first shift to see activity here.');
+    $('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    fillInventory(data);
+  }
+  function fillInventory(data) {
+    $('inventoryPetrol').textContent = litres(data.petrolStock);
+    $('inventoryDiesel').textContent = litres(data.dieselStock);
+    $('iPetrol').value = Number(data.petrolStock).toFixed(2);
+    $('iDiesel').value = Number(data.dieselStock).toFixed(2);
+    setStockBar('inventoryPetrolBar', data.petrolStock); setStockBar('inventoryDieselBar', data.dieselStock);
+  }
+  async function loadHistory() {
+    const query = new URLSearchParams({limit:'200'});
+    if ($('filterFrom').value) query.set('from', $('filterFrom').value);
+    if ($('filterTo').value) query.set('to', $('filterTo').value);
+    if ($('filterFuel').value) query.set('fuelType', $('filterFuel').value);
+    const data = await api('/api/records?' + query.toString());
+    const sum = data.records.reduce((acc, r) => ({liters:acc.liters + Number(r.liters), total:acc.total + Number(r.total)}), {liters:0,total:0});
+    $('historySummary').textContent = `${data.records.length} records · ${litres(sum.liters)} sold · ${money(sum.total)} revenue (maximum 200 records shown)`;
+    $('historyTable').innerHTML = data.records.length ? `<table><thead><tr><th>Date</th><th>Shift</th><th>Attendant</th><th>Fuel</th><th>Nozzle</th><th>Rate</th><th>Opening</th><th>Closing</th><th>Testing</th><th>Litres</th><th>Total</th></tr></thead><tbody>` +
+      data.records.map(r => `<tr><td>${escapeHTML(r.date)}</td><td>${escapeHTML(r.shift)}</td><td>${escapeHTML(r.attendant)}</td><td>${escapeHTML(r.fuelType)}</td><td>${escapeHTML(r.nozzleName)}</td><td>${money(r.unitPrice)}</td><td>${Number(r.openingMeter).toFixed(2)}</td><td>${Number(r.closingMeter).toFixed(2)}</td><td>${Number(r.testing).toFixed(2)}</td><td>${Number(r.liters).toFixed(2)}</td><td class="font-black">${money(r.total)}</td></tr>`).join('') + '</tbody></table>' : '<p class="muted text-sm py-4">No records match these filters.</p>';
+  }
+  $('filterForm').addEventListener('submit', e => { e.preventDefault(); loadHistory().catch(err => toast(err.message, 'error')); });
 
-                <!-- Shift Entry Tab (Morning/Evening & Nozzle) -->
-                <div id="tab-shifts" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border shadow-xs max-w-2xl">
-                        <h3 class="text-base font-bold mb-4">Record Shift Sales (Morning / Evening)</h3>
-                        <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <input type="date" id="sDate" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                            <select id="sShift" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                                <option value="Morning Shift">Morning Shift</option>
-                                <option value="Evening Shift">Evening Shift</option>
-                            </select>
-                            <input type="text" id="sAttendant" placeholder="Attendant Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                            <select id="sFuelType" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                                <option value="Petrol">Petrol</option>
-                                <option value="Diesel">Diesel</option>
-                            </select>
-                            <input type="text" id="sNozzle" placeholder="Nozzle ID (e.g. Nozzle 1)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                            <input type="number" step="0.01" id="sUnitPrice" placeholder="Rate (₹/L)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                            <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                            <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
-                            <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters" value="0" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl md:col-span-2">
-                            <button type="submit" class="bg-blue-600 text-white font-bold py-3 rounded-xl md:col-span-2">Save Shift & Deduct Tank Stock</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Tank Monitor -->
-                <div id="tab-tanks" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border shadow-xs max-w-xl">
-                        <h3 class="text-base font-bold mb-4">Underground Tank Inventory Levels</h3>
-                        <div class="space-y-4 text-sm">
-                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex justify-between items-center">
-                                <div><strong>Petrol Stock:</strong> <span id="tPetrol">0</span> L</div>
-                                <span class="text-xs text-emerald-500 font-bold">Safe</span>
-                            </div>
-                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex justify-between items-center">
-                                <div><strong>Diesel Stock:</strong> <span id="tDiesel">0</span> L</div>
-                                <span class="text-xs text-emerald-500 font-bold">Safe</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AI Assistant Tab -->
-                <div id="tab-ai" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border shadow-xs max-w-xl space-y-4">
-                        <h3 class="text-base font-bold text-purple-600">🤖 Advanced AI Business Assistant</h3>
-                        <div id="chatBox" class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl h-64 overflow-y-auto space-y-3 text-xs">
-                            <div class="p-3 bg-purple-500/10 text-purple-600 rounded-xl">AI: Hello! Ask me anything regarding your Petro App analytics, tank stock, or shift revenues.</div>
-                        </div>
-                        <form id="chatForm" class="flex gap-2">
-                            <input type="text" id="chatInput" placeholder="Ask AI (e.g. How is our stock level?)" required class="flex-1 p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl text-xs">
-                            <button type="submit" class="bg-purple-600 text-white font-bold px-5 py-3 rounded-xl text-xs">Send</button>
-                        </form>
-                    </div>
-                </div>
-
-            </main>
-        </div>
-    </div>
-
-    <script>
-        let isRegMode = false;
-        function toggleAuthMode() {
-            isRegMode = !isRegMode;
-            document.getElementById('modalTitle').innerText = isRegMode ? "Petro App Registration" : "Petro App Login";
-            document.getElementById('switchAuthBtn').innerText = isRegMode ? "Already registered? Login" : "New user? Register";
-            document.getElementById('loginForm').classList.toggle('hidden', isRegMode);
-            document.getElementById('registerForm').classList.toggle('hidden', isRegMode);
-            document.getElementById('credentialsBox').classList.add('hidden');
-        }
-
-        document.getElementById('registerForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const payload = {
-                ownerName: document.getElementById('regOwner').value,
-                email: document.getElementById('regEmail').value,
-                pumpName: document.getElementById('regPump').value,
-                password: document.getElementById('regPass').value
-            };
-            const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('registerForm').classList.add('hidden');
-                document.getElementById('credentialsBox').classList.remove('hidden');
-                document.getElementById('credUser').innerText = data.username;
-                document.getElementById('credPass').innerText = data.password;
-            } else { alert(data.error); }
-        };
-
-        function proceedToLogin() {
-            document.getElementById('credentialsBox').classList.add('hidden');
-            toggleAuthMode();
-        }
-
-        document.getElementById('loginForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: document.getElementById('loginUser').value, password: document.getElementById('loginPass').value })
-            });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem('petroAppUser', JSON.stringify(data));
-                location.reload();
-            } else { alert(data.error); }
-        };
-
-        function authFetch(url, options = {}) {
-            const user = JSON.parse(localStorage.getItem('petroAppUser') || '{}');
-            return fetch(url, { ...options, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`, ...(options.headers || {}) } });
-        }
-
-        window.onload = function() {
-            if (localStorage.getItem('petroAppUser')) {
-                document.getElementById('authModal').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                loadDashboard();
-            }
-        };
-
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-600', 'font-bold'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            if (btn) btn.classList.add('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-600', 'font-bold');
-        }
-
-        async function loadDashboard() {
-            const res = await authFetch('/api/dashboard');
-            const data = await res.json();
-            document.getElementById('dashRevenue').innerText = '₹ ' + Number(data.totalRevenue).toLocaleString('en-IN');
-            document.getElementById('dashPetrol').innerText = Number(data.petrolLiters).toLocaleString('en-IN') + ' L';
-            document.getElementById('dashDiesel').innerText = Number(data.dieselLiters).toLocaleString('en-IN') + ' L';
-            document.getElementById('tPetrol').innerText = data.petrolStock;
-            document.getElementById('tDiesel').innerText = data.dieselStock;
-        }
-
-        document.getElementById('shiftForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const payload = {
-                date: document.getElementById('sDate').value, shift: document.getElementById('sShift').value, attendant: document.getElementById('sAttendant').value,
-                fuelType: document.getElementById('sFuelType').value, nozzleName: document.getElementById('sNozzle').value,
-                unitPrice: parseFloat(document.getElementById('sUnitPrice').value), openingMeter: parseFloat(document.getElementById('sOpening').value),
-                closingMeter: parseFloat(document.getElementById('sClosing').value), testing: parseFloat(document.getElementById('sTesting').value) || 0
-            };
-            const res = await authFetch('/api/records', { method: 'POST', body: JSON.stringify(payload) });
-            if (res.ok) { this.reset(); loadDashboard(); alert('Shift recorded successfully!'); }
-            else { const err = await res.json(); alert(err.error); }
-        };
-
-        document.getElementById('chatForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const input = document.getElementById('chatInput');
-            const box = document.getElementById('chatBox');
-            const msg = input.value;
-            box.innerHTML += `<div class="p-3 bg-blue-500/10 text-blue-600 rounded-xl text-right">You: ${msg}</div>`;
-            input.value = '';
-            
-            const res = await authFetch('/api/ai-chat', { method: 'POST', body: JSON.stringify({ message: msg }) });
-            const data = await res.json();
-            box.innerHTML += `<div class="p-3 bg-purple-500/10 text-purple-600 rounded-xl">AI: ${data.reply}</div>`;
-            box.scrollTop = box.scrollHeight;
-        };
-
-        function logout() { localStorage.removeItem('petroAppUser'); location.reload(); }
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-    </script>
+  function updatePreview() {
+    const open = Number($('sOpening').value), close = Number($('sClosing').value);
+    const test = Number($('sTesting').value || 0), rate = Number($('sUnitPrice').value || 0);
+    const valid = [open,close,test,rate].every(Number.isFinite) && close >= open && test >= 0 && test <= close-open && rate >= 0;
+    const volume = valid ? Math.max(0, close-open-test) : 0;
+    $('salePreview').textContent = litres(volume);
+    $('revenuePreview').textContent = 'Estimated revenue: ' + money(volume * rate);
+  }
+  ['sOpening','sClosing','sTesting','sUnitPrice'].forEach(id => $(id).addEventListener('input', updatePreview));
+  $('shiftForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const button = $('saveShiftBtn'); button.disabled = true; button.textContent = 'Saving shift…';
+    try {
+      const payload = {
+        date:$('sDate').value, shift:$('sShift').value, attendant:$('sAttendant').value.trim(),
+        fuelType:$('sFuelType').value, nozzleName:$('sNozzle').value.trim(),
+        unitPrice:Number($('sUnitPrice').value), openingMeter:Number($('sOpening').value),
+        closingMeter:Number($('sClosing').value), testing:Number($('sTesting').value || 0)
+      };
+      const result = await api('/api/records', {method:'POST', body:JSON.stringify(payload)});
+      toast(`Shift saved: ${litres(result.liters)} · ${money(result.total)}`);
+      $('shiftForm').reset(); $('sDate').value = new Date().toLocaleDateString('en-CA'); $('sTesting').value = '0'; updatePreview();
+      await refreshAll(); switchPage('dashboard');
+    } catch (err) { toast(err.message, 'error'); }
+    finally { button.disabled = false; button.textContent = 'Save shift & update inventory'; }
+  });
+  $('inventoryForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      const data = await api('/api/tanks', {method:'PUT', body:JSON.stringify({petrolStock:Number($('iPetrol').value), dieselStock:Number($('iDiesel').value)})});
+      toast('Tank inventory updated.');
+      await refreshAll();
+    } catch (err) { toast(err.message, 'error'); }
+  });
+  async function askAssistant(message) {
+    const box = $('chatMessages');
+    const userLine = document.createElement('div');
+    userLine.className = 'ml-auto max-w-[90%] rounded-2xl rounded-tr-sm bg-blue-600 text-white p-3 text-sm whitespace-pre-wrap';
+    userLine.textContent = message; box.appendChild(userLine);
+    const pending = document.createElement('div');
+    pending.className = 'max-w-[90%] rounded-2xl rounded-tl-sm bg-purple-50 dark:bg-purple-950 p-3 text-sm';
+    pending.textContent = 'Checking saved station data…'; box.appendChild(pending); box.scrollTop = box.scrollHeight;
+    $('chatSend').disabled = true;
+    try {
+      const data = await api('/api/ai-chat', {method:'POST', body:JSON.stringify({message})});
+      pending.textContent = data.reply;
+    } catch (err) { pending.textContent = err.message; }
+    finally { $('chatSend').disabled = false; box.scrollTop = box.scrollHeight; }
+  }
+  $('chatForm').addEventListener('submit', e => { e.preventDefault(); const input = $('chatInput'); const msg = input.value.trim(); if (!msg) return; input.value = ''; askAssistant(msg); });
+  document.querySelectorAll('.suggestion').forEach(btn => btn.addEventListener('click', () => askAssistant(btn.textContent)));
+  window.addEventListener('load', () => {
+    const user = tokenData();
+    if (user?.token) showApp(user);
+  });
+</script>
 </body>
 </html>
