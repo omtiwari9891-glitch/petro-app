@@ -2,380 +2,177 @@
 <html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FuelFlow ERP - Enterprise Petrol Station Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
 
-    <!-- Professional Multi-Step Registration & Login Modal -->
-    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-        <div class="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-8 md:p-10">
-            
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 id="modalTitle" class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Register for Trial</h2>
-                    <p class="text-xs text-rose-500 font-bold tracking-wide mt-0.5">15 Days Free Trial & Priority Support</p>
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-8">
+            <h2 id="modalTitle" class="text-2xl font-black text-slate-900 dark:text-white">Register for Trial</h2>
+            <p class="text-xs text-rose-500 font-bold mb-6">15 Days Free Trial & Priority Support</p>
+
+            <form id="authForm" class="space-y-4">
+                <div id="regFields" class="space-y-3">
+                    <input type="text" id="wProprietor" placeholder="Proprietor Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                    <input type="tel" id="wPhone" placeholder="WhatsApp Number" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                    <input type="text" id="wPumpName" placeholder="Fuel Station Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                 </div>
-                <button onclick="toggleAuthMode()" id="switchAuthBtn" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Already registered? Login</button>
-            </div>
-
-            <!-- Multi-Step Wizard Container -->
-            <div id="registerWizardContainer">
-                <div class="mb-6">
-                    <div class="flex justify-between text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
-                        <span id="stepTitleText">Step 1 of 4: Proprietor Details</span>
-                        <span id="stepPercentText">25%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div id="wizardProgressBar" class="bg-blue-600 h-full transition-all duration-300 rounded-full" style="width: 25%;"></div>
-                    </div>
-                </div>
-
-                <form id="wizardForm" class="space-y-5">
-                    <div class="wizard-step space-y-2" data-step="1">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">What is your name?</label>
-                        <p class="text-xs text-slate-400">Enter the authorized dealer or proprietor's full name.</p>
-                        <input type="text" id="wProprietor" placeholder="e.g. Rajesh Kumar" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                    </div>
-
-                    <div class="wizard-step hidden space-y-2" data-step="2">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">What is your WhatsApp number?</label>
-                        <p class="text-xs text-slate-400">Your secure access credentials will be delivered here.</p>
-                        <input type="tel" id="wPhone" placeholder="e.g. +91 98765 43210" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                    </div>
-
-                    <div class="wizard-step hidden space-y-3" data-step="3">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Business & Email Verification</label>
-                        <input type="email" id="wEmail" placeholder="owner@petrolpump.com" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                        <input type="text" id="wPumpName" placeholder="Fuel Station / Business Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                    </div>
-
-                    <div class="wizard-step hidden space-y-2" data-step="4">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Choose your secure password</label>
-                        <p class="text-xs text-slate-400">Minimum 10 characters combining letters and numbers.</p>
-                        <input type="password" id="wPassword" minlength="10" placeholder="••••••••••••" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white transition">
-                    </div>
-
-                    <div class="flex gap-3 pt-3">
-                        <button type="button" id="wizardBackBtn" onclick="prevWizardStep()" class="hidden w-1/3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold py-3 rounded-2xl transition text-sm">Back</button>
-                        <button type="button" id="wizardNextBtn" onclick="nextWizardStep()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition text-sm shadow-lg shadow-blue-500/25">Continue →</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Direct Login Form -->
-            <form id="loginForm" class="hidden space-y-4 pt-2">
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1 tracking-wider">Email Address</label>
-                    <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1 tracking-wider">Password</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••••••" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none dark:text-white">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition shadow-lg shadow-blue-500/25">Access Dashboard</button>
+                <input type="email" id="authEmail" placeholder="Owner Email Address" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                <input type="password" id="authPassword" placeholder="Secure Password (10+ characters)" required minlength="10" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                <button type="submit" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition shadow-lg text-sm">Complete Registration</button>
             </form>
-
-            <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400 flex justify-between items-center">
-                <span>Helpline: +91 890 550 1200</span>
-                <span>support@fuelflow.in</span>
-            </div>
+            <button onclick="toggleAuthMode()" id="switchAuthBtn" class="mt-4 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Already registered? Login</button>
         </div>
     </div>
 
-    <!-- Main Workspace Container -->
+    <!-- Main Workspace -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
-        
-        <!-- Left Sidebar -->
         <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 shrink-0">
             <div class="p-5 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="bg-blue-600 p-2.5 rounded-xl font-black text-base shadow-md shadow-blue-600/30">FF</div>
+                    <div class="bg-blue-600 p-2.5 rounded-xl font-black text-base">FF</div>
                     <div>
-                        <h1 id="navPumpTitle" class="text-sm font-bold leading-tight truncate max-w-[130px]">FuelFlow ERP</h1>
-                        <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold inline-block mt-0.5">● Active License</span>
+                        <h1 id="navPumpTitle" class="text-sm font-bold truncate max-w-[130px]">FuelFlow ERP</h1>
+                        <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">● Active License</span>
                     </div>
                 </div>
             </div>
-
-            <nav class="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
-                <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-bold text-blue-400 bg-blue-600/10 text-xs flex items-center gap-3 transition">📊 Dashboard</button>
-                <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">⛽ Shift Entry & Sale</button>
-                <button onclick="switchTab('tally', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">🧮 Cash Reconciliation</button>
-                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">🛢️ Tank Stock & Dip</button>
-                <button onclick="switchTab('customers', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">👥 Credit Ledger (Udhar)</button>
-                <button onclick="switchTab('staff', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">👨‍💼 Staff Payroll</button>
-                <button onclick="switchTab('expenses', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">💸 Operating Expenses</button>
-                <button onclick="switchTab('audit', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">🛡️ Immutable Audit Logs</button>
-                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl font-medium text-slate-300 hover:bg-slate-800/60 text-xs flex items-center gap-3 transition">👤 Profile & Backups</button>
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto text-xs font-semibold">
+                <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-blue-400 bg-blue-600/10">📊 Smart Dashboard</button>
+                <button onclick="switchTab('forecast', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">📦 Stock Forecasting & Alerts</button>
+                <button onclick="switchTab('nozzles', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">⛽ Nozzle-Wise Tracking</button>
+                <button onclick="switchTab('suppliers', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🚚 Supplier & Purchases</button>
+                <button onclick="switchTab('whatsapp', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">💬 WhatsApp Notifications</button>
+                <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">📋 Shift Operations</button>
+                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👤 System Backup</button>
             </nav>
-
-            <div class="p-4 border-t border-slate-800 flex items-center justify-between text-xs">
-                <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-xl font-semibold border border-slate-700 transition">🌙 Theme</button>
-                <button onclick="logout()" class="bg-slate-800 hover:bg-rose-600 px-3 py-2 rounded-xl font-semibold border border-slate-700 text-rose-300 hover:text-white transition">Logout</button>
+            <div class="p-4 border-t border-slate-800 flex justify-between text-xs">
+                <button onclick="toggleDarkMode()" class="bg-slate-800 px-3 py-2 rounded-xl">🌙 Theme</button>
+                <button onclick="logout()" class="bg-slate-800 text-rose-300 px-3 py-2 rounded-xl">Logout</button>
             </div>
         </aside>
 
-        <!-- Right Content Area -->
         <div class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-950">
             <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4 flex justify-between items-center shadow-sm">
-                <h2 id="currentHeaderTitle" class="text-sm md:text-base font-black text-slate-800 dark:text-white uppercase tracking-wider">Dashboard</h2>
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md" id="navAvatarLetter">U</div>
-                    <span id="navOwnerName" class="text-xs font-bold text-slate-700 dark:text-slate-200">Account</span>
-                </div>
+                <h2 id="currentHeaderTitle" class="text-sm md:text-base font-black uppercase">Smart Owner Dashboard</h2>
+                <span id="navOwnerName" class="text-xs font-bold text-slate-600 dark:text-slate-300">User</span>
             </header>
 
             <main class="p-6 md:p-8 flex-grow space-y-6 overflow-y-auto">
                 
-                <!-- 1. Dashboard -->
+                <!-- 01. Smart Owner Dashboard -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
-                    <div id="dynamicAlertContainer"></div>
-
-                    <!-- AI Agent Widget -->
-                    <div class="bg-gradient-to-r from-indigo-900 via-blue-900 to-indigo-950 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-4 border border-indigo-700/50">
-                        <div class="space-y-1">
-                            <span class="bg-white/10 text-indigo-200 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border border-white/10">🤖 AI Autonomous Upgrader</span>
-                            <h3 class="text-lg font-black tracking-tight">System Operational & Optimized</h3>
-                            <p id="aiRecommendationText" class="text-xs text-indigo-100 max-w-xl">AI is continuously analyzing your station metrics to ensure data accuracy and efficiency.</p>
+                    <div class="bg-gradient-to-r from-indigo-900 to-blue-900 p-6 rounded-3xl text-white shadow-xl flex justify-between items-center">
+                        <div>
+                            <span class="bg-white/10 text-indigo-200 text-[10px] font-bold px-3 py-1 rounded-full uppercase">AI Assistant</span>
+                            <h3 id="aiRecommendationText" class="text-base font-bold mt-2">System operating efficiently.</h3>
                         </div>
-                        <button onclick="runAIUpgrader()" id="aiUpgradeBtn" class="bg-emerald-400 hover:bg-emerald-500 text-slate-950 font-black py-3 px-5 rounded-2xl text-xs transition shadow-lg shadow-emerald-400/20 shrink-0">✨ Run AI Optimization</button>
+                        <button onclick="runAIUpgrader()" class="bg-emerald-400 text-slate-950 font-black py-2.5 px-4 rounded-2xl text-xs shadow">Run Health Check</button>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800">
-                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total Revenue</p>
-                            <h3 id="dashTotalRevenue" class="text-xl md:text-2xl font-black text-slate-900 dark:text-white mt-1">₹0.00</h3>
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Total Revenue</p>
+                            <h3 id="dashTotalRevenue" class="text-xl font-black mt-1">₹0.00</h3>
                         </div>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800">
-                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Estimated Net Profit</p>
-                            <h3 id="dashNetProfit" class="text-xl md:text-2xl font-black text-emerald-600 mt-1">₹0.00</h3>
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Net Profit</p>
+                            <h3 id="dashNetProfit" class="text-xl font-black text-emerald-600 mt-1">₹0.00</h3>
                         </div>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800">
-                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total Credit Due</p>
-                            <h3 id="dashTotalUdhar" class="text-xl md:text-2xl font-black text-rose-600 mt-1">₹0.00</h3>
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Credit Due</p>
+                            <h3 id="dashTotalUdhar" class="text-xl font-black text-rose-600 mt-1">₹0.00</h3>
                         </div>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800">
-                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Reconciliation Status</p>
-                            <h3 id="dashTallyStatus" class="text-xs md:text-sm font-black text-slate-700 dark:text-slate-300 mt-2">No Sales Pending</h3>
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-wrap gap-4 justify-between items-center">
-                        <div>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">📥 Accounting & Tally Integration</h3>
-                            <p class="text-xs text-slate-400 mt-0.5">Export structured data for professional auditing and software import.</p>
-                        </div>
-                        <div class="flex flex-wrap gap-2.5">
-                            <button onclick="downloadTallyXML()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-2xl text-xs transition shadow">📊 Download Tally XML</button>
-                            <button onclick="downloadCSVReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-2xl text-xs transition shadow">Export CSV</button>
-                            <button onclick="downloadJSONBackup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-4 rounded-2xl text-xs transition shadow">JSON Backup</button>
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">📈 Sales Velocity & Performance</h3>
-                        <div class="w-full h-72">
-                            <canvas id="salesChart"></canvas>
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                            <p class="text-[10px] font-bold uppercase text-slate-400">Tally Status</p>
+                            <h3 id="dashTallyStatus" class="text-xs font-black mt-2">Balanced</h3>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. Shift Closing -->
+                <!-- 02. Stock Forecasting & Reorder Alerts -->
+                <div id="tab-forecast" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-2xl">
+                        <h3 class="text-base font-bold mb-4">Stock Forecasting & Reorder Thresholds</h3>
+                        <div class="space-y-4 text-sm">
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-between items-center">
+                                <div><strong>Petrol Tank Stock:</strong> <span id="forecastPetrol">Loading...</span></div>
+                                <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Safe Level</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-between items-center">
+                                <div><strong>Diesel Tank Stock:</strong> <span id="forecastDiesel">Loading...</span></div>
+                                <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Safe Level</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 03. Nozzle-Wise Tracking -->
+                <div id="tab-nozzles" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Configure Dispenser Nozzles</h3>
+                        <form id="nozzleForm" class="space-y-3">
+                            <input type="text" id="nozName" placeholder="Nozzle Name (e.g. Dispenser 1 - MS)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <select id="nozFuel" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                            </select>
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-sm">Add Nozzle Mapping</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 04. Supplier & Purchase Management -->
+                <div id="tab-suppliers" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Add Fuel Supplier / OMC</h3>
+                        <form id="supplierForm" class="space-y-3">
+                            <input type="text" id="supName" placeholder="Supplier Name (e.g. IOCL Depot)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="tel" id="supPhone" placeholder="Contact Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="supBalance" placeholder="Initial Balance Due (₹)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl text-sm">Save Supplier</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 05. WhatsApp Notifications -->
+                <div id="tab-whatsapp" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg space-y-4">
+                        <h3 class="text-base font-bold">Dispatch Exception Alert via WhatsApp</h3>
+                        <textarea id="waMessage" placeholder="Type exception alert message..." class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm h-24"></textarea>
+                        <button onclick="sendWhatsAppAlert()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 rounded-2xl text-sm shadow">Send WhatsApp Notification</button>
+                        <p id="waStatus" class="text-xs text-emerald-500 font-bold"></p>
+                    </div>
+                </div>
+
+                <!-- Shift Operations Tab -->
                 <div id="tab-shifts" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Nozzle Meter Shift Entry</h3>
-                        <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Date</label>
-                                <input type="date" id="sDate" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Shift Name</label>
-                                <input type="text" id="sShift" placeholder="Morning / Night" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Attendant</label>
-                                <input type="text" id="sAttendant" placeholder="Attendant Name" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Fuel Type</label>
-                                <select id="sFuelType" class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                                    <option value="Petrol">Petrol (MS)</option>
-                                    <option value="Diesel">Diesel (HSD)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Unit Rate (₹/L)</label>
-                                <input type="number" step="0.01" id="sUnitPrice" placeholder="96.72" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Opening Meter</label>
-                                <input type="number" step="0.01" id="sOpening" placeholder="0.00" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Closing Meter</label>
-                                <input type="number" step="0.01" id="sClosing" placeholder="0.00" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Testing Liters</label>
-                                <input type="number" step="0.01" id="sTesting" placeholder="0.00" value="0" class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            </div>
-                            <button type="submit" id="shiftSubmitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl md:col-span-4 transition shadow-lg shadow-blue-500/25 text-sm">Save Shift & Deduct Tank Stock</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-x-auto">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Active Shift Logs</h3>
-                        <table class="w-full text-left border-collapse text-xs md:text-sm">
-                            <thead>
-                                <tr class="bg-slate-100 dark:bg-slate-800/50 text-slate-500 uppercase tracking-wider text-[10px]">
-                                    <th class="p-3">Date / Shift</th>
-                                    <th class="p-3">Attendant</th>
-                                    <th class="p-3">Product</th>
-                                    <th class="p-3">Saleable Liters</th>
-                                    <th class="p-3">Total Revenue</th>
-                                    <th class="p-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recordsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- 3. Cash Tally -->
-                <div id="tab-tally" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 max-w-lg mx-auto">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">🧮 Cash Reconciliation</h3>
-                        <p class="text-xs text-slate-400 mb-6">Verify physical drawer cash against system calculated sales revenue.</p>
-                        
-                        <form id="tallyForm" class="space-y-4">
-                            <div class="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800/50 border border-blue-100 dark:border-slate-700 flex justify-between items-center">
-                                <span class="text-xs font-extrabold text-blue-900 dark:text-blue-300 uppercase tracking-wider">Expected Sales Target:</span>
-                                <strong id="tallyDisplayTarget" class="text-lg font-black text-blue-600">₹0.00</strong>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Drawer Cash (₹)</label>
-                                    <input type="number" step="0.01" id="tallyCash" placeholder="0.00" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm font-semibold">
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">UPI / Cards (₹)</label>
-                                    <input type="number" step="0.01" id="tallyUPI" placeholder="0.00" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm font-semibold">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Credit Issued (₹)</label>
-                                <input type="number" step="0.01" id="tallyUdhar" placeholder="0.00" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm font-semibold">
-                            </div>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition shadow-lg shadow-blue-500/25 text-sm">Save Reconciliation</button>
-                            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 mt-4">
-                                <div class="flex justify-between items-center text-xs font-bold">
-                                    <span class="text-slate-500 uppercase tracking-wider">Status:</span>
-                                    <span id="tallyResultText" class="text-slate-900 dark:text-white font-extrabold">No Sales Pending</span>
-                                </div>
-                            </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                        <h3 class="text-base font-bold mb-4">Record Shift Sales</h3>
+                        <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+                            <input type="date" id="sDate" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="text" id="sShift" placeholder="Shift Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="text" id="sAttendant" placeholder="Attendant Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <select id="sFuelType" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl"><option value="Petrol">Petrol</option><option value="Diesel">Diesel</option></select>
+                            <input type="number" step="0.01" id="sUnitPrice" placeholder="Rate (₹/L)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters" value="0" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <button type="submit" class="bg-blue-600 text-white font-bold py-3 rounded-2xl md:col-span-4">Save Shift</button>
                         </form>
                     </div>
                 </div>
 
-                <!-- 4. Tank Stock -->
-                <div id="tab-tanks" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800">
-                        <div class="flex justify-between items-center mb-6">
-                            <div>
-                                <h3 class="text-base font-bold text-slate-900 dark:text-white">Underground Tank Inventory</h3>
-                                <p class="text-xs text-slate-400 mt-0.5">Real-time database volume levels.</p>
-                            </div>
-                            <button onclick="loadTanks()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 px-4 py-2 rounded-2xl text-xs font-bold transition">🔄 Refresh Stock</button>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-3xl bg-blue-50/30 dark:bg-slate-800/30 space-y-3">
-                                <h4 class="font-black text-blue-900 dark:text-blue-400 uppercase tracking-wider text-xs">Petrol Tank Stock</h4>
-                                <p class="text-lg font-black text-slate-900 dark:text-white" id="petrolStockText">Loading...</p>
-                                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
-                                    <div id="petrolProgressBar" class="bg-blue-600 h-full rounded-full transition-all" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                            <div class="border border-slate-200 dark:border-slate-700 p-6 rounded-3xl bg-emerald-50/30 dark:bg-slate-800/30 space-y-3">
-                                <h4 class="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wider text-xs">Diesel Tank Stock</h4>
-                                <p class="text-lg font-black text-slate-900 dark:text-white" id="dieselStockText">Loading...</p>
-                                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
-                                    <div id="dieselProgressBar" class="bg-emerald-600 h-full rounded-full transition-all" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. Udhar Ledger -->
-                <div id="tab-customers" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 max-w-lg">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Add Credit Customer</h3>
-                        <form id="customerForm" class="space-y-3">
-                            <input type="text" id="cName" placeholder="Customer / Organization Name" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <input type="text" id="cPhone" placeholder="Mobile Number" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <input type="text" id="cVehicle" placeholder="Vehicle / Fleet Number" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <input type="number" step="0.01" id="cAmount" placeholder="Opening Credit Balance (₹)" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl transition shadow text-sm">Save Customer Account</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- 6. Staff Payroll -->
-                <div id="tab-staff" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 max-w-lg">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Register Staff</h3>
-                        <form id="staffForm" class="space-y-3">
-                            <input type="text" id="stName" placeholder="Full Name" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <input type="text" id="stPhone" placeholder="Mobile Number" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <input type="number" step="0.01" id="stSalary" placeholder="Monthly Salary (₹)" required class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-2xl transition shadow text-sm">Save Staff Record</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- 7. Expenses -->
-                <div id="tab-expenses" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 max-w-xl">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Log Station Expense</h3>
-                        <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <input type="date" id="eDate" required class="border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <input type="text" id="eCategory" placeholder="Category (Electricity/Maintenance)" required class="border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm">
-                            <input type="number" step="0.01" id="eAmount" placeholder="Amount (₹)" required class="border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl text-sm md:col-span-2">
-                            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-2xl transition text-sm md:col-span-2 shadow">Save Expense</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- 8. Audit Logs -->
-                <div id="tab-audit" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-x-auto">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">🛡️ Immutable Audit History</h3>
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-slate-100 dark:bg-slate-800/50 text-slate-500 uppercase tracking-wider text-[10px]">
-                                    <th class="p-3">Timestamp</th>
-                                    <th class="p-3">Action</th>
-                                    <th class="p-3">Details</th>
-                                </tr>
-                            </thead>
-                            <tbody id="auditTableBody" class="font-mono divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- 9. Profile -->
+                <!-- Account Tab -->
                 <div id="tab-account" class="tab-content hidden space-y-6">
-                    <div class="max-w-xl mx-auto bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-4">
-                        <h3 class="text-base font-black text-slate-900 dark:text-white">Station Profile & Backups</h3>
-                        <p class="text-xs text-slate-400">Download complete operational backups for offline compliance.</p>
-                        <button onclick="downloadJSONBackup()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-2xl text-xs font-bold transition shadow">Download Encrypted JSON Backup</button>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-md">
+                        <h3 class="text-base font-bold mb-3">Data Backup</h3>
+                        <button onclick="downloadBackup()" class="w-full bg-slate-900 text-white py-3 rounded-2xl text-xs font-bold">Download JSON Backup</button>
                     </div>
                 </div>
 
@@ -384,288 +181,109 @@
     </div>
 
     <script>
-        let currentWizardStep = 1;
-        const totalWizardSteps = 4;
-        let mySalesChart = null;
-
-        function nextWizardStep() {
-            if (currentWizardStep < totalWizardSteps) {
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.add('hidden');
-                currentWizardStep++;
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.remove('hidden');
-                updateWizardProgress();
-            } else {
-                submitWizardRegistration();
-            }
-        }
-
-        function prevWizardStep() {
-            if (currentWizardStep > 1) {
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.add('hidden');
-                currentWizardStep--;
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.remove('hidden');
-                updateWizardProgress();
-            }
-        }
-
-        function updateWizardProgress() {
-            const pct = (currentWizardStep / totalWizardSteps) * 100;
-            document.getElementById('wizardProgressBar').style.width = pct + '%';
-            document.getElementById('stepPercentText').innerText = Math.round(pct) + '%';
-            document.getElementById('stepTitleText').innerText = `Step ${currentWizardStep} of ${totalWizardSteps}`;
-            
-            const backBtn = document.getElementById('wizardBackBtn');
-            const nextBtn = document.getElementById('wizardNextBtn');
-            if (currentWizardStep > 1) backBtn.classList.remove('hidden'); else backBtn.classList.add('hidden');
-            if (currentWizardStep === totalWizardSteps) nextBtn.innerText = 'Complete & Register →'; else nextBtn.innerText = 'Continue →';
-        }
-
-        async function submitWizardRegistration() {
-            const pumpName = document.getElementById('wPumpName').value;
-            const email = document.getElementById('wEmail').value;
-            const password = document.getElementById('wPassword').value;
-            const proprietor = document.getElementById('wProprietor').value;
-            const phone = document.getElementById('wPhone').value;
-
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password, pumpName, ownerName: proprietor, phone })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    localStorage.setItem('petroUser', JSON.stringify(data));
-                    alert('Registration Successful! License activated.');
-                    location.reload();
-                } else { alert(data.error); }
-            } catch(e) { alert('Connection error during registration.'); }
-        }
-
+        let isLoginMode = false;
         function toggleAuthMode() {
-            const wiz = document.getElementById('registerWizardContainer');
-            const log = document.getElementById('loginForm');
-            const btn = document.getElementById('switchAuthBtn');
-            const title = document.getElementById('modalTitle');
-            if (wiz.classList.contains('hidden')) {
-                wiz.classList.remove('hidden'); log.classList.add('hidden');
-                btn.innerText = 'Already registered? Login'; title.innerText = 'Register for Trial';
-            } else {
-                wiz.classList.add('hidden'); log.classList.remove('hidden');
-                btn.innerText = 'Register for Trial?'; title.innerText = 'Station Login';
-            }
+            isLoginMode = !isLoginMode;
+            document.getElementById('modalTitle').innerText = isLoginMode ? "Station Login" : "Register for Trial";
+            document.getElementById('authSubmitBtn').innerText = isLoginMode ? "Access Dashboard" : "Complete Registration";
+            document.getElementById('switchAuthBtn').innerText = isLoginMode ? "New here? Register for Trial" : "Already registered? Login";
+            document.getElementById('regFields').classList.toggle('hidden', isLoginMode);
         }
 
-        async function authFetch(url, options = {}) {
+        document.getElementById('authForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const payload = {
+                email: document.getElementById('authEmail').value,
+                password: document.getElementById('authPassword').value,
+                pumpName: isLoginMode ? '' : document.getElementById('wPumpName').value,
+                ownerName: isLoginMode ? '' : document.getElementById('wProprietor').value,
+                phone: isLoginMode ? '' : document.getElementById('wPhone').value
+            };
+            const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem('petroUser', JSON.stringify(data));
+                location.reload();
+            } else { alert(data.error); }
+        };
+
+        function authFetch(url, options = {}) {
             const user = JSON.parse(localStorage.getItem('petroUser') || '{}');
-            const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
-            if (user && user.token) headers['Authorization'] = `Bearer ${user.token}`;
-            const res = await fetch(url, { ...options, headers });
-            if (res.status === 401 || res.status === 403) { logout(); throw new Error('Unauthorized'); }
-            return res;
+            return fetch(url, { ...options, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`, ...(options.headers || {}) } });
         }
 
         window.onload = function() {
-            const user = localStorage.getItem('petroUser');
-            if (user) {
-                applyUserData(JSON.parse(user));
+            if (localStorage.getItem('petroUser')) {
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
                 loadAllData();
             }
         };
 
-        function applyUserData(userData) {
-            document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('navPumpTitle').innerText = userData.pumpName || 'FuelFlow ERP';
-            const initial = (userData.ownerName || userData.pumpName || 'U').charAt(0).toUpperCase();
-            document.getElementById('navAvatarLetter').innerText = initial;
-            document.getElementById('navOwnerName').innerText = userData.ownerName || userData.pumpName;
-        }
-
-        document.getElementById('loginForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value, pumpName: 'Station' })
-            });
-            const data = await res.json();
-            if (data.success) { localStorage.setItem('petroUser', JSON.stringify(data)); applyUserData(data); loadAllData(); }
-            else { alert(data.error); }
-        };
-
-        function logout() { localStorage.removeItem('petroUser'); location.reload(); }
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-
-        function switchTab(tabId, btnEl) {
+        function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('text-blue-400', 'bg-blue-600/10', 'font-bold');
-                el.classList.add('text-slate-300', 'font-medium');
-            });
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('text-blue-400', 'bg-blue-600/10'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            if (btnEl) {
-                btnEl.classList.add('text-blue-400', 'bg-blue-600/10', 'font-bold');
-                btnEl.classList.remove('text-slate-300', 'font-medium');
-                document.getElementById('currentHeaderTitle').innerText = btnEl.innerText.replace(/^[📊⛽🛢️👥👨‍💼💸🛡️👤]\s*/, '');
-            }
-            if (tabId === 'audit') loadAuditLogs();
+            btn.classList.add('text-blue-400', 'bg-blue-600/10');
+            document.getElementById('currentHeaderTitle').innerText = btn.innerText.replace(/^[📊📦⛽🚚💬📋👤]\s*/, '');
         }
 
-        function loadAllData() { loadAuthoritativeSummary(); loadRecords(); loadCustomers(); loadStaff(); loadExpenses(); loadTanks(); loadAIUpgrades(); }
+        async function loadAllData() {
+            const res = await authFetch('/api/summary');
+            const data = await res.json();
+            document.getElementById('dashTotalRevenue').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN');
+            document.getElementById('dashNetProfit').innerText = '₹' + Number(data.netProfit || 0).toLocaleString('en-IN');
+            document.getElementById('dashTotalUdhar').innerText = '₹' + Number(data.totalUdhar || 0).toLocaleString('en-IN');
+            document.getElementById('dashTallyStatus').innerText = data.tallyStatus;
+
+            const tankRes = await authFetch('/api/tanks');
+            const tankData = await tankRes.json();
+            document.getElementById('forecastPetrol').innerText = `${tankData.petrolStock} Liters`;
+            document.getElementById('forecastDiesel').innerText = `${tankData.dieselStock} Liters`;
+        }
 
         async function runAIUpgrader() {
-            try {
-                const res = await authFetch('/api/ai-upgrader/run', { method: 'POST' });
-                const data = await res.json();
-                if (data.success) {
-                    document.getElementById('aiRecommendationText').innerText = `💡 ${data.title}: ${data.suggestion}`;
-                    alert(`AI Optimization: ${data.suggestion}`);
-                }
-            } catch(e) { alert('AI Upgrade error.'); }
-        }
-
-        async function loadAIUpgrades() {
-            try {
-                const res = await authFetch('/api/ai-upgrades');
-                const data = await res.json();
-                if (data.upgrades && data.upgrades.length > 0) {
-                    document.getElementById('aiRecommendationText').innerText = `💡 Latest: ${data.upgrades[0].aiRecommendation}`;
-                }
-            } catch(e) {}
-        }
-
-        async function loadAuthoritativeSummary() {
-            try {
-                const res = await authFetch('/api/summary');
-                const data = await res.json();
-                document.getElementById('dashTotalRevenue').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                document.getElementById('dashNetProfit').innerText = '₹' + Number(data.netProfit || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                document.getElementById('dashTotalUdhar').innerText = '₹' + Number(data.totalUdhar).toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                document.getElementById('dashTallyStatus').innerText = data.tallyStatus;
-                document.getElementById('tallyDisplayTarget').innerText = '₹' + Number(data.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 });
-            } catch (e) {}
-        }
-
-        document.getElementById('tallyForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const res = await authFetch('/api/reconcile-tally', {
-                method: 'POST',
-                body: JSON.stringify({ cashDrawer: parseFloat(document.getElementById('tallyCash').value) || 0, upiSettled: parseFloat(document.getElementById('tallyUPI').value) || 0, creditIssued: parseFloat(document.getElementById('tallyUdhar').value) || 0 })
-            });
+            const res = await authFetch('/api/ai-upgrader/run', { method: 'POST' });
             const data = await res.json();
-            if (res.ok) { loadAuthoritativeSummary(); alert(`Reconciliation Saved: ${data.status}`); }
-        };
-
-        async function loadRecords() {
-            try {
-                const res = await authFetch('/api/records');
-                const data = await res.json();
-                const tbody = document.getElementById('recordsTableBody');
-                tbody.innerHTML = '';
-                (data.records || []).forEach(r => {
-                    tbody.innerHTML += `<tr><td class="p-3">${r.date} (${r.shift})</td><td class="p-3">${r.attendant}</td><td class="p-3">${r.fuelType}</td><td class="p-3">${r.liters} L</td><td class="p-3 font-black">₹${r.total}</td><td class="p-3"><button onclick="reverseRecord(${r.id})" class="text-rose-500 font-bold hover:underline">Cancel</button></td></tr>`;
-                });
-                renderSalesGraph(data.records);
-            } catch(e) {}
+            document.getElementById('aiRecommendationText').innerText = data.suggestion;
         }
 
         document.getElementById('shiftForm').onsubmit = async function(e) {
             e.preventDefault();
             const payload = {
-                idempotencyKey: `SHIFT-${Date.now()}`,
                 date: document.getElementById('sDate').value, shift: document.getElementById('sShift').value, attendant: document.getElementById('sAttendant').value, fuelType: document.getElementById('sFuelType').value,
                 unitPrice: parseFloat(document.getElementById('sUnitPrice').value), openingMeter: parseFloat(document.getElementById('sOpening').value), closingMeter: parseFloat(document.getElementById('sClosing').value), testing: parseFloat(document.getElementById('sTesting').value) || 0
             };
             const res = await authFetch('/api/records', { method: 'POST', body: JSON.stringify(payload) });
+            if (res.ok) { this.reset(); loadAllData(); alert('Shift saved successfully!'); }
+        };
+
+        document.getElementById('nozzleForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/nozzles', { method: 'POST', body: JSON.stringify({ nozzleName: document.getElementById('nozName').value, fuelType: document.getElementById('nozFuel').value }) });
+            this.reset(); alert('Nozzle mapping saved!');
+        };
+
+        document.getElementById('supplierForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/suppliers', { method: 'POST', body: JSON.stringify({ supplierName: document.getElementById('supName').value, phone: document.getElementById('supPhone').value, balanceDue: parseFloat(document.getElementById('supBalance').value) }) });
+            this.reset(); alert('Supplier saved successfully!');
+        };
+
+        async function sendWhatsAppAlert() {
+            const message = document.getElementById('waMessage').value;
+            const res = await authFetch('/api/whatsapp/notify', { method: 'POST', body: JSON.stringify({ message }) });
             const data = await res.json();
-            if (res.ok) { this.reset(); loadAllData(); alert(`Shift Saved! Saleable: ${data.liters} L`); }
-            else { alert(data.error); }
-        };
-
-        async function reverseRecord(id) {
-            if (!confirm('Are you sure you want to cancel this shift?')) return;
-            const res = await authFetch(`/api/records/${id}/reverse`, { method: 'POST' });
-            if (res.ok) loadAllData();
+            document.getElementById('waStatus').innerText = data.status;
         }
 
-        async function loadTanks() {
-            try {
-                const res = await authFetch('/api/tanks');
-                const data = await res.json();
-                document.getElementById('petrolStockText').innerText = `${Number(data.petrolStock).toLocaleString('en-IN')} L`;
-                document.getElementById('petrolProgressBar').style.width = '75%';
-                document.getElementById('dieselStockText').innerText = `${Number(data.dieselStock).toLocaleString('en-IN')} L`;
-                document.getElementById('dieselProgressBar').style.width = '80%';
-            } catch(e) {}
-        }
-
-        document.getElementById('customerForm').onsubmit = async function(e) {
-            e.preventDefault();
-            await authFetch('/api/customers', { method: 'POST', body: JSON.stringify({ name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value, vehicleNo: document.getElementById('cVehicle').value, udharAmount: parseFloat(document.getElementById('cAmount').value) }) });
-            this.reset(); alert('Credit Customer Saved Successfully!');
-        };
-
-        document.getElementById('staffForm').onsubmit = async function(e) {
-            e.preventDefault();
-            await authFetch('/api/staff', { method: 'POST', body: JSON.stringify({ name: document.getElementById('stName').value, phone: document.getElementById('stPhone').value, monthlySalary: parseFloat(document.getElementById('stSalary').value) }) });
-            this.reset(); alert('Staff Record Saved!');
-        };
-
-        document.getElementById('expenseForm').onsubmit = async function(e) {
-            e.preventDefault();
-            await authFetch('/api/expenses', { method: 'POST', body: JSON.stringify({ date: document.getElementById('eDate').value, category: document.getElementById('eCategory').value, amount: parseFloat(document.getElementById('eAmount').value) }) });
-            this.reset(); loadAllData(); alert('Expense Logged Successfully!');
-        };
-
-        async function loadAuditLogs() {
-            try {
-                const res = await authFetch('/api/audit-logs');
-                const data = await res.json();
-                const tbody = document.getElementById('auditTableBody');
-                tbody.innerHTML = '';
-                (data.logs || []).forEach(l => {
-                    tbody.innerHTML += `<tr><td class="p-3 text-slate-400">${l.createdAt}</td><td class="p-3 font-bold text-blue-600">${l.action}</td><td class="p-3">${l.details}</td></tr>`;
-                });
-            } catch(e) {}
-        }
-
-        async function downloadCSVReport() {
-            const res = await authFetch('/api/export-csv');
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `sales_${Date.now()}.csv`;
-            document.body.appendChild(a); a.click(); a.remove();
-        }
-
-        async function downloadJSONBackup() {
+        function logout() { localStorage.removeItem('petroUser'); location.reload(); }
+        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+        async function downloadBackup() {
             const res = await authFetch('/api/backup-json');
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `backup_${Date.now()}.json`;
-            document.body.appendChild(a); a.click(); a.remove();
-        }
-
-        async function downloadTallyXML() {
-            const res = await authFetch('/api/export-tally-xml');
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `tally_${Date.now()}.xml`;
-            document.body.appendChild(a); a.click(); a.remove();
-        }
-
-        function renderSalesGraph(records) {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            const dateMap = {};
-            (records || []).forEach(r => { dateMap[r.date] = (dateMap[r.date] || 0) + r.total; });
-            const labels = Object.keys(dateMap).sort();
-            const dataValues = labels.map(date => dateMap[date]);
-            if (mySalesChart) mySalesChart.destroy();
-            mySalesChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: labels, datasets: [{ label: 'Daily Revenue (₹)', data: dataValues, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.08)', borderWidth: 2.5, fill: true, tension: 0.3 }] },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            const a = document.createElement('a'); a.href = url; a.download = 'backup.json'; a.click();
         }
     </script>
 </body>
