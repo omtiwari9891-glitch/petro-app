@@ -3,326 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetroByte - Enterprise Petrol Pump Management System</title>
+    <title>PetroByte - A Petrol Pump Software Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
 
-    <!-- PetroByte Multi-Step Trial Registration & Login Modal -->
-    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-        <div class="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-8 md:p-10">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 id="modalTitle" class="text-2xl font-black text-slate-900 dark:text-white">Register for Trial</h2>
-                    <p class="text-xs text-rose-500 font-bold tracking-wide mt-0.5">15 Days Free Trial (Trial + Support)</p>
-                </div>
-                <button onclick="toggleAuthMode()" id="switchAuthBtn" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Already registered? Login</button>
-            </div>
-
-            <!-- Multi-Step Wizard -->
-            <div id="registerWizardContainer">
-                <div class="mb-6">
-                    <div class="flex justify-between text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
-                        <span id="stepTitleText">Step 1 of 4: Proprietor Details</span>
-                        <span id="stepPercentText">25%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div id="wizardProgressBar" class="bg-blue-600 h-full transition-all duration-300 rounded-full" style="width: 25%;"></div>
-                    </div>
-                </div>
-
-                <form id="wizardForm" class="space-y-5">
-                    <div class="wizard-step space-y-2" data-step="1">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">What is your name?</label>
-                        <p class="text-xs text-slate-400">Enter the proprietor's (dealer) name.</p>
-                        <input type="text" id="wProprietor" placeholder="Proprietor Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                    </div>
-                    <div class="wizard-step hidden space-y-2" data-step="2">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">How can we contact you?</label>
-                        <p class="text-xs text-slate-400">Your password will be shared via WhatsApp on this number.</p>
-                        <input type="tel" id="wPhone" placeholder="Mobile Number (WhatsApp)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                    </div>
-                    <div class="wizard-step hidden space-y-3" data-step="3">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Business & Email Details</label>
-                        <input type="email" id="wEmail" placeholder="Email Address" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm mb-2">
-                        <input type="text" id="wPumpName" placeholder="Petrol Pump Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                    </div>
-                    <div class="wizard-step hidden space-y-2" data-step="4">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Choose your secure password</label>
-                        <input type="password" id="wPassword" minlength="10" placeholder="Secure Password (10+ characters)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                    </div>
-                    <div class="flex gap-3 pt-3">
-                        <button type="button" id="wizardBackBtn" onclick="prevWizardStep()" class="hidden w-1/3 bg-slate-100 dark:bg-slate-800 font-bold py-3 rounded-2xl text-sm">Back</button>
-                        <button type="button" id="wizardNextBtn" onclick="nextWizardStep()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl text-sm shadow-lg">Continue →</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Login Form -->
-            <form id="loginForm" class="hidden space-y-4 pt-2">
-                <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <input type="password" id="loginPassword" placeholder="Enter password" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl text-sm shadow-lg">Login to Dashboard</button>
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border p-8">
+            <h2 class="text-2xl font-black text-blue-600 mb-2">PetroByte Demo</h2>
+            <p class="text-xs text-slate-400 mb-6">Cloud-Based Petrol Pump Accounting & Management</p>
+            <form id="loginForm" class="space-y-4">
+                <input type="email" id="loginEmail" placeholder="demo@petrobyte.in" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                <input type="password" id="loginPassword" placeholder="Password" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl text-sm shadow-lg">Login to PetroByte Demo</button>
             </form>
         </div>
     </div>
 
-    <!-- Main Workspace -->
+    <!-- Main Workspace with PetroByte Sidebar -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
-        <!-- PetroByte Sidebar Navigation -->
-        <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 shrink-0">
-            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-blue-600 p-2.5 rounded-xl font-black text-base">PB</div>
-                    <div>
-                        <h1 id="navPumpTitle" class="text-sm font-bold truncate max-w-[130px]">PetroByte ERP</h1>
-                        <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">● Active / Online</span>
-                    </div>
-                </div>
+        
+        <!-- Sidebar matching screenshot -->
+        <aside class="w-full md:w-60 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 text-xs font-semibold">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                <div class="bg-blue-600 text-white p-1.5 rounded-lg font-bold">PB</div>
+                <span class="font-black text-sm text-blue-600">PetroByte Demo</span>
             </div>
-            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto text-xs font-semibold">
-                <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-blue-400 bg-blue-600/15">📊 Executive Dashboard[cite: 5]</button>
-                <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">⛽ Shift Management[cite: 7]</button>
-                <button onclick="switchTab('nozzles', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">⚙️ Nozzle Configuration</button>
-                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🛢️ Fuel Stock Panel[cite: 7]</button>
-                <button onclick="switchTab('customers', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👥 Short Term Credit[cite: 7]</button>
-                <button onclick="switchTab('staff', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👨‍💼 Employees Panel[cite: 7]</button>
-                <button onclick="switchTab('expenses', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">💸 Expense Statistics[cite: 4]</button>
-                <button onclick="switchTab('audit', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🛡️ Immutable Audit Logs</button>
-                <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👤 Excel Export & Backup</button>
+            
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto text-slate-600 dark:text-slate-300">
+                <button onclick="switchTab('dashboard', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-bold flex items-center gap-2">📊 Dashboard</button>
+                <div class="pt-2 pb-1 px-3 text-[10px] uppercase font-bold text-slate-400">Operations</div>
+                <button onclick="switchTab('operations', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">⚙️ Shift Management</button>
+                <div class="pt-2 pb-1 px-3 text-[10px] uppercase font-bold text-slate-400">Management</div>
+                <button onclick="switchTab('reports', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">📈 Reports & Analytics</button>
+                <button onclick="switchTab('taxation', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">📋 Taxation</button>
+                <button onclick="switchTab('financials', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">💰 Financials</button>
+                <button onclick="switchTab('communication', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">💬 Communication</button>
+                <div class="pt-2 pb-1 px-3 text-[10px] uppercase font-bold text-slate-400">Support & Help</div>
+                <button onclick="switchTab('support', this)" class="tab-btn w-full text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-rose-500 font-bold">🎫 Submit Ticket / AI Support</button>
             </nav>
-            <div class="p-4 border-t border-slate-800 flex justify-between text-xs">
-                <button onclick="toggleDarkMode()" class="bg-slate-800 px-3 py-2 rounded-xl">🌙 Theme</button>
-                <button onclick="logout()" class="bg-slate-800 text-rose-300 px-3 py-2 rounded-xl">Logout</button>
+
+            <div class="p-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex justify-between">
+                <span>PetroByte Demo</span>
+                <button onclick="logout()" class="text-rose-500 font-bold">Logout</button>
             </div>
         </aside>
 
-        <div class="flex-1 flex flex-col min-w-0 bg-slate-100 dark:bg-slate-950">
-            <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4 flex justify-between items-center shadow-sm">
-                <h2 id="currentHeaderTitle" class="text-sm md:text-base font-black uppercase">Executive Dashboard</h2>
-                <span id="navOwnerName" class="text-xs font-bold text-slate-600 dark:text-slate-300">User</span>
+        <!-- Main Content Area matching screenshot -->
+        <div class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-950">
+            <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center shadow-xs">
+                <div class="flex items-center gap-3">
+                    <span class="bg-blue-500/10 text-blue-600 p-2 rounded-full font-black text-xs">PB</span>
+                    <div>
+                        <h2 class="text-xs font-black uppercase text-slate-900 dark:text-white">PetroByte Demo Account</h2>
+                        <p class="text-[10px] text-slate-400">Welcome to the PetroByte[cite: 8]</p>
+                    </div>
+                </div>
+                <button onclick="toggleDarkMode()" class="text-xs font-bold bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl">🌙 Theme</button>
             </header>
 
-            <main class="p-6 md:p-8 flex-grow space-y-6 overflow-y-auto">
+            <main class="p-6 flex-grow space-y-6 overflow-y-auto">
                 
-                <!-- Dashboard with PetroByte Financial Cards & Charts -->
+                <!-- Dashboard Tab (Exact PetroByte Metrics) -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
-                    <div class="bg-gradient-to-r from-indigo-900 to-blue-900 p-6 rounded-3xl text-white shadow-xl flex justify-between items-center">
-                        <div>
-                            <span class="bg-white/10 text-indigo-200 text-[10px] font-bold px-3 py-1 rounded-full uppercase">AI Assistant & Analytics</span>
-                            <h3 id="aiRecommendationText" class="text-base font-bold mt-2">System operating efficiently.</h3>
+                    
+                    <!-- Top 4 Metric Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-xs">
+                            <p class="text-[11px] font-bold text-slate-400">Daily Revenue[cite: 8]</p>
+                            <h3 id="statRevenue" class="text-xl font-black text-slate-900 dark:text-white mt-1">₹ 5,62,067[cite: 8]</h3>
+                            <span class="text-[10px] text-emerald-500 font-bold">↑ 100%[cite: 8]</span>
                         </div>
-                        <button onclick="runAIUpgrader()" class="bg-emerald-400 text-slate-950 font-black py-2.5 px-4 rounded-2xl text-xs shadow">Run AI Health Check</button>
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                            <p class="text-[10px] font-bold uppercase text-slate-400">Receivables[cite: 5]</p>
-                            <h3 id="cardReceivables" class="text-xl font-black text-blue-600 mt-1">₹0.00</h3>
+                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-xs">
+                            <p class="text-[11px] font-bold text-slate-400">Credit Sale[cite: 8]</p>
+                            <h3 id="statCredit" class="text-xl font-black text-slate-900 dark:text-white mt-1">₹ 2,27,246[cite: 8]</h3>
+                            <span class="text-[10px] text-emerald-500 font-bold">↑ 100%[cite: 8]</span>
                         </div>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                            <p class="text-[10px] font-bold uppercase text-slate-400">Payables[cite: 5]</p>
-                            <h3 id="cardPayables" class="text-xl font-black text-amber-600 mt-1">₹0.00</h3>
+                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-xs">
+                            <p class="text-[11px] font-bold text-slate-400">Stock Variation[cite: 8]</p>
+                            <h3 id="statVariation" class="text-xl font-black text-rose-500 mt-1">-33[cite: 8]</h3>
+                            <span class="text-[10px] text-rose-500 font-bold">↓ 100%[cite: 8]</span>
                         </div>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                            <p class="text-[10px] font-bold uppercase text-slate-400">Stock Value[cite: 5]</p>
-                            <h3 id="cardStock" class="text-xl font-black text-emerald-600 mt-1">₹0.00</h3>
-                        </div>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                            <p class="text-[10px] font-bold uppercase text-slate-400">Liquidity[cite: 5]</p>
-                            <h3 id="cardLiquidity" class="text-xl font-black text-indigo-600 mt-1">₹0.00</h3>
+                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-xs">
+                            <p class="text-[11px] font-bold text-slate-400">Diesel Sales[cite: 8]</p>
+                            <h3 id="statDiesel" class="text-xl font-black text-slate-900 dark:text-white mt-1">4,297[cite: 8]</h3>
+                            <span class="text-[10px] text-emerald-500 font-bold">↑ 100%[cite: 8]</span>
                         </div>
                     </div>
 
-                    <!-- Sales Velocity Chart -->
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                        <h3 class="text-base font-bold mb-4">📈 Sales Velocity & Growth Chart</h3>
-                        <div class="w-full h-72">
-                            <canvas id="salesChart"></canvas>
+                    <!-- Credit Usages & Stock Progress Bars -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border shadow-xs space-y-4">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">Credit Usages</h4>
+                            <div class="space-y-2 text-xs">
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1"><span>Base Credit Usages (71%)[cite: 8]</span><span>₹ 1,50,00,000[cite: 8]</span></div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-blue-600 h-full w-[71%]"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1"><span>STC Credit Usages (31%)[cite: 8]</span><span>₹ 1,00,000[cite: 8]</span></div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-blue-600 h-full w-[31%]"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1"><span>OD Limit Usages (96%)[cite: 8]</span><span>₹ 60,00,000[cite: 8]</span></div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-blue-600 h-full w-[96%]"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border shadow-xs space-y-4">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">Tank Stock Levels</h4>
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1"><span>Diesel Stock (25,800 L)[cite: 8]</span><span>25,800 / 30,000 L</span></div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full w-[85%]"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between font-bold mb-1"><span>Petrol Stock (10,848 L)[cite: 8]</span><span>10,848 / 20,000 L</span></div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-blue-600 h-full w-[54%]"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attention Required Section -->
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border shadow-xs space-y-3">
+                        <h4 class="font-bold text-xs uppercase text-rose-500">Attention Required !!![cite: 8]</h4>
+                        <div class="p-3 bg-blue-50 dark:bg-slate-800 rounded-xl text-xs flex justify-between items-center">
+                            <div>
+                                <strong>Unsettled Shifts[cite: 8]</strong>
+                                <p class="text-slate-400 text-[11px]">4 Shifts Unsettled, Initiated : 2, Calculated : 1, Collected : 1[cite: 8]</p>
+                            </div>
+                            <span class="px-3 py-1 bg-blue-600 text-white rounded-lg font-bold">Resolve</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Shift Management -->
-                <div id="tab-shifts" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                        <h3 class="text-base font-bold mb-4">Record Shift Sales (Nozzle-Wise)</h3>
-                        <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
-                            <input type="date" id="sDate" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="text" id="sShift" placeholder="Shift Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="text" id="sAttendant" placeholder="Attendant Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <select id="sFuelType" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl"><option value="Petrol">Petrol</option><option value="Diesel">Diesel</option></select>
-                            <input type="text" id="sNozzle" placeholder="Nozzle ID (e.g. Nozzle 1)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sUnitPrice" placeholder="Rate (₹/L)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters" value="0" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl md:col-span-2">
-                            <button type="submit" class="bg-blue-600 text-white font-bold py-3 rounded-2xl md:col-span-2">Save Shift & Deduct Tank Stock</button>
+                <!-- Support & Ticket Tab -->
+                <div id="tab-support" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border shadow-xs max-w-lg space-y-4">
+                        <h3 class="text-base font-bold">Facing any Issue? Submit Ticket / AI based Support[cite: 8]</h3>
+                        <form id="ticketForm" class="space-y-3 text-xs">
+                            <input type="text" id="tSubject" placeholder="Subject (e.g. Meter discrepancy)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl">
+                            <textarea id="tDesc" placeholder="Describe your issue..." required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-xl h-24"></textarea>
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow">Submit Ticket to PetroByte Support</button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Nozzle Configuration -->
-                <div id="tab-nozzles" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
-                        <h3 class="text-base font-bold mb-4">Configure Dispenser Nozzles</h3>
-                        <form id="nozzleForm" class="space-y-3">
-                            <input type="text" id="nozName" placeholder="Nozzle Name (e.g. Pump 1 - MS)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <select id="nozFuel" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                                <option value="Petrol">Petrol</option>
-                                <option value="Diesel">Diesel</option>
-                            </select>
-                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-sm">Save Nozzle</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Fuel Stock Panel -->
-                <div id="tab-tanks" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                        <h3 class="text-base font-bold mb-4">🛢️ Underground Tank Inventory[cite: 7]</h3>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">Petrol Stock: <span id="tankPetrol" class="font-black text-blue-600">0</span> Liters</div>
-                            <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl">Diesel Stock: <span id="tankDiesel" class="font-black text-emerald-600">0</span> Liters</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Short Term Credit -->
-                <div id="tab-customers" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
-                        <h3 class="text-base font-bold mb-4">👥 Short Term Credit Customer[cite: 7]</h3>
-                        <form id="customerForm" class="space-y-3">
-                            <input type="text" id="cName" placeholder="Customer Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <input type="text" id="cPhone" placeholder="Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <input type="text" id="cVehicle" placeholder="Vehicle No" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <input type="number" step="0.01" id="cAmount" placeholder="Opening Credit Amount" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl text-sm">Save Credit Customer</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Employees Panel -->
-                <div id="tab-staff" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
-                        <h3 class="text-base font-bold mb-4">👨‍💼 Employee Payroll & Dues[cite: 7]</h3>
-                        <form id="staffForm" class="space-y-3">
-                            <input type="text" id="stName" placeholder="Employee Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <input type="text" id="stPhone" placeholder="Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <input type="number" step="0.01" id="stSalary" placeholder="Monthly Salary" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <button type="submit" class="w-full bg-purple-600 text-white font-bold py-3 rounded-2xl text-sm">Save Employee</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Expense Statistics -->
-                <div id="tab-expenses" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
-                        <h3 class="text-base font-bold mb-4">💸 Expense Statistics & Logs[cite: 4]</h3>
-                        <form id="expenseForm" class="space-y-3">
-                            <input type="date" id="eDate" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <input type="text" id="eCategory" placeholder="Category (Food/Insurance/Maintenance)[cite: 4]" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <input type="number" step="0.01" id="eAmount" placeholder="Amount (₹)" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                            <button type="submit" class="w-full bg-amber-600 text-white font-bold py-3 rounded-2xl text-sm">Save Expense</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Audit Logs -->
-                <div id="tab-audit" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                        <h3 class="text-base font-bold mb-4">🛡️ Immutable Audit History</h3>
-                        <div id="auditList" class="space-y-2 text-xs font-mono"></div>
-                    </div>
-                </div>
-
-                <!-- Account / Excel Export -->
-                <div id="tab-account" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-md space-y-3">
-                        <h3 class="text-base font-bold">Data Management & Excel Exports</h3>
-                        <button onclick="downloadCSV()" class="w-full bg-emerald-600 text-white py-3 rounded-2xl text-xs font-bold">Export Excel / CSV Report</button>
-                        <button onclick="downloadBackup()" class="w-full bg-slate-900 text-white py-3 rounded-2xl text-xs font-bold">Download JSON Backup</button>
-                    </div>
-                </div>
+                <!-- Operations & Other placeholders -->
+                <div id="tab-operations" class="tab-content hidden"><div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border">Shift Management & Meter Operations Active.</div></div>
+                <div id="tab-reports" class="tab-content hidden"><div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border">Advanced Sales Statistics & Reports Active.</div></div>
+                <div id="tab-taxation" class="tab-content hidden"><div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border">Taxation & GST Filing Module Active.</div></div>
+                <div id="tab-financials" class="tab-content hidden"><div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border">Financials & Ledger Summary Active.</div></div>
+                <div id="tab-communication" class="tab-content hidden"><div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border">WhatsApp & SMS Notification Center Active.</div></div>
 
             </main>
         </div>
     </div>
 
     <script>
-        let currentWizardStep = 1;
-        const totalWizardSteps = 4;
-        let mySalesChart = null;
-
-        function nextWizardStep() {
-            if (currentWizardStep < totalWizardSteps) {
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.add('hidden');
-                currentWizardStep++;
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.remove('hidden');
-                updateWizardProgress();
-            } else {
-                submitWizardRegistration();
-            }
-        }
-
-        function prevWizardStep() {
-            if (currentWizardStep > 1) {
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.add('hidden');
-                currentWizardStep--;
-                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.remove('hidden');
-                updateWizardProgress();
-            }
-        }
-
-        function updateWizardProgress() {
-            const pct = (currentWizardStep / totalWizardSteps) * 100;
-            document.getElementById('wizardProgressBar').style.width = pct + '%';
-            document.getElementById('stepPercentText').innerText = Math.round(pct) + '%';
-            document.getElementById('stepTitleText').innerText = `Step ${currentWizardStep} of ${totalWizardSteps}`;
-            const backBtn = document.getElementById('wizardBackBtn');
-            const nextBtn = document.getElementById('wizardNextBtn');
-            if (currentWizardStep > 1) backBtn.classList.remove('hidden'); else backBtn.classList.add('hidden');
-            if (currentWizardStep === totalWizardSteps) nextBtn.innerText = 'Complete & Register →'; else nextBtn.innerText = 'Continue →';
-        }
-
-        async function submitWizardRegistration() {
-            const payload = {
-                ownerName: document.getElementById('wProprietor').value,
-                phone: document.getElementById('wPhone').value,
-                email: document.getElementById('wEmail').value,
-                pumpName: document.getElementById('wPumpName').value,
-                password: document.getElementById('wPassword').value
-            };
-            const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem('petroUser', JSON.stringify(data));
-                alert('Registration Successful! License activated.');
-                location.reload();
-            } else { alert(data.error); }
-        }
-
-        let isLoginMode = false;
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('modalTitle').innerText = isLoginMode ? "Station Login" : "Register for Trial";
-            document.getElementById('switchAuthBtn').innerText = isLoginMode ? "New here? Register for Trial" : "Already registered? Login";
-            document.getElementById('registerWizardContainer').classList.toggle('hidden', isLoginMode);
-            document.getElementById('loginForm').classList.toggle('hidden', !isLoginMode);
-        }
-
         document.getElementById('loginForm').onsubmit = async function(e) {
             e.preventDefault();
             const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value, pumpName: 'Station' })
+                body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value })
             });
             const data = await res.json();
-            if (data.success) { localStorage.setItem('petroUser', JSON.stringify(data)); location.reload(); }
-            else { alert(data.error); }
+            if (data.success) {
+                localStorage.setItem('petroUser', JSON.stringify(data));
+                location.reload();
+            } else { alert(data.error); }
         };
 
         function authFetch(url, options = {}) {
@@ -334,120 +189,40 @@
             if (localStorage.getItem('petroUser')) {
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
-                loadAllData();
+                loadDashboard();
             }
         };
 
         function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('text-blue-400', 'bg-blue-600/15'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-600', 'font-bold'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             if (btn) {
-                btn.classList.add('text-blue-400', 'bg-blue-600/15');
-                document.getElementById('currentHeaderTitle').innerText = btn.innerText.replace(/^[📊⛽⚙️🛢️👥👨‍💼💸🛡️👤]\s*/, '');
+                btn.classList.add('bg-blue-50', 'dark:bg-blue-900/20', 'text-blue-600', 'font-bold');
             }
-            if (tabId === 'audit') loadAuditLogs();
         }
 
-        async function loadAllData() {
-            const res = await authFetch('/api/summary');
+        async function loadDashboard() {
+            const res = await authFetch('/api/dashboard-stats');
             const data = await res.json();
-            document.getElementById('cardReceivables').innerText = '₹' + Number(data.totalReceivables).toLocaleString('en-IN');
-            document.getElementById('cardPayables').innerText = '₹' + Number(data.totalPayables).toLocaleString('en-IN');
-            document.getElementById('cardStock').innerText = '₹' + Number(data.totalStockValue).toLocaleString('en-IN');
-            document.getElementById('cardLiquidity').innerText = '₹' + Number(data.liquidity).toLocaleString('en-IN');
-
-            const tankRes = await authFetch('/api/tanks');
-            const tankData = await tankRes.json();
-            document.getElementById('tankPetrol').innerText = tankData.petrolStock;
-            document.getElementById('tankDiesel').innerText = tankData.dieselStock;
-
-            const recRes = await authFetch('/api/records');
-            const recData = await recRes.json();
-            renderSalesGraph(recData.records || []);
+            document.getElementById('statRevenue').innerText = '₹ ' + Number(data.dailyRevenue).toLocaleString('en-IN');
+            document.getElementById('statCredit').innerText = '₹ ' + Number(data.creditSale).toLocaleString('en-IN');
+            document.getElementById('statVariation').innerText = data.stockVariation;
+            document.getElementById('statDiesel').innerText = Number(data.dieselSales).toLocaleString('en-IN');
         }
 
-        document.getElementById('shiftForm').onsubmit = async function(e) {
+        document.getElementById('ticketForm').onsubmit = async function(e) {
             e.preventDefault();
-            const payload = {
-                date: document.getElementById('sDate').value, shift: document.getElementById('sShift').value, attendant: document.getElementById('sAttendant').value,
-                fuelType: document.getElementById('sFuelType').value, nozzleName: document.getElementById('sNozzle').value,
-                unitPrice: parseFloat(document.getElementById('sUnitPrice').value), openingMeter: parseFloat(document.getElementById('sOpening').value),
-                closingMeter: parseFloat(document.getElementById('sClosing').value), testing: parseFloat(document.getElementById('sTesting').value) || 0
-            };
-            const res = await authFetch('/api/records', { method: 'POST', body: JSON.stringify(payload) });
-            if (res.ok) { this.reset(); loadAllData(); alert('Shift recorded successfully!'); }
-            else { const err = await res.json(); alert(err.error); }
-        };
-
-        document.getElementById('nozzleForm').onsubmit = async function(e) {
-            e.preventDefault();
-            await authFetch('/api/nozzles', { method: 'POST', body: JSON.stringify({ nozzleName: document.getElementById('nozName').value, fuelType: document.getElementById('nozFuel').value }) });
-            this.reset(); alert('Nozzle saved!');
-        };
-
-        document.getElementById('customerForm').onsubmit = async function(e) {
-            e.preventDefault();
-            await authFetch('/api/customers', { method: 'POST', body: JSON.stringify({ name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value, vehicleNo: document.getElementById('cVehicle').value, udharAmount: parseFloat(document.getElementById('cAmount').value) }) });
-            this.reset(); alert('Credit customer saved!');
-        };
-
-        document.getElementById('staffForm').onsubmit = async function(e) {
-            e.preventDefault();
-            await authFetch('/api/staff', { method: 'POST', body: JSON.stringify({ name: document.getElementById('stName').value, phone: document.getElementById('stPhone').value, monthlySalary: parseFloat(document.getElementById('stSalary').value) }) });
-            this.reset(); alert('Employee saved!');
-        };
-
-        document.getElementById('expenseForm').onsubmit = async function(e) {
-            e.preventDefault();
-            await authFetch('/api/expenses', { method: 'POST', body: JSON.stringify({ date: document.getElementById('eDate').value, category: document.getElementById('eCategory').value, amount: parseFloat(document.getElementById('eAmount').value) }) });
-            this.reset(); alert('Expense statistic saved!');
-        };
-
-        async function runAIUpgrader() {
-            const res = await authFetch('/api/ai-upgrader/run', { method: 'POST' });
-            const data = await res.json();
-            document.getElementById('aiRecommendationText').innerText = data.suggestion;
-        }
-
-        async function loadAuditLogs() {
-            const res = await authFetch('/api/audit-logs');
-            const data = await res.json();
-            const list = document.getElementById('auditList');
-            list.innerHTML = '';
-            (data.logs || []).forEach(l => {
-                list.innerHTML += `<div class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl"><b>${l.createdAt}</b> - [${l.action}]: ${l.details}</div>`;
+            const res = await authFetch('/api/support/ticket', {
+                method: 'POST',
+                body: JSON.stringify({ subject: document.getElementById('tSubject').value, description: document.getElementById('tDesc').value })
             });
-        }
-
-        function renderSalesGraph(records) {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            const dateMap = {};
-            (records || []).forEach(r => { dateMap[r.date] = (dateMap[r.date] || 0) + r.total; });
-            const labels = Object.keys(dateMap).sort();
-            const dataValues = labels.map(date => dateMap[date]);
-            if (mySalesChart) mySalesChart.destroy();
-            mySalesChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: labels, datasets: [{ label: 'Daily Sales Revenue (₹)', data: dataValues, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.08)', borderWidth: 2.5, fill: true, tension: 0.3 }] },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
+            const data = await res.json();
+            if (res.ok) { this.reset(); alert(data.message); }
+        };
 
         function logout() { localStorage.removeItem('petroUser'); location.reload(); }
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-        async function downloadBackup() {
-            const res = await authFetch('/api/backup-json');
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'petrobyte_backup.json'; a.click();
-        }
-        async function downloadCSV() {
-            const res = await authFetch('/api/export-csv');
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'sales_report.csv'; a.click();
-        }
     </script>
 </body>
 </html>
