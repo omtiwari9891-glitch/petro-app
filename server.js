@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'petroflow_enterprise_jwt_secret_key_9192';
+const JWT_SECRET = process.env.JWT_SECRET || 'fuelflow_enterprise_jwt_secret_key_9192';
 const ADMIN_EMAIL = 'omtiwari9192@gmail.com';
 
 app.use(express.json());
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database connection error:', err.message);
-    else console.log('Connected to SQLite with All Core & Advanced Modules.');
+    else console.log('Connected to SQLite with PetroByte-Style Enterprise Features.');
 });
 
 db.serialize(() => {
@@ -97,17 +97,6 @@ db.serialize(() => {
         udharAmount REAL DEFAULT 0
     )`);
 
-    db.run(`CREATE TABLE IF NOT EXISTS customer_payments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        stationId INTEGER,
-        idempotencyKey TEXT UNIQUE,
-        customerId INTEGER,
-        date TEXT,
-        amountPaid REAL,
-        paymentMode TEXT,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
     db.run(`CREATE TABLE IF NOT EXISTS staff (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         stationId INTEGER,
@@ -133,8 +122,6 @@ db.serialize(() => {
         dieselStock REAL DEFAULT 20000,
         petrolCapacity REAL DEFAULT 20000,
         dieselCapacity REAL DEFAULT 25000,
-        petrolReorderThreshold REAL DEFAULT 3000,
-        dieselReorderThreshold REAL DEFAULT 4000,
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
@@ -262,22 +249,6 @@ app.post('/api/records', authenticateToken, (req, res) => {
                 db.run(`COMMIT`, () => {
                     logAudit(stationId, 'SHIFT_CLOSED', `Shift saved: ${saleable}L ${fuelType}`, req.user.email);
                     res.json({ success: true, liters: saleable, total });
-                });
-            });
-        });
-    });
-});
-
-app.post('/api/records/:id/reverse', authenticateToken, (req, res) => {
-    const recId = Number(req.params.id);
-    db.get(`SELECT * FROM records WHERE id = ? AND stationId = ? AND isReversed = 0`, [recId, req.user.stationId], (err, rec) => {
-        if (!rec) return res.status(404).json({ error: 'Record not found.' });
-        const col = rec.fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
-        db.serialize(() => {
-            db.run(`BEGIN IMMEDIATE TRANSACTION`);
-            db.run(`UPDATE records SET isReversed = 1 WHERE id = ?`, [recId], () => {
-                db.run(`UPDATE tanks SET ${col} = ROUND(${col} + ?, 2) WHERE stationId = ?`, [rec.liters, req.user.stationId], () => {
-                    db.run(`COMMIT`, () => { res.json({ success: true }); });
                 });
             });
         });

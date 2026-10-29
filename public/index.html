@@ -10,27 +10,83 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
 
-    <!-- Auth Modal -->
-    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-        <div class="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-8">
-            <h2 id="modalTitle" class="text-2xl font-black text-slate-900 dark:text-white">Register for Trial</h2>
-            <p class="text-xs text-rose-500 font-bold mb-6">15 Days Free Trial & Priority Support</p>
-
-            <form id="authForm" class="space-y-4">
-                <div id="regFields" class="space-y-3">
-                    <input type="text" id="wProprietor" placeholder="Proprietor Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                    <input type="tel" id="wPhone" placeholder="WhatsApp Number" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                    <input type="text" id="wPumpName" placeholder="Fuel Station Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+    <!-- PetroByte Style Multi-Step Trial Registration & Login Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-8 md:p-10">
+            
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 id="modalTitle" class="text-2xl font-black text-slate-900 dark:text-white">Register for Trial</h2>
+                    <p class="text-xs text-rose-500 font-bold tracking-wide mt-0.5">15 Days Free Trial (Trial + Support)</p>
                 </div>
-                <input type="email" id="authEmail" placeholder="Owner Email Address" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <input type="password" id="authPassword" placeholder="Secure Password (10+ characters)" required minlength="10" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <button type="submit" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition shadow-lg text-sm">Complete Registration</button>
+                <button onclick="toggleAuthMode()" id="switchAuthBtn" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Already registered? Login</button>
+            </div>
+
+            <!-- Multi-Step Wizard Form -->
+            <div id="registerWizardContainer">
+                <div class="mb-6">
+                    <div class="flex justify-between text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                        <span id="stepTitleText">Step 1 of 4: Proprietor Details[cite: 14, 15]</span>
+                        <span id="stepPercentText">25%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="wizardProgressBar" class="bg-blue-600 h-full transition-all duration-300 rounded-full" style="width: 25%;"></div>
+                    </div>
+                </div>
+
+                <form id="wizardForm" class="space-y-5">
+                    <div class="wizard-step space-y-2" data-step="1">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">What is your name?[cite: 15]</label>
+                        <p class="text-xs text-slate-400">Enter the proprietor's (dealer) name.[cite: 15]</p>
+                        <input type="text" id="wProprietor" placeholder="Proprietor Name[cite: 15]" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                    </div>
+
+                    <div class="wizard-step hidden space-y-2" data-step="2">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">How can we contact you?</label>
+                        <p class="text-xs text-slate-400">Your password will be shared via WhatsApp on this number.</p>
+                        <input type="tel" id="wPhone" placeholder="Mobile Number (WhatsApp)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                    </div>
+
+                    <div class="wizard-step hidden space-y-3" data-step="3">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Business & Email Details</label>
+                        <input type="email" id="wEmail" placeholder="Email Address" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm mb-2">
+                        <input type="text" id="wPumpName" placeholder="Petrol Pump Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                    </div>
+
+                    <div class="wizard-step hidden space-y-2" data-step="4">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">Choose your secure password</label>
+                        <p class="text-xs text-slate-400">Minimum 10 characters combining letters and numbers.</p>
+                        <input type="password" id="wPassword" minlength="10" placeholder="Secure Password (10+ characters)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                    </div>
+
+                    <div class="flex gap-3 pt-3">
+                        <button type="button" id="wizardBackBtn" onclick="prevWizardStep()" class="hidden w-1/3 bg-slate-100 dark:bg-slate-800 font-bold py-3 rounded-2xl text-sm">Back</button>
+                        <button type="button" id="wizardNextBtn" onclick="nextWizardStep()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl text-sm shadow-lg">Continue →</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Direct Login Form -->
+            <form id="loginForm" class="hidden space-y-4 pt-2">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="owner@petrolpump.com" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl text-sm shadow-lg">Login to Dashboard</button>
             </form>
-            <button onclick="toggleAuthMode()" id="switchAuthBtn" class="mt-4 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Already registered? Login</button>
+
+            <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400 flex justify-between">
+                <span>Helpline: +91 890 550 1200[cite: 13]</span>
+                <span>Help@fuelflow.in[cite: 13]</span>
+            </div>
         </div>
     </div>
 
-    <!-- Main Workspace -->
+    <!-- Main Workspace (Hidden until login) -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
         <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 shrink-0">
             <div class="p-5 border-b border-slate-800 flex items-center justify-between">
@@ -253,30 +309,76 @@
     </div>
 
     <script>
-        let isLoginMode = false;
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('modalTitle').innerText = isLoginMode ? "Station Login" : "Register for Trial";
-            document.getElementById('authSubmitBtn').innerText = isLoginMode ? "Access Dashboard" : "Complete Registration";
-            document.getElementById('switchAuthBtn').innerText = isLoginMode ? "New here? Register for Trial" : "Already registered? Login";
-            document.getElementById('regFields').classList.toggle('hidden', isLoginMode);
+        let currentWizardStep = 1;
+        const totalWizardSteps = 4;
+
+        function nextWizardStep() {
+            if (currentWizardStep < totalWizardSteps) {
+                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.add('hidden');
+                currentWizardStep++;
+                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.remove('hidden');
+                updateWizardProgress();
+            } else {
+                submitWizardRegistration();
+            }
         }
 
-        document.getElementById('authForm').onsubmit = async function(e) {
-            e.preventDefault();
+        function prevWizardStep() {
+            if (currentWizardStep > 1) {
+                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.add('hidden');
+                currentWizardStep--;
+                document.querySelector(`.wizard-step[data-step="${currentWizardStep}"]`).classList.remove('hidden');
+                updateWizardProgress();
+            }
+        }
+
+        function updateWizardProgress() {
+            const pct = (currentWizardStep / totalWizardSteps) * 100;
+            document.getElementById('wizardProgressBar').style.width = pct + '%';
+            document.getElementById('stepPercentText').innerText = Math.round(pct) + '%';
+            document.getElementById('stepTitleText').innerText = `Step ${currentWizardStep} of ${totalWizardSteps}`;
+            const backBtn = document.getElementById('wizardBackBtn');
+            const nextBtn = document.getElementById('wizardNextBtn');
+            if (currentWizardStep > 1) backBtn.classList.remove('hidden'); else backBtn.classList.add('hidden');
+            if (currentWizardStep === totalWizardSteps) nextBtn.innerText = 'Complete & Register →'; else nextBtn.innerText = 'Continue →';
+        }
+
+        async function submitWizardRegistration() {
             const payload = {
-                email: document.getElementById('authEmail').value,
-                password: document.getElementById('authPassword').value,
-                pumpName: isLoginMode ? '' : document.getElementById('wPumpName').value,
-                ownerName: isLoginMode ? '' : document.getElementById('wProprietor').value,
-                phone: isLoginMode ? '' : document.getElementById('wPhone').value
+                ownerName: document.getElementById('wProprietor').value,
+                phone: document.getElementById('wPhone').value,
+                email: document.getElementById('wEmail').value,
+                pumpName: document.getElementById('wPumpName').value,
+                password: document.getElementById('wPassword').value
             };
             const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             const data = await res.json();
             if (data.success) {
                 localStorage.setItem('petroUser', JSON.stringify(data));
+                alert('Registration Successful! License activated.');
                 location.reload();
             } else { alert(data.error); }
+        }
+
+        let isLoginMode = false;
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('modalTitle').innerText = isLoginMode ? "Station Login" : "Register for Trial";
+            document.getElementById('switchAuthBtn').innerText = isLoginMode ? "New here? Register for Trial" : "Already registered? Login";
+            document.getElementById('registerWizardContainer').classList.toggle('hidden', isLoginMode);
+            document.getElementById('loginForm').classList.toggle('hidden', !isLoginMode);
+        }
+
+        document.getElementById('loginForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value, pumpName: 'Station' })
+            });
+            const data = await res.json();
+            if (data.success) { localStorage.setItem('petroUser', JSON.stringify(data)); location.reload(); }
+            else { alert(data.error); }
         };
 
         function authFetch(url, options = {}) {
@@ -321,7 +423,7 @@
                 closingMeter: parseFloat(document.getElementById('sClosing').value), testing: parseFloat(document.getElementById('sTesting').value) || 0
             };
             const res = await authFetch('/api/records', { method: 'POST', body: JSON.stringify(payload) });
-            if (res.ok) { this.reset(); loadAllData(); alert('Shift recorded & tank stock deducted successfully!'); }
+            if (res.ok) { this.reset(); loadAllData(); alert('Shift recorded successfully!'); }
             else { const err = await res.json(); alert(err.error); }
         };
 
