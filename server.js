@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database connection error:', err.message);
-    else console.log('Connected to SQLite with Audit Triggers & Nozzle Mapping.');
+    else console.log('Connected to SQLite with All Core & Advanced Modules.');
 });
 
 db.serialize(() => {
@@ -55,7 +55,6 @@ db.serialize(() => {
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Immutable Audit Trigger Enforcement
     db.run(`CREATE TRIGGER IF NOT EXISTS prevent_records_delete
         BEFORE DELETE ON records
         BEGIN
@@ -96,6 +95,17 @@ db.serialize(() => {
         phone TEXT,
         vehicleNo TEXT,
         udharAmount REAL DEFAULT 0
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS customer_payments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stationId INTEGER,
+        idempotencyKey TEXT UNIQUE,
+        customerId INTEGER,
+        date TEXT,
+        amountPaid REAL,
+        paymentMode TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS staff (
@@ -212,6 +222,23 @@ app.get('/api/summary', authenticateToken, (req, res) => {
     });
 });
 
+app.post('/api/reconcile-tally', authenticateToken, (req, res) => {
+    const { cashDrawer, upiSettled, creditIssued } = req.body;
+    const cash = toExactDecimal(cashDrawer), upi = toExactDecimal(upiSettled), credit = toExactDecimal(creditIssued);
+    db.get(`SELECT COALESCE(SUM(total), 0) AS expectedSales FROM records WHERE stationId = ? AND isReversed = 0`, [req.user.stationId], (err, row) => {
+        const expected = toExactDecimal(row.expectedSales);
+        const accounted = toExactDecimal(cash + upi + credit);
+        const variance = toExactDecimal(accounted - expected);
+        let status = variance === 0 ? 'Balanced' : (variance > 0 ? `Surplus: +₹${variance}` : `Shortage: -₹${Math.abs(variance)}`);
+        db.run(`INSERT INTO cash_tallies (stationId, expectedSales, cashDrawer, upiSettled, creditIssued, variance, status, updatedAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(stationId) DO UPDATE SET expectedSales=excluded.expectedSales, cashDrawer=excluded.cashDrawer, upiSettled=excluded.upiSettled, creditIssued=excluded.creditIssued, variance=excluded.variance, status=excluded.status, updatedAt=CURRENT_TIMESTAMP`,
+            [req.user.stationId, expected, cash, upi, credit, variance, status], () => {
+                res.json({ success: true, status });
+            });
+    });
+});
+
 app.get('/api/records', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ? AND isReversed = 0 ORDER BY id DESC`, [req.user.stationId], (err, rows) => res.json({ records: rows || [] }));
 });
@@ -233,11 +260,73 @@ app.post('/api/records', authenticateToken, (req, res) => {
             if (err) { db.run(`ROLLBACK`); return res.status(409).json({ error: 'Duplicate shift entry blocked.' }); }
             db.run(`UPDATE tanks SET ${col} = MAX(0, ROUND(${col} - ?, 2)) WHERE stationId = ?`, [saleable, stationId], () => {
                 db.run(`COMMIT`, () => {
-                    logAudit(stationId, 'SHIFT_CLOSED', `Shift saved: ${saleable}L ${fuelType} (${nozzleName})`, req.user.email);
+                    logAudit(stationId, 'SHIFT_CLOSED', `Shift saved: ${saleable}L ${fuelType}`, req.user.email);
                     res.json({ success: true, liters: saleable, total });
                 });
             });
         });
+    });
+});
+
+app.post('/api/records/:id/reverse', authenticateToken, (req, res) => {
+    const recId = Number(req.params.id);
+    db.get(`SELECT * FROM records WHERE id = ? AND stationId = ? AND isReversed = 0`, [recId, req.user.stationId], (err, rec) => {
+        if (!rec) return res.status(404).json({ error: 'Record not found.' });
+        const col = rec.fuelType === 'Petrol' ? 'petrolStock' : 'dieselStock';
+        db.serialize(() => {
+            db.run(`BEGIN IMMEDIATE TRANSACTION`);
+            db.run(`UPDATE records SET isReversed = 1 WHERE id = ?`, [recId], () => {
+                db.run(`UPDATE tanks SET ${col} = ROUND(${col} + ?, 2) WHERE stationId = ?`, [rec.liters, req.user.stationId], () => {
+                    db.run(`COMMIT`, () => { res.json({ success: true }); });
+                });
+            });
+        });
+    });
+});
+
+app.get('/api/tanks', authenticateToken, (req, res) => {
+    db.get(`SELECT * FROM tanks WHERE stationId = ?`, [req.user.stationId], (err, row) => {
+        if (!row) {
+            db.run(`INSERT OR IGNORE INTO tanks (stationId, petrolStock, dieselStock) VALUES (?, 15000, 20000)`, [req.user.stationId], () => {
+                res.json({ petrolStock: 15000, dieselStock: 20000, petrolCapacity: 20000, dieselCapacity: 25000 });
+            });
+        } else { res.json(row); }
+    });
+});
+
+app.get('/api/customers', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM customers WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => res.json({ customers: rows || [] }));
+});
+
+app.post('/api/customers', authenticateToken, (req, res) => {
+    const { name, phone, vehicleNo, udharAmount } = req.body;
+    db.run(`INSERT INTO customers (stationId, name, phone, vehicleNo, udharAmount) VALUES (?, ?, ?, ?, ?)`,
+        [req.user.stationId, name.trim(), phone.trim(), vehicleNo.trim().toUpperCase(), toExactDecimal(udharAmount)], () => {
+        res.json({ success: true });
+    });
+});
+
+app.get('/api/staff', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM staff WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => res.json({ staff: rows || [] }));
+});
+
+app.post('/api/staff', authenticateToken, (req, res) => {
+    const { name, phone, monthlySalary } = req.body;
+    db.run(`INSERT INTO staff (stationId, name, phone, monthlySalary) VALUES (?, ?, ?, ?)`,
+        [req.user.stationId, name.trim(), phone.trim(), toExactDecimal(monthlySalary)], () => {
+        res.json({ success: true });
+    });
+});
+
+app.get('/api/expenses', authenticateToken, (req, res) => {
+    db.all(`SELECT * FROM expenses WHERE stationId = ? ORDER BY id DESC`, [req.user.stationId], (err, rows) => res.json({ expenses: rows || [] }));
+});
+
+app.post('/api/expenses', authenticateToken, (req, res) => {
+    const { date, category, amount } = req.body;
+    db.run(`INSERT INTO expenses (stationId, date, category, amount) VALUES (?, ?, ?, ?)`,
+        [req.user.stationId, date, category.trim(), toExactDecimal(amount)], () => {
+        res.json({ success: true });
     });
 });
 

@@ -10,7 +10,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
 
-    <!-- Auth Modal (Ensures no unauthenticated dashboard metric leakage) -->
+    <!-- Auth Modal -->
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
         <div class="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-8">
             <h2 id="modalTitle" class="text-2xl font-black text-slate-900 dark:text-white">Register for Trial</h2>
@@ -23,14 +23,14 @@
                     <input type="text" id="wPumpName" placeholder="Fuel Station Name" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                 </div>
                 <input type="email" id="authEmail" placeholder="Owner Email Address" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
-                <input type="password" id="authPassword" placeholder="Secure Password (10+ characters, bcrypt protected)" required minlength="10" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                <input type="password" id="authPassword" placeholder="Secure Password (10+ characters)" required minlength="10" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
                 <button type="submit" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition shadow-lg text-sm">Complete Registration</button>
             </form>
             <button onclick="toggleAuthMode()" id="switchAuthBtn" class="mt-4 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Already registered? Login</button>
         </div>
     </div>
 
-    <!-- Main Workspace (Hidden until authenticated) -->
+    <!-- Main Workspace -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
         <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 shrink-0">
             <div class="p-5 border-b border-slate-800 flex items-center justify-between">
@@ -49,6 +49,11 @@
                 <button onclick="switchTab('suppliers', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🚚 Supplier & Purchases</button>
                 <button onclick="switchTab('whatsapp', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">💬 WhatsApp Notifications</button>
                 <button onclick="switchTab('shifts', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">📋 Shift Operations</button>
+                <button onclick="switchTab('tally', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🧮 Cash Reconciliation</button>
+                <button onclick="switchTab('tanks', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🛢️ Tank Stock & Dip</button>
+                <button onclick="switchTab('customers', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👥 Credit Ledger (Udhar)</button>
+                <button onclick="switchTab('staff', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👨‍💼 Staff Payroll</button>
+                <button onclick="switchTab('expenses', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">💸 Operating Expenses</button>
                 <button onclick="switchTab('audit', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">🛡️ Immutable Audit Logs</button>
                 <button onclick="switchTab('account', this)" class="tab-btn w-full text-left py-2.5 px-3.5 rounded-2xl text-slate-300 hover:bg-slate-800">👤 Profile & Backups</button>
             </nav>
@@ -88,26 +93,24 @@
                     </div>
                 </div>
 
-                <!-- Shift Operations (With Nozzle Selection) -->
-                <div id="tab-shifts" class="tab-content hidden space-y-6">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                        <h3 class="text-base font-bold mb-4">Record Shift Sales (Nozzle-Wise)</h3>
-                        <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
-                            <input type="date" id="sDate" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="text" id="sShift" placeholder="Shift Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="text" id="sAttendant" placeholder="Attendant Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <select id="sFuelType" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl"><option value="Petrol">Petrol</option><option value="Diesel">Diesel</option></select>
-                            <input type="text" id="sNozzle" placeholder="Nozzle ID (e.g. Nozzle 1)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sUnitPrice" placeholder="Rate (₹/L)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
-                            <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters" value="0" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl md:col-span-2">
-                            <button type="submit" class="bg-blue-600 text-white font-bold py-3 rounded-2xl md:col-span-2">Save Shift & Deduct Tank</button>
-                        </form>
+                <!-- Stock Forecasting -->
+                <div id="tab-forecast" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-2xl">
+                        <h3 class="text-base font-bold mb-4">Stock Forecasting & Reorder Thresholds</h3>
+                        <div class="space-y-4 text-sm">
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-between items-center">
+                                <div><strong>Petrol Tank Stock:</strong> <span id="forecastPetrol">Loading...</span></div>
+                                <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Safe Level</span>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-between items-center">
+                                <div><strong>Diesel Tank Stock:</strong> <span id="forecastDiesel">Loading...</span></div>
+                                <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Safe Level</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Nozzle Mapping Tab -->
+                <!-- Nozzle Mapping -->
                 <div id="tab-nozzles" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
                         <h3 class="text-base font-bold mb-4">Configure Dispenser Nozzles</h3>
@@ -145,11 +148,93 @@
                     </div>
                 </div>
 
+                <!-- Shift Operations -->
+                <div id="tab-shifts" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                        <h3 class="text-base font-bold mb-4">Record Shift Sales (Nozzle-Wise)</h3>
+                        <form id="shiftForm" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+                            <input type="date" id="sDate" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="text" id="sShift" placeholder="Shift Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="text" id="sAttendant" placeholder="Attendant Name" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <select id="sFuelType" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl"><option value="Petrol">Petrol</option><option value="Diesel">Diesel</option></select>
+                            <input type="text" id="sNozzle" placeholder="Nozzle ID (e.g. Nozzle 1)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="number" step="0.01" id="sUnitPrice" placeholder="Rate (₹/L)" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="number" step="0.01" id="sOpening" placeholder="Opening Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="number" step="0.01" id="sClosing" placeholder="Closing Meter" required class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+                            <input type="number" step="0.01" id="sTesting" placeholder="Testing Liters" value="0" class="p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl md:col-span-2">
+                            <button type="submit" class="bg-blue-600 text-white font-bold py-3 rounded-2xl md:col-span-2">Save Shift & Deduct Tank</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Cash Tally -->
+                <div id="tab-tally" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Cash Reconciliation</h3>
+                        <form id="tallyForm" class="space-y-3">
+                            <input type="number" step="0.01" id="tallyCash" placeholder="Drawer Cash" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="tallyUPI" placeholder="UPI Settled" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="tallyUdhar" placeholder="Credit Issued" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl text-sm">Save Tally</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tank Stock -->
+                <div id="tab-tanks" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
+                        <h3 class="text-base font-bold mb-4">Underground Tank Inventory</h3>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">Petrol Stock: <span id="tankPetrol">0</span> L</div>
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">Diesel Stock: <span id="tankDiesel">0</span> L</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credit Customers -->
+                <div id="tab-customers" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Credit Customer Ledger</h3>
+                        <form id="customerForm" class="space-y-3">
+                            <input type="text" id="cName" placeholder="Customer Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="cPhone" placeholder="Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="cVehicle" placeholder="Vehicle No" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="cAmount" placeholder="Opening Credit" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl text-sm">Save Customer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Staff Payroll -->
+                <div id="tab-staff" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Staff Payroll</h3>
+                        <form id="staffForm" class="space-y-3">
+                            <input type="text" id="stName" placeholder="Staff Name" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="stPhone" placeholder="Phone" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="stSalary" placeholder="Monthly Salary" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-purple-600 text-white font-bold py-3 rounded-2xl text-sm">Save Staff</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Expenses -->
+                <div id="tab-expenses" class="tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm max-w-lg">
+                        <h3 class="text-base font-bold mb-4">Operating Expenses</h3>
+                        <form id="expenseForm" class="space-y-3">
+                            <input type="date" id="eDate" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="text" id="eCategory" placeholder="Category" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <input type="number" step="0.01" id="eAmount" placeholder="Amount" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-sm">
+                            <button type="submit" class="w-full bg-amber-600 text-white font-bold py-3 rounded-2xl text-sm">Save Expense</button>
+                        </form>
+                    </div>
+                </div>
+
                 <!-- Audit Logs -->
                 <div id="tab-audit" class="tab-content hidden space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-sm">
-                        <h3 class="text-base font-bold mb-2">Immutable Audit History</h3>
-                        <p class="text-xs text-slate-400 mb-4">Protected by SQLite triggers. Records cannot be altered or deleted.</p>
+                        <h3 class="text-base font-bold mb-4">Immutable Audit History</h3>
                         <div id="auditList" class="space-y-2 text-xs font-mono"></div>
                     </div>
                 </div>
@@ -213,7 +298,7 @@
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             if (btn) {
                 btn.classList.add('text-blue-400', 'bg-blue-600/15');
-                document.getElementById('currentHeaderTitle').innerText = btn.innerText.replace(/^[📊📦⛽🚚💬📋🛡️👤]\s*/, '');
+                document.getElementById('currentHeaderTitle').innerText = btn.innerText.replace(/^[📊📦🚚💬📋🧮🛢️👥👨‍💼💸🛡️👤]\s*/, '');
             }
             if (tabId === 'audit') loadAuditLogs();
         }
@@ -240,10 +325,38 @@
             else { const err = await res.json(); alert(err.error); }
         };
 
+        document.getElementById('tallyForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const res = await authFetch('/api/reconcile-tally', {
+                method: 'POST',
+                body: JSON.stringify({ cashDrawer: parseFloat(document.getElementById('tallyCash').value) || 0, upiSettled: parseFloat(document.getElementById('tallyUPI').value) || 0, creditIssued: parseFloat(document.getElementById('tallyUdhar').value) || 0 })
+            });
+            const data = await res.json();
+            if (res.ok) { loadAllData(); alert(`Tally Saved: ${data.status}`); }
+        };
+
+        document.getElementById('customerForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/customers', { method: 'POST', body: JSON.stringify({ name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value, vehicleNo: document.getElementById('cVehicle').value, udharAmount: parseFloat(document.getElementById('cAmount').value) }) });
+            this.reset(); alert('Customer saved!');
+        };
+
+        document.getElementById('staffForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/staff', { method: 'POST', body: JSON.stringify({ name: document.getElementById('stName').value, phone: document.getElementById('stPhone').value, monthlySalary: parseFloat(document.getElementById('stSalary').value) }) });
+            this.reset(); alert('Staff saved!');
+        };
+
+        document.getElementById('expenseForm').onsubmit = async function(e) {
+            e.preventDefault();
+            await authFetch('/api/expenses', { method: 'POST', body: JSON.stringify({ date: document.getElementById('eDate').value, category: document.getElementById('eCategory').value, amount: parseFloat(document.getElementById('eAmount').value) }) });
+            this.reset(); alert('Expense saved!');
+        };
+
         document.getElementById('nozzleForm').onsubmit = async function(e) {
             e.preventDefault();
             await authFetch('/api/nozzles', { method: 'POST', body: JSON.stringify({ nozzleName: document.getElementById('nozName').value, fuelType: document.getElementById('nozFuel').value }) });
-            this.reset(); alert('Nozzle mapping saved!');
+            this.reset(); alert('Nozzle saved!');
         };
 
         document.getElementById('supplierForm').onsubmit = async function(e) {
