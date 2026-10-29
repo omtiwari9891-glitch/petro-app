@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'fuelflow_petrobyte_enterprise_key_9192';
+const JWT_SECRET = process.env.JWT_SECRET || 'petrobyte_exact_enterprise_secret_9192';
 const ADMIN_EMAIL = 'omtiwari9192@gmail.com';
 
 app.use(express.json());
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) console.error('Database connection error:', err.message);
-    else console.log('Connected to SQLite with Full PetroByte & AI Modules.');
+    else console.log('Connected to SQLite with PetroByte Exact ERP Modules.');
 });
 
 db.serialize(() => {
@@ -360,7 +360,7 @@ app.get('/api/export-csv', authenticateToken, (req, res) => {
         let csv = 'ID,Date,Shift,Attendant,FuelType,Nozzle,UnitPrice,Opening,Closing,Testing,SaleableLiters,Total\n';
         (rows || []).forEach(r => { csv += `${r.id},"${r.date}","${r.shift}","${r.attendant}","${r.fuelType}","${r.nozzleName}",${r.unitPrice},${r.openingMeter},${r.closingMeter},${r.testing},${r.liters},${r.total}\n`; });
         res.header('Content-Type', 'text/csv');
-        res.attachment(`sales_${Date.now()}.csv`);
+        res.attachment(`petrobyte_sales_${Date.now()}.csv`);
         res.send(csv);
     });
 });
@@ -368,7 +368,7 @@ app.get('/api/export-csv', authenticateToken, (req, res) => {
 app.get('/api/backup-json', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM records WHERE stationId = ?`, [req.user.stationId], (e1, rec) => {
         res.header('Content-Type', 'application/json');
-        res.attachment(`petrobyte_enterprise_backup_${Date.now()}.json`);
+        res.attachment(`petrobyte_backup_${Date.now()}.json`);
         res.send(JSON.stringify({ records: rec || [] }, null, 2));
     });
 });
